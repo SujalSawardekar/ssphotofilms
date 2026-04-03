@@ -1,0 +1,23 @@
+version: '3.9'
+
+services:
+  face-recognition-app:
+    build: .
+    container_name: face-recognition-app
+    ports:
+      - "${PORT:-5001}:5001"
+    environment:
+      HOST: 0.0.0.0
+      PORT: 5001
+      FLASK_ENV: development
+      SECRET_KEY: ${SECRET_KEY:-dev-secret-change-in-production}
+    volumes:
+      - ./album_images:/app/album_images
+      - ./user_uploads:/app/user_uploads
+      - ./databases:/app/databases:rw
+    networks:
+      - face-net
+
+networks:
+  face-net:
+    driver: bridge

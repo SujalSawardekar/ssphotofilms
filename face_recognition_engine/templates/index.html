@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Find My Event Photos</title>
+    <style>
+        body { font-family: sans-serif; text-align: center; padding-top: 50px; }
+        .container { max-width: 400px; margin: 0 auto; padding: 20px; border: 1px solid #ccc; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+        input[type="submit"] { background-color: #007bff; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; margin-top: 15px; }
+        input[type="file"] { margin-bottom: 20px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>📷 Find Your Event Photos</h2>
+        <p>Please upload a clear picture of your face to find your images from the album. You can use your phone's camera!</p>
+        
+        <form method="POST" action="/shortlist" enctype="multipart/form-data">
+            <input type="file" name="face_image" accept="image/*" capture="user" required>
+            <br>
+            <input type="submit" value="Find My Photos">
+        </form>
+    </div>
+</body>
+</html>
