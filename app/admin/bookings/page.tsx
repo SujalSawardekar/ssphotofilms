@@ -281,6 +281,28 @@ const AdminBookingsDashboard = () => {
                            </div>
                         </div>
 
+                        {/* Payment Status for Pending (NEW) */}
+                        <div className="grid grid-cols-2 gap-4 mb-8 bg-[#FAF9F6]/50 p-4 rounded-xl border border-dark/5">
+                           <div className="space-y-1">
+                              <p className="text-[8px] font-black uppercase tracking-widest text-dark/30">Paid So Far</p>
+                              <p className="text-sm font-black text-emerald-600">₹{(booking.totalPaid || 0).toLocaleString()}</p>
+                           </div>
+                           <div className="space-y-1 text-right">
+                              <p className="text-[8px] font-black uppercase tracking-widest text-dark/30">
+                                 {booking.isOffline ? 'Remaining' : 'Payable'}
+                              </p>
+                              <p className={`text-sm font-black ${(booking.amount - (booking.totalPaid || 0)) > 0 ? (booking.isOffline ? 'text-red-500' : 'text-dark') : 'text-emerald-600'}`}>
+                                 ₹{(booking.amount - (booking.totalPaid || 0)).toLocaleString()}
+                              </p>
+                           </div>
+                           {booking.razorpayPaymentId && (
+                              <div className="col-span-2 mt-2 pt-2 border-t border-dark/5 flex items-center justify-center gap-2">
+                                 <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
+                                 <span className="text-[9px] font-black text-emerald-600 uppercase tracking-widest">Paid Online via Razorpay</span>
+                              </div>
+                           )}
+                        </div>
+
                         {booking.message && (
                            <div className="mb-8 p-4 bg-[#FAF9F6] rounded-lg italic text-[11px] text-dark/60 border-l-2 border-gold/40 quotes">
                               "{booking.message}"
@@ -348,8 +370,10 @@ const AdminBookingsDashboard = () => {
                             <p className="text-md font-black text-emerald-600">₹{(booking.totalPaid || 0).toLocaleString()}</p>
                           </div>
                           <div className="space-y-1">
-                            <p className="text-[8px] font-black uppercase tracking-widest text-dark/30">Remaining</p>
-                            <p className={`text-md font-black ${remaining > 0 ? 'text-red-500' : 'text-emerald-600'}`}>
+                            <p className="text-[8px] font-black uppercase tracking-widest text-dark/30">
+                               {booking.isOffline ? 'Remaining' : 'Payable'}
+                            </p>
+                            <p className={`text-md font-black ${remaining > 0 ? (booking.isOffline ? 'text-red-500' : 'text-dark') : 'text-emerald-600'}`}>
                               ₹{remaining.toLocaleString()}
                             </p>
                           </div>

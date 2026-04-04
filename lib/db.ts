@@ -154,14 +154,21 @@ export const updateBookingStatus = async (id: string, newStatus: string, reason?
 };
 
 export const updateBookingPayment = async (bookingId: string, orderId: string, paymentId: string, signature: string): Promise<void> => {
+  const booking = await prisma.booking.findUnique({
+    where: { id: bookingId }
+  });
+
+  if (!booking) return;
+
   await prisma.booking.update({
     where: { id: bookingId },
     data: {
-      status: "Pending", // Keep Pending for admin review as per new rule
+      status: booking.status === "Confirmed" ? "Confirmed" : "Pending", 
+      isOffline: false, // Ensure it's marked as online once a razorpay payment lands
       razorpayOrderId: orderId,
       razorpayPaymentId: paymentId,
       razorpaySignature: signature,
-      totalPaid: { increment: 0 } // Just ensuring we update the record
+      totalPaid: booking.amount // Mark as fully paid
     }
   });
 };

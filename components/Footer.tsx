@@ -8,16 +8,17 @@ const Footer = () => {
 
   return (
     <footer className="bg-background text-dark py-20 px-6 md:px-12 w-full border-t border-dark/5 snap-start">
-      <div className="max-w-7xl mx-auto px-6 md:px-16 lg:px-24">
+      <div className="max-w-7xl mx-auto px-6 md:px-4 lg:px-6">
         
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-16 mb-20">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-[1.5fr_1fr_1fr_1fr] gap-12 lg:gap-16 mb-20">
           
           <div className="space-y-6">
             <Link href="/" className="inline-block">
               <img src="/assets/logo.png" alt="S S PHOTO & FILMS" className="h-12 w-auto object-contain" />
             </Link>
-            <p className="text-xs uppercase tracking-[0.3em] text-dark/50 font-bold leading-loose">
-              Capturing Love Stories, <br /> Preserving Soulful Memories.
+            <p className="text-xs uppercase tracking-[0.3em] text-dark/40 font-bold leading-loose">
+              <span className="block whitespace-nowrap">Capturing Love Stories,</span>
+              <span className="block whitespace-nowrap">Preserving Soulful Memories.</span>
             </p>
           </div>
 

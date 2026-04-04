@@ -11,10 +11,17 @@ export async function POST(req: NextRequest) {
       bookingId 
     } = await req.json();
 
+    const key_secret = process.env.RAZORPAY_KEY_SECRET;
+
+    if (!key_secret) {
+      console.error('Razorpay secret missing from environment');
+      return NextResponse.json({ error: 'Razorpay configuration error' }, { status: 500 });
+    }
+
     const body = razorpay_order_id + "|" + razorpay_payment_id;
 
     const expectedSignature = crypto
-      .createHmac('sha256', process.env.RAZORPAY_KEY_SECRET!)
+      .createHmac('sha256', key_secret)
       .update(body.toString())
       .digest('hex');
 

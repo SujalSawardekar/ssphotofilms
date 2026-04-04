@@ -130,7 +130,19 @@ const InvoicePage = () => {
                        <span className="text-xs font-black uppercase tracking-widest">Total</span>
                        <span className="text-xs font-bold text-dark">₹{booking.amount}/-</span>
                     </div>
-                    {booking.isOffline ? (
+                    {!booking.isOffline ? (
+                      remaining <= 0 ? (
+                        <div className="flex justify-between px-4 py-3 bg-emerald-50">
+                           <span className="text-xs font-black uppercase tracking-widest text-emerald-600">Status</span>
+                           <span className="text-xs font-black text-emerald-600">FULL PAID</span>
+                        </div>
+                      ) : (
+                        <div className="flex justify-between px-4 py-3 bg-[#FAF9F6]">
+                           <span className="text-xs font-black uppercase tracking-widest text-dark/40">Status</span>
+                           <span className="text-xs font-black text-dark">PAYMENT PENDING</span>
+                        </div>
+                      )
+                    ) : (
                       <>
                         <div className="flex justify-between px-4 py-3 border-b-2 border-dark">
                            <span className="text-xs font-black uppercase tracking-widest">Paid</span>
@@ -141,11 +153,6 @@ const InvoicePage = () => {
                            <span className="text-xs font-black text-[#8FB13E]">₹{remaining}/-</span>
                         </div>
                       </>
-                    ) : (
-                      <div className="flex justify-between px-4 py-3 bg-emerald-50">
-                         <span className="text-xs font-black uppercase tracking-widest text-emerald-600">Status</span>
-                         <span className="text-xs font-black text-emerald-600">FULL PAID</span>
-                      </div>
                     )}
                  </div>
               </div>
