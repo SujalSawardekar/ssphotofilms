@@ -115,18 +115,18 @@ export default function CheckoutPage() {
   );
 
   return (
-    <main className="min-h-screen bg-white font-manrope pt-[160px] pb-32">
+    <main className="min-h-screen bg-white font-manrope pt-[180px] pb-32 flex flex-col">
       <Navbar transparentDarkText={true} />
       
-      <div className="max-w-6xl mx-auto px-6 flex flex-col items-center">
+      <div className="max-w-7xl mx-auto px-6 md:px-12 flex-1 flex flex-col items-center justify-center mb-20">
         
         {/* Title Section */}
         <div className="text-center mb-10">
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-cinzel font-bold text-[#4A4D4A] tracking-wider mb-2 uppercase text-center">
-            Payment<span className="text-gold">.</span>
+          <h1 className="text-4xl md:text-5xl font-cinzel font-bold text-[#4A4D4A] tracking-wider mb-2 uppercase text-center">
+            Checkout Summary<span className="text-gold">.</span>
           </h1>
           <p className="text-[#646464] text-[10px] md:text-xs font-black uppercase tracking-[0.4em] opacity-80">
-            THAT WAS REALLY QUICK <span className="text-dark">YOUR PHOTOSHOOT IS JUST SOME BUCKS AWAY 😍</span>
+            Confirm your details and <span className="text-dark">SECURE YOUR SESSION INSTANTLY</span>
           </p>
         </div>
 
@@ -134,83 +134,83 @@ export default function CheckoutPage() {
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="w-full max-w-3xl bg-white rounded-[40px] shadow-[0_48px_96px_-12px_rgba(0,0,0,0.08)] border border-dark/5 p-10 md:p-12 relative overflow-hidden"
+          className="w-full max-w-5xl bg-white rounded-[40px] shadow-[0_48px_96px_-12px_rgba(0,0,0,0.08)] border border-dark/5 p-8 md:p-14 relative overflow-hidden"
         >
           <div className="flex flex-col lg:flex-row gap-12 lg:gap-20">
             {/* Left Column: Shoot Details */}
             <div className="flex-1 space-y-8">
                <div className="space-y-2">
-                  <h2 className="text-xs md:text-sm font-black text-[#646464] uppercase tracking-widest leading-relaxed">
+                  <h2 className="text-xs font-black text-[#646464] uppercase tracking-widest leading-relaxed">
                     {booking.eventType} SHOOT AT {booking.location.split(',').pop()?.trim().toUpperCase()}, PLAN:
                   </h2>
-                  <h3 className="text-6xl md:text-7xl font-cinzel font-bold text-dark leading-tight">
+                  <h3 className="text-5xl md:text-6xl font-cinzel font-bold text-dark leading-tight tracking-tight">
                     {booking.packageType}<span className="text-[#FF2D55]">.</span>
                   </h3>
                </div>
 
                <div className="space-y-6">
                   <p className="text-xs font-bold text-secondary uppercase tracking-widest italic decoration-gold underline-offset-8 underline">Photography Only</p>
-                  <ul className="space-y-3">
+                  <ul className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-3">
                     {booking.packageFeatures.map((f: string, i: number) => (
                       <li key={i} className="flex items-start gap-4">
-                        <div className="w-1 h-1 bg-dark mt-2 rounded-full shrink-0" />
-                        <span className="text-xs md:text-sm font-medium text-dark/70 leading-relaxed uppercase tracking-tight">{f}</span>
+                        <div className="w-1 h-1 bg-gold mt-2 rounded-full shrink-0" />
+                        <span className="text-[11px] font-medium text-dark/70 leading-relaxed uppercase tracking-tight">{f}</span>
                       </li>
                     ))}
                   </ul>
-                  <p className="text-[10px] font-black text-dark/40 uppercase tracking-widest pt-4">1 Photographer with Prime lens and lights on Full Frame Camera</p>
+                  <div className="pt-6 border-t border-dark/5">
+                    <p className="text-[9px] font-black text-dark/30 uppercase tracking-[0.2em] leading-relaxed">1 Photographer with Prime lens and technical lighting Setup.</p>
+                  </div>
                </div>
             </div>
 
             {/* Right Column: Pricing & Payment */}
-            <div className="w-full lg:w-[350px] space-y-10 flex flex-col justify-between">
+            <div className="w-full lg:w-[350px] flex flex-col justify-between">
                <div className="space-y-8">
                   {/* Amount Section with Breakdown */}
                   <div className="space-y-4">
                     <div className="space-y-1">
                       <p className="text-[10px] font-black text-dark/40 uppercase tracking-widest">Pricing Breakdown:</p>
-                      <div className="flex justify-between items-center text-xs font-bold text-dark/60">
+                      <div className="flex justify-between items-center text-[11px] font-bold text-dark/60">
                         <span>Base Package</span>
                         <span>₹{(booking.amount - (booking.travelCharges || 0)).toLocaleString('en-IN')}</span>
                       </div>
                       {booking.travelCharges > 0 && (
-                        <div className="flex justify-between items-center text-xs font-bold text-[#FF2D55]">
+                        <div className="flex justify-between items-center text-[11px] font-bold text-[#FF2D55]">
                           <span>Traveling Charges</span>
                           <span>+ ₹{booking.travelCharges.toLocaleString('en-IN')}</span>
                         </div>
                       )}
                     </div>
                     
-                    <div className="pt-4 border-t border-dark/10 space-y-2">
-                      <p className="text-xs font-black text-[#FF2D55] uppercase tracking-widest">Total Amount:</p>
-                      <p className="text-6xl font-cinzel font-bold text-dark tracking-tighter">₹{booking.amount.toLocaleString('en-IN')}</p>
+                    <div className="pt-4 border-t border-dark/10 space-y-1">
+                      <p className="text-[10px] font-black text-[#FF2D55] uppercase tracking-widest">Total Investment:</p>
+                      <p className="text-5xl font-cinzel font-bold text-dark tracking-tighter">₹{booking.amount.toLocaleString('en-IN')}</p>
                     </div>
-
-                    {booking.travelCharges > 0 && (
-                      <p className="text-[9px] font-bold text-dark/30 uppercase tracking-widest italic">
-                        * Traveling charges applied for shoot outside base location.
-                      </p>
-                    )}
                   </div>
 
                   {/* Shoot Info Summary */}
-                  <div className="space-y-4 pt-8 border-t border-dark/5">
+                  <div className="space-y-4 pt-6 border-t border-dark/5">
                     <p className="text-[10px] font-black text-[#646464] uppercase tracking-widest">Booking Info:</p>
-                    <div className="space-y-1.5">
-                      <p className="text-xs font-bold text-dark uppercase">{booking.clientName}</p>
-                      <p className="text-[11px] font-medium text-secondary truncate">{booking.email}</p>
-                      <p className="text-[11px] font-bold text-dark uppercase mt-2">{new Date(booking.eventDate).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}</p>
-                      <p className="text-[10px] font-medium text-secondary/60 leading-relaxed uppercase">{booking.location}</p>
+                    <div className="space-y-1">
+                      <p className="text-xs font-bold text-dark uppercase tracking-tight">{booking.clientName}</p>
+                      <div className="flex flex-col space-y-1 pt-2">
+                        <div className="flex items-center text-[10px] font-black text-dark uppercase tracking-widest">
+                          <CheckCircle2 size={12} className="mr-2 text-emerald-500" />
+                          {new Date(booking.eventDate).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}
+                        </div>
+                        <p className="text-[9px] font-medium text-secondary/60 leading-relaxed uppercase tracking-wide truncate">{booking.location}</p>
+                      </div>
                     </div>
                   </div>
                </div>
 
                {/* Pay Now Button (Premium Shimmer) */}
-               <div className="space-y-6">
+               <div className="mt-8">
                   <button 
                     onClick={handlePayment}
                     disabled={paying}
-                    className="w-full bg-[#FF2D55] text-white py-6 rounded-xl text-[12px] font-black tracking-[0.4em] uppercase hover:bg-dark transition-all duration-500 relative overflow-hidden group shadow-2xl shadow-red-500/20 disabled:opacity-50"
+                    className="w-full bg-[#FF2D55] text-white py-5 rounded-xl text-[11px] font-black tracking-[0.4em] uppercase hover:bg-dark transition-all duration-500 relative overflow-hidden group shadow-xl shadow-red-500/10 disabled:opacity-50"
                   >
                     <span className="relative z-10 flex items-center justify-center gap-3">
                       {paying ? (
@@ -218,7 +218,7 @@ export default function CheckoutPage() {
                       ) : (
                         <>
                           <span>Pay Now</span>
-                          <ArrowRight size={16} className="group-hover:translate-x-2 transition-transform" />
+                          <ArrowRight size={14} className="group-hover:translate-x-2 transition-transform" />
                         </>
                       )}
                     </span>
@@ -226,15 +226,11 @@ export default function CheckoutPage() {
                     <div className="absolute top-0 -left-full w-full h-full bg-white/10 skew-x-[45deg] group-hover:left-[200%] transition-all duration-1000 z-0" />
                   </button>
 
-                  <div className="flex flex-col items-center gap-3 py-4 border-t border-dark/5 mt-4">
-                    <div className="flex items-center gap-2">
-                      <ShieldCheck size={14} className="text-emerald-500" />
-                      <span className="text-[10px] font-black text-secondary/40 uppercase tracking-widest">100% Safe & Secure Payment</span>
+                  <div className="mt-4 flex flex-col items-center gap-2">
+                    <div className="flex items-center justify-center gap-2">
+                      <ShieldCheck size={12} className="text-emerald-500" />
+                      <span className="text-[8px] font-black text-secondary/40 uppercase tracking-widest">Safe & Secure Payment</span>
                     </div>
-                    <p className="text-[10px] text-dark/40 font-bold uppercase tracking-widest text-center leading-relaxed">
-                      * All bookings are subject to final approval within 24 hours. <br/>
-                      Full refund will be issued if the slot is not available or rejected.
-                    </p>
                   </div>
                </div>
             </div>

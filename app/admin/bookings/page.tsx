@@ -30,6 +30,30 @@ const AdminBookingsDashboard = () => {
   const [selectedBookingId, setSelectedBookingId] = useState<string | null>(null);
   const [paymentData, setPaymentData] = useState({ amount: 0, method: 'Cash' });
   
+  // Custom UI State
+  const [notifications, setNotifications] = useState<{id: number, message: string, type: 'success' | 'error'}[]>([]);
+  const [promptConfig, setPromptConfig] = useState<{
+    isOpen: boolean;
+    title: string;
+    message: string;
+    value: string;
+    onConfirm: (val: string) => void;
+  }>({
+    isOpen: false,
+    title: '',
+    message: '',
+    value: '',
+    onConfirm: () => {}
+  });
+
+  const showNotification = (message: string, type: 'success' | 'error' = 'success') => {
+    const id = Date.now();
+    setNotifications(prev => [...prev, { id, message, type }]);
+    setTimeout(() => {
+      setNotifications(prev => prev.filter(n => n.id !== id));
+    }, 4000);
+  };
+  
   // Form State for Manual Booking
   const [formData, setFormData] = useState({
     clientName: '',
@@ -72,14 +96,22 @@ const AdminBookingsDashboard = () => {
         }).catch(err => console.log("Silent reminder scan failed:", err));
       }
     } catch (error) {
-      console.error("Failed to update booking status:", error);
+      showNotification("Failed to update booking status.", "error");
     }
   };
 
   const handleStatusChangeSafe = (id: string, newStatus: string, reason?: string) => {
     if (newStatus === 'Rejected') {
-      const r = window.prompt("Reason for rejection:");
-      if (r !== null) handleStatusChange(id, newStatus, r);
+      setPromptConfig({
+        isOpen: true,
+        title: 'Reject Booking',
+        message: 'Please provide a reason for rejecting this booking.',
+        value: '',
+        onConfirm: (r) => {
+          if (r.trim()) handleStatusChange(id, newStatus, r);
+          else showNotification("Rejection reason is required.", "error");
+        }
+      });
     } else {
       handleStatusChange(id, newStatus);
     }
@@ -87,6 +119,21 @@ const AdminBookingsDashboard = () => {
 
   const handleManualSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (formData.amount <= 0) {
+      showNotification("Booking amount must be greater than zero.", "error");
+      return;
+    }
+    if (formData.advancePaid < 0) {
+      showNotification("Advance payment cannot be negative.", "error");
+      return;
+    }
+
+    const phoneRegex = /^[6-9][0-9]{9}$/;
+    if (!phoneRegex.test(formData.phone)) {
+      showNotification("Please enter a valid 10-digit mobile number.", "error");
+      return;
+    }
+
     try {
       await addBooking({
         ...formData,
@@ -96,9 +143,9 @@ const AdminBookingsDashboard = () => {
       setIsManualModalOpen(false);
       resetForm();
       await fetchBookings();
-      alert("Offline booking added successfully!");
+      showNotification("Offline booking added successfully!", "success");
     } catch (error) {
-      alert("Error adding manual booking. Ensure 'npx prisma generate' was run.");
+      showNotification("Error adding manual booking.", "error");
     }
   };
 
@@ -109,28 +156,40 @@ const AdminBookingsDashboard = () => {
   };
 
   const handleAssignPhotographer = async (id: string) => {
-    const name = window.prompt("Enter Photographer Name:");
-    if (name) {
-      try {
-        await updateBookingPhotographer(id, name);
-        await fetchBookings();
-      } catch (err) {
-        alert("Failed to assign photographer.");
+    setPromptConfig({
+      isOpen: true,
+      title: 'Assign Team',
+      message: 'Enter the name of the photographer/team for this event.',
+      value: '',
+      onConfirm: async (name) => {
+        if (name.trim()) {
+          try {
+            await updateBookingPhotographer(id, name);
+            await fetchBookings();
+            showNotification(`Assigned ${name} successfully!`, "success");
+          } catch (err) {
+            showNotification("Failed to assign photographer.", "error");
+          }
+        }
       }
-    }
+    });
   };
 
   const submitInstallment = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!selectedBookingId) return;
+    if (paymentData.amount <= 0) {
+      showNotification("Please enter a valid amount.", "error");
+      return;
+    }
 
     try {
       await addPaymentInstallment(selectedBookingId, paymentData.amount, paymentData.method);
       setIsPaymentModalOpen(false);
       await fetchBookings();
-      alert("Payment recorded successfully!");
+      showNotification("Payment recorded successfully!", "success");
     } catch (err) {
-      alert("Failed to add payment.");
+      showNotification("Failed to add payment.", "error");
     }
   };
 
@@ -188,17 +247,53 @@ const AdminBookingsDashboard = () => {
                   <AnimatePresence>
                     {pendingBookings.map(booking => (
                       <motion.div layout initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.96 }}
-                        key={booking.id} className="bg-white rounded-lg p-8 shadow-sm border border-dark/5 relative flex flex-col">
-                        <div className="absolute top-6 right-6 px-4 py-1.5 rounded-md text-sm font-bold uppercase bg-[#FEF08A] text-[#854D0E]">Pending</div>
-                        <h3 className="text-2xl font-cinzel text-dark mb-5 pr-24">{booking.clientName}</h3>
-                        <div className="space-y-3 mb-6 flex-1 italic text-xs text-dark/60 leading-relaxed">
-                          <div className="flex items-center space-x-3 text-xs text-dark"><CalendarIcon size={14} className="text-secondary" /><span>{booking.eventDate}</span></div>
-                          <div className="flex items-center space-x-3 text-xs text-dark"><Mail size={14} className="text-secondary" /><span>{booking.email}</span></div>
-                          <div className="flex items-center space-x-3 text-xs text-dark font-medium"><Box size={14} className="text-secondary" /><span>{booking.packageType || 'Custom'}</span></div>
+                        key={booking.id} className="bg-white rounded-2xl p-8 shadow-sm border border-dark/5 relative flex flex-col group transition-all hover:shadow-xl">
+                        
+                        <div className="absolute top-6 right-6 px-4 py-1.5 rounded-md text-[10px] font-black uppercase tracking-widest bg-[#FEF08A] text-[#854D0E] border border-[#854D0E]/10">Pending Approval</div>
+                        
+                        <div className="mb-6">
+                           <p className="text-[10px] font-black uppercase tracking-[0.3em] text-gold italic mb-1">{booking.eventType || 'New Event'}</p>
+                           <h3 className="text-3xl font-cinzel font-bold text-dark">{booking.clientName}</h3>
                         </div>
-                        <div className="grid grid-cols-2 gap-4 mt-6">
-                          <button onClick={() => handleStatusChange(booking.id, 'Confirmed')} className="py-3 bg-[#D1FAE5] text-[#059669] text-xs uppercase tracking-widest font-bold hover:bg-[#A7F3D0] rounded-md transition-colors">Accept</button>
-                          <button onClick={() => handleStatusChangeSafe(booking.id, 'Rejected')} className="py-3 bg-[#FCE7F3] text-[#BE185D] text-xs uppercase tracking-widest font-bold hover:bg-[#FBCFE8] rounded-md transition-colors">Reject</button>
+
+                        <div className="grid grid-cols-2 gap-y-4 gap-x-8 mb-8 pb-8 border-b border-dark/5">
+                           <div className="space-y-1">
+                              <p className="text-[8px] font-black uppercase tracking-widest text-dark/30">Contact Information</p>
+                              <div className="flex flex-col space-y-1">
+                                 <div className="flex items-center text-[10px] font-medium text-dark/70"><Mail size={12} className="mr-2 text-dark/40" /> {booking.email}</div>
+                                 <div className="flex items-center text-[10px] font-medium text-dark/70"><Phone size={12} className="mr-2 text-dark/40" /> {booking.phone}</div>
+                              </div>
+                           </div>
+                           <div className="space-y-1">
+                              <p className="text-[8px] font-black uppercase tracking-widest text-dark/30">Event Logistics</p>
+                              <div className="flex flex-col space-y-1">
+                                 <div className="flex items-center text-[10px] font-medium text-dark/70"><CalendarIcon size={12} className="mr-2 text-dark/40" /> {new Date(booking.eventDate).toLocaleDateString('en-GB')}</div>
+                                 <div className="flex items-center text-[10px] font-medium text-dark/70"><MapPin size={12} className="mr-2 text-dark/40" /> {booking.location}</div>
+                              </div>
+                           </div>
+                           <div className="space-y-1">
+                              <p className="text-[8px] font-black uppercase tracking-widest text-dark/30">Package & Duration</p>
+                              <div className="text-[10px] font-bold text-dark uppercase">{booking.packageType || 'Custom'} ({booking.hours} Hours)</div>
+                           </div>
+                           <div className="space-y-1 text-right">
+                              <p className="text-[8px] font-black uppercase tracking-widest text-dark/30">Quoted Amount</p>
+                              <div className="text-xl font-black text-dark tracking-tighter">₹{booking.amount?.toLocaleString()}</div>
+                           </div>
+                        </div>
+
+                        {booking.message && (
+                           <div className="mb-8 p-4 bg-[#FAF9F6] rounded-lg italic text-[11px] text-dark/60 border-l-2 border-gold/40 quotes">
+                              "{booking.message}"
+                           </div>
+                        )}
+
+                        <div className="grid grid-cols-2 gap-4 mt-auto">
+                          <button onClick={() => handleStatusChange(booking.id, 'Confirmed')} className="flex items-center justify-center space-x-2 py-4 bg-[#D1FAE5] text-[#059669] text-[10px] uppercase tracking-widest font-black rounded-lg hover:bg-emerald-600 hover:text-white transition-all">
+                             <Check size={14} /><span>Accept Booking</span>
+                          </button>
+                          <button onClick={() => handleStatusChangeSafe(booking.id, 'Rejected')} className="flex items-center justify-center space-x-2 py-4 bg-[#FCE7F3] text-[#BE185D] text-[10px] uppercase tracking-widest font-black rounded-lg hover:bg-rose-600 hover:text-white transition-all">
+                             <XCircle size={14} /><span>Decline</span>
+                          </button>
                         </div>
                       </motion.div>
                     ))}
@@ -222,7 +317,10 @@ const AdminBookingsDashboard = () => {
                       
                       <div className="flex justify-between items-start mb-6">
                         <div className="space-y-1">
-                          <p className="text-[10px] font-black uppercase tracking-[0.3em] text-[#FF2D55] italic">Premium Event</p>
+                          <div className="flex items-center space-x-2">
+                             <p className="text-[10px] font-black uppercase tracking-[0.3em] text-[#FF2D55] italic">Premium Event</p>
+                             {booking.isOffline && <span className="bg-zinc-100 text-zinc-500 text-[8px] font-black px-2 py-0.5 rounded uppercase tracking-widest">Offline</span>}
+                          </div>
                           <h3 className="text-2xl font-cinzel font-bold text-dark">{booking.clientName}</h3>
                         </div>
                         <div className={`px-4 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest flex items-center space-x-2 ${
@@ -240,42 +338,51 @@ const AdminBookingsDashboard = () => {
                             <p className="text-xs font-bold text-dark uppercase">{booking.packageType || 'Wedding Shoot'}</p>
                           </div>
                           <div className="space-y-1">
-                            <p className="text-[8px] font-black uppercase tracking-widest text-dark/30">Location</p>
-                            <p className="text-xs font-bold text-dark truncate">{booking.location}</p>
+                            <p className="text-[8px] font-black uppercase tracking-widest text-dark/30">Total Amount</p>
+                            <p className="text-md font-black text-dark">₹{booking.amount.toLocaleString()}</p>
                           </div>
                         </div>
                         <div className="space-y-4 text-right">
                           <div className="space-y-1">
-                            <p className="text-[8px] font-black uppercase tracking-widest text-dark/30">Total Amount</p>
-                            <p className="text-lg font-black text-dark tracking-tighter">₹{booking.amount.toLocaleString()}</p>
+                            <p className="text-[8px] font-black uppercase tracking-widest text-dark/30">Paid So Far</p>
+                            <p className="text-md font-black text-emerald-600">₹{(booking.totalPaid || 0).toLocaleString()}</p>
                           </div>
                           <div className="space-y-1">
-                            <p className="text-[8px] font-black uppercase tracking-widest text-dark/30">Date</p>
-                            <p className="text-xs font-bold text-dark">{new Date(booking.eventDate).toLocaleDateString('en-GB')}</p>
+                            <p className="text-[8px] font-black uppercase tracking-widest text-dark/30">Remaining</p>
+                            <p className={`text-md font-black ${remaining > 0 ? 'text-red-500' : 'text-emerald-600'}`}>
+                              ₹{remaining.toLocaleString()}
+                            </p>
                           </div>
                         </div>
                       </div>
 
                       <div className="space-y-4 mb-10 flex-1">
                          <p className="text-[9px] font-black uppercase tracking-widest text-dark/20 border-b border-dark/5 pb-2">Technical Summary</p>
-                         <ul className="space-y-2">
-                            {booking.packageFeatures && booking.packageFeatures.slice(0, 3).map((f: string, i: number) => (
-                              <li key={i} className="flex items-center text-[11px] font-medium text-dark/60">
-                                <div className="w-1 h-1 bg-gold rounded-full mr-3 shrink-0" />
-                                <span className="truncate">{f}</span>
-                              </li>
-                            ))}
-                         </ul>
+                         <div className="grid grid-cols-2 gap-2 mt-2">
+                            <div className="flex items-center text-[10px] text-dark/60"><CalendarIcon size={12} className="mr-2 text-gold" /> {new Date(booking.eventDate).toLocaleDateString('en-GB')}</div>
+                            <div className="flex items-center text-[10px] text-dark/60"><MapPin size={12} className="mr-2 text-gold" /> {booking.location}</div>
+                         </div>
                       </div>
 
                       <div className="grid grid-cols-2 gap-4">
-                        <button onClick={() => handleAssignPhotographer(booking.id)} className="flex items-center justify-center space-x-2 py-4 bg-dark text-white text-[9px] uppercase tracking-widest font-black rounded-lg hover:bg-gold hover:text-dark transition-all shadow-lg">
-                           <span>{booking.photographerName ? booking.photographerName : 'Assign Team'}</span>
-                        </button>
+                        {remaining <= 0 ? (
+                          <div className="flex items-center justify-center space-x-2 py-4 bg-emerald-50 text-emerald-600 text-[10px] uppercase tracking-widest font-black rounded-lg border border-emerald-200">
+                             <CheckCircle2 size={14} /><span>Full Payment Received</span>
+                          </div>
+                        ) : booking.isOffline ? (
+                          <button onClick={() => handleAddInstallment(booking.id)} className="flex items-center justify-center space-x-2 py-4 bg-emerald-600 text-white text-[9px] uppercase tracking-widest font-black rounded-lg hover:bg-emerald-700 transition-all shadow-lg">
+                             <Plus size={14} /><span>Record Payment</span>
+                          </button>
+                        ) : (
+                          <div className="flex items-center justify-center space-x-2 py-4 bg-[#FAF9F6] text-dark/40 text-[9px] uppercase tracking-widest font-black rounded-lg border border-dark/5 italic">
+                             <span>Online Payment Pending</span>
+                          </div>
+                        )}
                         <Link href={`/admin/bookings/${booking.id}/invoice`} className="flex items-center justify-center space-x-2 py-4 border border-dark/10 text-dark text-[9px] uppercase tracking-widest font-black rounded-lg hover:bg-dark hover:text-white transition-all">
                           <FileText size={14} /><span>Detailed Invoice</span>
                         </Link>
                       </div>
+
                     </div>
                   );
                 })}
@@ -297,11 +404,11 @@ const AdminBookingsDashboard = () => {
                 <form onSubmit={handleManualSubmit} className="space-y-6">
                    <div className="grid grid-cols-2 gap-6">
                       <div className="flex flex-col space-y-1.5"><label className="text-[10px] font-black text-dark/30 uppercase tracking-widest">Name</label><input required className="px-4 py-2.5 bg-[#FAF9F6] border border-dark/5 rounded-md focus:outline-none focus:border-gold text-sm" value={formData.clientName} onChange={e => setFormData({...formData, clientName: e.target.value})} /></div>
-                      <div className="flex flex-col space-y-1.5"><label className="text-[10px] font-black text-dark/30 uppercase tracking-widest">Phone</label><input required className="px-4 py-2.5 bg-[#FAF9F6] border border-dark/5 rounded-md focus:outline-none focus:border-gold text-sm" value={formData.phone} onChange={e => setFormData({...formData, phone: e.target.value})} /></div>
+                      <div className="flex flex-col space-y-1.5"><label className="text-[10px] font-black text-dark/30 uppercase tracking-widest">Phone</label><input required type="tel" pattern="[6-9][0-9]{9}" placeholder="10-digit number" className="px-4 py-2.5 bg-[#FAF9F6] border border-dark/5 rounded-md focus:outline-none focus:border-gold text-sm" value={formData.phone} onChange={e => setFormData({...formData, phone: e.target.value})} /></div>
                       <div className="flex flex-col space-y-1.5"><label className="text-[10px] font-black text-dark/30 uppercase tracking-widest">Date</label><input required type="datetime-local" className="px-4 py-2.5 bg-[#FAF9F6] border border-dark/5 rounded-md focus:outline-none focus:border-gold text-sm" value={formData.eventDate} onChange={e => setFormData({...formData, eventDate: e.target.value})} /></div>
                       <div className="flex flex-col space-y-1.5"><label className="text-[10px] font-black text-dark/30 uppercase tracking-widest">Location</label><input required className="px-4 py-2.5 bg-[#FAF9F6] border border-dark/5 rounded-md focus:outline-none focus:border-gold text-sm" value={formData.location} onChange={e => setFormData({...formData, location: e.target.value})} /></div>
-                      <div className="flex flex-col space-y-1.5"><label className="text-[10px] font-black text-dark/30 uppercase tracking-widest">Amount (₹)</label><input required type="number" className="px-4 py-2.5 border-2 border-dark/10 rounded-md focus:border-gold text-sm font-bold" value={formData.amount} onChange={e => handleNumChange('amount', e.target.value)} /></div>
-                      <div className="flex flex-col space-y-1.5"><label className="text-[10px] font-black text-dark/30 uppercase tracking-widest">Advance (₹)</label><input type="number" className="px-4 py-2.5 border-2 border-emerald-100 rounded-md focus:border-emerald-500 text-sm font-bold text-emerald-600" value={formData.advancePaid} onChange={e => handleNumChange('advancePaid', e.target.value)} /></div>
+                      <div className="flex flex-col space-y-1.5"><label className="text-[10px] font-black text-dark/30 uppercase tracking-widest">Amount (₹)</label><input required type="number" min="1" className="px-4 py-2.5 border-2 border-dark/10 rounded-md focus:border-gold text-sm font-bold" value={formData.amount} onChange={e => handleNumChange('amount', e.target.value)} /></div>
+                      <div className="flex flex-col space-y-1.5"><label className="text-[10px] font-black text-dark/30 uppercase tracking-widest">Advance (₹)</label><input type="number" min="0" className="px-4 py-2.5 border-2 border-emerald-100 rounded-md focus:border-emerald-500 text-sm font-bold text-emerald-600" value={formData.advancePaid} onChange={e => handleNumChange('advancePaid', e.target.value)} /></div>
                    </div>
                    <button type="submit" className="w-full py-4 bg-dark text-white text-[12px] font-black uppercase tracking-[0.3em] rounded-lg hover:bg-gold transition-all">Confirm Offline Booking</button>
                 </form>
@@ -310,14 +417,14 @@ const AdminBookingsDashboard = () => {
         )}
       </AnimatePresence>
 
-      {/* Payment Entry Modal (REPLACES BLACK BOX) */}
+      {/* Payment Entry Modal */}
       <AnimatePresence>
         {isPaymentModalOpen && (
           <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-dark/70 backdrop-blur-md">
              <motion.div initial={{opacity:0, y:20}} animate={{opacity:1, y:0}} exit={{opacity:0, y:20}} className="bg-white w-full max-w-sm rounded-2xl shadow-2xl p-10">
                 <div className="flex justify-between items-center mb-8 border-b border-dark/5 pb-4"><h2 className="text-xl font-cinzel font-bold text-dark uppercase tracking-widest">Add Payment</h2><button onClick={() => setIsPaymentModalOpen(false)} className="text-dark/20 hover:text-red-500"><XCircle size={20} /></button></div>
                 <form onSubmit={submitInstallment} className="space-y-8">
-                   <div className="flex flex-col space-y-1.5"><label className="text-[10px] font-black text-dark/30 uppercase tracking-widest">Amount to Record (₹)</label><input required type="number" autoFocus className="px-5 py-4 bg-[#FAF9F6] border border-dark/5 rounded-xl focus:outline-none focus:border-gold text-2xl font-bold font-cinzel text-emerald-600" value={paymentData.amount === 0 ? '' : paymentData.amount} onChange={e => setPaymentData({...paymentData, amount: parseInt(e.target.value) || 0})} /></div>
+                   <div className="flex flex-col space-y-1.5"><label className="text-[10px] font-black text-dark/30 uppercase tracking-widest">Amount to Record (₹)</label><input required type="number" min="1" autoFocus className="px-5 py-4 bg-[#FAF9F6] border border-dark/5 rounded-xl focus:outline-none focus:border-gold text-2xl font-bold font-cinzel text-emerald-600" value={paymentData.amount === 0 ? '' : paymentData.amount} onChange={e => setPaymentData({...paymentData, amount: parseInt(e.target.value) || 0})} /></div>
                    <div className="flex flex-col space-y-2"><label className="text-[10px] font-black text-dark/30 uppercase tracking-widest text-center">Payment Method</label><div className="grid grid-cols-2 gap-3"><button type="button" onClick={() => setPaymentData({...paymentData, method: 'Cash'})} className={`py-3 rounded-lg text-[10px] font-black uppercase tracking-widest border transition-all ${paymentData.method === 'Cash' ? 'bg-dark text-white' : 'bg-white text-dark/30 border-dark/10'}`}>Cash</button><button type="button" onClick={() => setPaymentData({...paymentData, method: 'Online'})} className={`py-3 rounded-lg text-[10px] font-black uppercase tracking-widest border transition-all ${paymentData.method === 'Online' ? 'bg-dark text-white' : 'bg-white text-dark/30 border-dark/10'}`}>Online</button></div></div>
                    <button type="submit" className="w-full py-4 bg-emerald-600 text-white text-[12px] font-black uppercase tracking-[0.3em] rounded-lg hover:bg-emerald-700 shadow-xl shadow-emerald-500/20">Confirm Receipt</button>
                 </form>
@@ -326,7 +433,39 @@ const AdminBookingsDashboard = () => {
         )}
       </AnimatePresence>
 
+      {/* Prompt Modal */}
+      <AnimatePresence>
+        {promptConfig.isOpen && (
+           <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-dark/80 backdrop-blur-lg">
+              <motion.div initial={{opacity:0, scale:0.9}} animate={{opacity:1, scale:1}} exit={{opacity:0, scale:0.9}} className="bg-white w-full max-w-md rounded-2xl p-8 shadow-2xl">
+                 <h2 className="text-xl font-cinzel font-bold text-dark uppercase tracking-widest mb-2">{promptConfig.title}</h2>
+                 <p className="text-[10px] font-bold text-dark/40 uppercase tracking-widest mb-6">{promptConfig.message}</p>
+                 <div className="space-y-6">
+                    <input autoFocus className="w-full px-4 py-3 bg-[#FAF9F6] border border-dark/10 rounded-lg focus:outline-none focus:border-gold font-medium" value={promptConfig.value} onChange={e => setPromptConfig({...promptConfig, value: e.target.value})} placeholder="Type here..." />
+                    <div className="grid grid-cols-2 gap-4">
+                       <button onClick={() => setPromptConfig({...promptConfig, isOpen: false})} className="py-3 border border-dark/10 text-dark/40 text-[10px] font-black uppercase tracking-widest rounded-lg hover:bg-dark/5 transition-all">Cancel</button>
+                       <button onClick={() => { promptConfig.onConfirm(promptConfig.value); setPromptConfig({...promptConfig, isOpen: false}); }} className="py-3 bg-dark text-white text-[10px] font-black uppercase tracking-widest rounded-lg hover:bg-gold transition-all">Confirm</button>
+                    </div>
+                 </div>
+              </motion.div>
+           </div>
+        )}
+      </AnimatePresence>
+
+      {/* Toast Notifications */}
+      <div className="fixed bottom-10 left-1/2 -translate-x-1/2 z-[200] flex flex-col space-y-3 pointer-events-none">
+         <AnimatePresence>
+            {notifications.map(n => (
+               <motion.div key={n.id} initial={{opacity:0, y:20}} animate={{opacity:1, y:0}} exit={{opacity:0, y:-20}} className={`flex items-center space-x-3 px-6 py-4 rounded-full shadow-2xl pointer-events-auto border ${n.type === 'success' ? 'bg-[#D1FAE5] text-emerald-800 border-emerald-200' : 'bg-rose-50 text-rose-800 border-rose-200'}`}>
+                  {n.type === 'success' ? <CheckCircle2 size={18} className="text-emerald-500" /> : <XCircle size={18} className="text-rose-500" />}
+                  <span className="text-[11px] font-black uppercase tracking-widest">{n.message}</span>
+               </motion.div>
+            ))}
+         </AnimatePresence>
+      </div>
+
       <Footer />
+
     </div>
   );
 };

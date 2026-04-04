@@ -73,7 +73,7 @@ const ContactPage = () => {
             So go ahead, share your details with us below. Not a fan of forms? Just give us a call or drop us a message on WhatsApp:
           </p>
           <p className="text-sm font-bold text-dark">
-            Phone / WhatsApp: <span className="text-dark">+91 72194 - 95714</span>
+            Phone / WhatsApp: <span className="text-dark">+91 77410 83155</span>
           </p>
         </div>
       </section>

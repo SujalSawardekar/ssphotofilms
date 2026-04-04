@@ -180,7 +180,7 @@ const InvoicePage = () => {
            <div className="space-y-4 flex-1 text-left">
               <div className="flex items-center space-x-3 text-sm font-bold text-dark">
                  <Phone size={14} className="text-[#8FB13E]" />
-                 <span>77410 83155 / 7219495714</span>
+                 <span>+91 77410 83155</span>
               </div>
               <div className="flex items-center space-x-3 text-sm font-bold text-dark">
                  <Mail size={14} className="text-[#8FB13E]" />

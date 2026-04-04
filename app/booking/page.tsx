@@ -49,6 +49,17 @@ function BookingFormContent() {
   const [showWhySs, setShowWhySs] = useState(false);
   const [showTerms, setShowTerms] = useState(false);
   const [showPrivacy, setShowPrivacy] = useState(false);
+  
+  // Notification State
+  const [notifications, setNotifications] = useState<{id: number, message: string, type: 'success' | 'error'}[]>([]);
+
+  const showNotification = (message: string, type: 'success' | 'error' = 'success') => {
+    const id = Date.now();
+    setNotifications(prev => [...prev, { id, message, type }]);
+    setTimeout(() => {
+      setNotifications(prev => prev.filter(n => n.id !== id));
+    }, 4000);
+  };
 
   useEffect(() => {
     // Load Razorpay SDK
@@ -116,17 +127,17 @@ function BookingFormContent() {
   const handleProceedToPay = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user) {
-      alert("Please log in to complete your booking.");
+      showNotification("Please log in to complete your booking.", "error");
       return;
     }
 
     if (formData.datetime && !isValidFutureDate(formData.datetime)) {
-      alert("Please select a future date and time for your shoot");
+      showNotification("Please select a future date and time for your shoot", "error");
       return;
     }
 
     if (!formData.city) {
-      alert("Please select your city to continue.");
+      showNotification("Please select your city to continue.", "error");
       return;
     }
 
@@ -158,7 +169,7 @@ function BookingFormContent() {
       
     } catch (err: any) {
       console.error("Booking creation error:", err);
-      alert(`Error saving booking: ${err.message}`);
+      showNotification(`Error saving booking: ${err.message}`, "error");
       setLoading(false);
     }
   };
@@ -631,6 +642,18 @@ function BookingFormContent() {
             </div>
           )}
         </AnimatePresence>
+
+        {/* Toast Notifications */}
+        <div className="fixed bottom-10 left-1/2 -translate-x-1/2 z-[200] flex flex-col space-y-3 pointer-events-none">
+           <AnimatePresence>
+              {notifications.map(n => (
+                 <motion.div key={n.id} initial={{opacity:0, y:20}} animate={{opacity:1, y:0}} exit={{opacity:0, y:-20}} className={`flex items-center space-x-3 px-6 py-4 rounded-full shadow-2xl pointer-events-auto border ${n.type === 'success' ? 'bg-[#D1FAE5] text-emerald-800 border-emerald-200' : 'bg-rose-50 text-rose-800 border-rose-200'}`}>
+                    {n.type === 'success' ? <CheckCircle2 size={18} className="text-emerald-500" /> : <AlertCircle size={18} className="text-rose-500" />}
+                    <span className="text-[11px] font-black uppercase tracking-widest">{n.message}</span>
+                 </motion.div>
+              ))}
+           </AnimatePresence>
+        </div>
       </div>
     </div>
   );
