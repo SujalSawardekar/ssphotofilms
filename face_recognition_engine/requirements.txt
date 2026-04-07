@@ -1,0 +1,15 @@
+Flask==3.1.2
+Werkzeug==3.1.3
+numpy==1.26.4
+pandas==2.3.3
+Pillow==12.0.0
+qrcode==8.2
+python-dotenv==1.2.1
+setuptools>=80,<81
+face-recognition==1.3.0
+dlib==19.24.6; platform_system != "Windows"
+dlib-bin>=19.24.6,<21; platform_system == "Windows"
+gdown==5.1.0
+flask-cors==5.0.0
+opencv-python==4.10.1.84
+patool==2.3.0

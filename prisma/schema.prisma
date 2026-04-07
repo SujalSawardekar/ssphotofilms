@@ -1,0 +1,132 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int           @id @default(autoincrement())
+  email     String        @unique
+  password  String?
+  role      String        @default("client")
+  name      String
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+  image     String?
+  phone     String?
+  bookings  Booking[]
+  queries   ClientQuery[]
+}
+
+model Booking {
+  id                 String               @id @default(cuid())
+  clientName         String
+  email              String
+  phone              String
+  eventType          String
+  eventDate          String
+  location           String
+  hours              Int                  @default(4)
+  status             String               @default("Pending")
+  amount             Int
+  packageType        String?
+  message            String?
+  photographerNotes  String?
+  userId             Int?
+  createdAt          DateTime             @default(now())
+  updatedAt          DateTime             @updatedAt
+  cancellationReason String?
+  reminderSent       Boolean              @default(false)
+  advancePaid        Int                  @default(0)
+  isCustomPrice      Boolean              @default(false)
+  paymentMethod      String               @default("Cash")
+  totalPaid          Int                  @default(0)
+  isOffline          Boolean              @default(false)
+  razorpayOrderId    String?
+  razorpayPaymentId  String?
+  razorpaySignature  String?
+  photographerName   String?
+  travelCharges      Int                  @default(0)
+  packageFeatures    String[]
+  user               User?                @relation(fields: [userId], references: [id])
+  installments       PaymentInstallment[]
+}
+
+model PaymentInstallment {
+  id        String   @id @default(cuid())
+  amount    Int
+  date      DateTime @default(now())
+  method    String   @default("Cash")
+  bookingId String
+  booking   Booking  @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+}
+
+model ClientQuery {
+  id        String               @id @default(cuid())
+  name      String
+  email     String
+  userEmail String?
+  date      String
+  status    String               @default("Open")
+  message   String
+  userId    Int?
+  createdAt DateTime             @default(now())
+  user      User?                @relation(fields: [userId], references: [id])
+  messages  ClientQueryMessage[]
+}
+
+model ClientQueryMessage {
+  id        Int         @id @default(autoincrement())
+  text      String
+  sender    String
+  status    String      @default("sent")
+  queryId   String
+  createdAt DateTime    @default(now())
+  query     ClientQuery @relation(fields: [queryId], references: [id], onDelete: Cascade)
+}
+
+model Event {
+  id              String   @id @default(cuid())
+  name            String
+  date            String
+  type            String
+  photoCount      Int      @default(0)
+  qrCode          String
+  createdAt       DateTime @default(now())
+  albumId         String?  @unique
+  driveLink       String?
+  isFaceProcessed Boolean  @default(false)
+  updatedAt       DateTime @updatedAt
+  zipPath         String?
+  aiStatus        String   @default("Pending")
+  isPublished     Boolean  @default(false)
+  currentProgress Int      @default(0)
+  totalPhotos     Int      @default(0)
+  aiStage         String   @default("Idle")
+  lastPhoto       String?
+  photos          Photo[]
+}
+
+model Photo {
+  id        Int      @id @default(autoincrement())
+  src       String
+  eventId   String
+  tags      String[]
+  createdAt DateTime @default(now())
+  event     Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+}
+
+model TeamApplication {
+  id             Int      @id @default(autoincrement())
+  name           String
+  email          String
+  phone          String
+  experience     Int
+  specialization String[]
+  portfolioUrl   String
+  status         String   @default("Pending")
+  createdAt      DateTime @default(now())
+}

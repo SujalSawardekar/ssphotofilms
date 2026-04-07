@@ -1,0 +1,10 @@
+.venv/
+__pycache__/
+*.pyc
+album_images/
+user_uploads/
+testing_data/
+testing_dl*/
+databases/
+face_embeddings_database.csv
+.env
