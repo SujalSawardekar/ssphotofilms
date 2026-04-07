@@ -3,7 +3,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { User } from './mockData';
-import { initDb, getUsers } from './db';
 
 interface AuthContextType {
   user: User | null;
@@ -22,7 +21,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const pathname = usePathname();
 
   useEffect(() => {
-    initDb(); // Initialize mock local DB
     const storedUser = localStorage.getItem('ss_user');
     if (storedUser) {
       setUser(JSON.parse(storedUser));
@@ -31,21 +29,28 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, []);
 
   const login = async (email: string, password: string): Promise<boolean> => {
-    const allUsers = await getUsers();
-    const foundUser = (allUsers as any).find((u: any) => u.email === email && u.password === password);
-    if (foundUser) {
-      const { password, ...userWithoutPassword } = foundUser;
-      localStorage.setItem('ss_user', JSON.stringify(userWithoutPassword));
-      setUser(userWithoutPassword as User);
-      
-      // Redirect based on role
-      if (foundUser.role === 'admin') router.push('/admin');
-      else if (foundUser.role === 'client') router.push('/client');
-      else if (foundUser.role === 'attendee') router.push('/attendee/scan-qr');
-      
-      return true;
+    const response = await fetch('/api/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password }),
+    });
+
+    if (!response.ok) {
+      const data = await response.json();
+      throw new Error(data.error || 'Login failed');
     }
-    return false;
+
+    const { user: foundUser } = await response.json();
+
+    localStorage.setItem('ss_user', JSON.stringify(foundUser));
+    setUser(foundUser as User);
+
+    // Redirect based on role
+    if (foundUser.role === 'admin') router.push('/admin');
+    else if (foundUser.role === 'client') router.push('/client');
+    else if (foundUser.role === 'attendee') router.push('/attendee/scan-qr');
+
+    return true;
   };
 
   const logout = () => {
