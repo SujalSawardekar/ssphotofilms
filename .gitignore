@@ -46,6 +46,9 @@ next-env.d.ts
 .venv_ai/
 .venv/
 venv/
+face_recognition_engine/.venv_ai/
+face_recognition_engine/.venv/
+face_recognition_engine/venv/
 __pycache__/
 *.pyc
 *.pyo
