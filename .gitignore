@@ -42,6 +42,9 @@ next-env.d.ts
 
 /lib/generated/prisma
 
+# Large media assets - served from cloud storage, not git
+/public/assets/
+
 # Python virtual environments (AI engine)
 .venv_ai/
 .venv/
