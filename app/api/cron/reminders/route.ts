@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import nodemailer from 'nodemailer';
 
+export const dynamic = 'force-dynamic';
+
 // Initialize Nodemailer with secure SMTP settings (proven to work in tests)
 const transporter = nodemailer.createTransport({
   host: 'smtp.gmail.com',
