@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { updateEventProgress } from '@/lib/db';
 
+export const dynamic = 'force-dynamic';
+
 export async function POST(req: NextRequest) {
   try {
     const { album_id, current, total, last_photo, stage } = await req.json();
