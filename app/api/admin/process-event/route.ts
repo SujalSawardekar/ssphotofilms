@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { updateEventAiStatus } from '@/lib/db';
 
+export const dynamic = 'force-dynamic';
+
 // Note: Body size limits in App Router are typically handled by platform config or streaming.
 
 export async function POST(req: NextRequest) {
