@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import Image from 'next/image';
 
 const images = [
   "/assets/hero-bg.jpg",
@@ -40,10 +41,13 @@ const HeroSection = () => {
             transition={{ duration: 0.8, ease: "easeInOut" }}
             className="absolute inset-0"
           >
-            <img
+            <Image
               src={images[currentIndex]}
               alt="Hero Background"
-              className="w-full h-full object-cover"
+              fill
+              priority
+              className="object-cover"
+              sizes="100vw"
             />
           </motion.div>
         </AnimatePresence>

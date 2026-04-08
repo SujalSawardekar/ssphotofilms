@@ -12,6 +12,11 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { indianCities, City } from '@/lib/indianCities';
 import { Search, MapPin, ChevronDown, CheckCircle2, AlertCircle, ArrowRight } from 'lucide-react';
 
+const parsePrice = (price: string | number): number => {
+  if (typeof price === 'number') return price;
+  return Number(price.replace(/,/g, ''));
+};
+
 function BookingFormContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -21,10 +26,20 @@ function BookingFormContent() {
 
   const preselectedEvent = searchParams.get('event') || 'Wedding';
   const preselectedPackageTitle = searchParams.get('package') || 'BASIC SHOOT';
+  const isBothSide = searchParams.get('bothSide') === 'true';
+  const isReel = searchParams.get('reel') === 'true';
 
   // Find the matching package data
   const categoryData = pricingCategories.find(c => c.label.toLowerCase() === preselectedEvent.toLowerCase()) || pricingCategories[0];
   const packageData = categoryData.packages.find(p => p.title.toLowerCase() === preselectedPackageTitle.toLowerCase()) || categoryData.packages[0];
+
+  // Helper for coverage label
+  const getCoverageLabel = (features: string[]) => {
+    const hasVideo = features.some(f => 
+      /video|film|reel|cine|videographer|cinematographer|cinematic/i.test(f)
+    );
+    return hasVideo ? "Photography + Videography" : "Photography Only";
+  };
 
   const [formData, setFormData] = useState({
     firstName: '',
@@ -122,7 +137,9 @@ function BookingFormContent() {
     }, 1000);
   };
 
-  const currentTotal = packageData.discountPrice + surcharge;
+  const activeBasePrice = (isBothSide && packageData.bothSidePrice) ? packageData.bothSidePrice : packageData.discountPrice;
+  const reelAddonPrice = (isReel && packageData.reelPrice) ? parsePrice(packageData.reelPrice) : 0;
+  const currentTotal = parsePrice(activeBasePrice) + surcharge + reelAddonPrice;
 
   const handleProceedToPay = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -156,9 +173,9 @@ function BookingFormContent() {
         status: "Pending", // Start as pending
         amount: currentTotal,
         travelCharges: surcharge,
-        packageType: packageData.title,
+        packageType: `${isBothSide ? `${packageData.title} (Both Side)` : packageData.title}${isReel ? ' + Cinematic Reel' : ''}`,
         packageFeatures: packageData.features,
-        message: `City: ${formData.city}`,
+        message: `${formData.city}${isBothSide ? ' | Both Side' : ''}${isReel ? ' | Cinematic Reel' : ''}`,
         paymentMethod: "Razorpay"
       };
 
@@ -208,22 +225,67 @@ function BookingFormContent() {
                     </div>
 
                     <div className="space-y-4">
-                       <p className="text-xs font-bold text-secondary uppercase tracking-widest italic decoration-gold underline-offset-4 underline">Photography Only</p>
-                       <ul className="space-y-3">
-                          {packageData.features.map((f, i) => (
-                            <li key={i} className="flex items-start gap-4">
-                               <div className="w-1 h-1 bg-dark mt-2 rounded-full shrink-0" />
-                               <span className="text-sm font-medium text-dark/70 leading-relaxed">{f}</span>
-                            </li>
-                          ))}
+                       <p className="text-[10px] font-black text-[#FF2D55] uppercase tracking-widest italic decoration-gold underline-offset-4 underline">
+                          {isBothSide ? "Full Both Side Coverage" : getCoverageLabel(packageData.features)}
+                       </p>
+                        <ul className="space-y-3">
+                          {packageData.features.map((f, i) => {
+                            const isBothSideFeature = f.toLowerCase().includes("both side");
+                            const isReelFeature = f.toLowerCase().includes("add-on: cinematic reel");
+                            
+                            const isSelected = (isBothSideFeature && isBothSide) || (isReelFeature && isReel);
+                            const hasPrice = (isBothSideFeature && packageData.bothSidePrice) || (isReelFeature && packageData.reelPrice);
+
+                            return (
+                              <li 
+                                key={i} 
+                                onClick={() => {
+                                  if (hasPrice) {
+                                    const params = new URLSearchParams(window.location.search);
+                                    if (isBothSideFeature) {
+                                      if (isBothSide) params.delete('bothSide');
+                                      else params.set('bothSide', 'true');
+                                    } else if (isReelFeature) {
+                                      if (isReel) params.delete('reel');
+                                      else params.set('reel', 'true');
+                                    }
+                                    router.push(`${window.location.pathname}?${params.toString()}`);
+                                  }
+                                }}
+                                className={`flex items-start gap-4 transition-all duration-300 ${
+                                  hasPrice 
+                                    ? `cursor-pointer p-3 rounded-xl border-2 ${isSelected ? 'bg-gold/10 border-gold shadow-md' : 'bg-transparent border-dark/5 hover:border-gold/30'}` 
+                                    : ''
+                                }`}
+                              >
+                                 <div className={`mt-2 shrink-0 ${isSelected ? 'text-gold' : 'text-dark/40'}`}>
+                                    {isSelected ? <CheckCircle2 size={14} /> : <div className="w-1 h-1 bg-current rounded-full" />}
+                                 </div>
+                                 <div className="flex flex-col">
+                                    <span className={`text-sm font-medium leading-relaxed ${isSelected ? 'font-black text-dark' : 'text-dark/70'}`}>
+                                      {f}
+                                    </span>
+                                    {hasPrice && (
+                                       <span className="text-[9px] font-black uppercase tracking-widest text-gold mt-1">
+                                          {isSelected ? "Included in your plan ✓" : "Click to select add-on"}
+                                       </span>
+                                    )}
+                                 </div>
+                              </li>
+                            );
+                          })}
                        </ul>
                      </div>
 
                     <div className="pt-6 border-t border-dark/5 space-y-1">
                        <p className="text-xs font-bold text-[#FF2D55] uppercase tracking-widest">Starts at:</p>
                        <div className="flex items-baseline space-x-3">
-                          <span className="text-2xl font-cinzel font-bold text-dark/20 line-through Decoration-dark/10">₹{packageData.originalPrice}/-</span>
-                          <span className="text-4xl font-cinzel font-bold text-dark">₹{currentTotal}/-</span>
+                          <span className="text-2xl font-cinzel font-bold text-dark/20 line-through Decoration-dark/10">
+                            ₹{( (isBothSide 
+                              ? (parsePrice(packageData.bothSidePrice!) + (parsePrice(packageData.originalPrice) - parsePrice(packageData.discountPrice)))
+                              : parsePrice(packageData.originalPrice)) + (isReel ? parsePrice(packageData.reelPrice!) : 0) ).toLocaleString('en-IN')}/-
+                          </span>
+                          <span className="text-4xl font-cinzel font-bold text-dark">₹{currentTotal.toLocaleString('en-IN')}/-</span>
                        </div>
                     </div>
 
@@ -373,19 +435,14 @@ function BookingFormContent() {
                       <div className="space-y-4 opacity-80 text-[9px] font-bold uppercase tracking-[0.2em] leading-relaxed max-w-sm">
                          <p>• Booking depends on availability.</p>
                          <p>
-                           * By proceeding, you agree to <button type="button" onClick={() => setShowTerms(true)} className="text-gold border-b border-gold/30 hover:border-gold transition-colors">Terms and Conditions</button> of this booking.
+                           • Agree to <button type="button" onClick={() => setShowTerms(true)} className="text-gold border-b border-gold/30 hover:border-gold transition-colors">Terms and Conditions</button>
                          </p>
                          <p>
-                           * You also agree to SS Photo & Films <button type="button" onClick={() => setShowPrivacy(true)} className="text-gold border-b border-gold/30 hover:border-gold transition-colors">Privacy Policy</button> and provide consent to recieve Whatsapp communications.
+                           • Agree to <button type="button" onClick={() => setShowPrivacy(true)} className="text-gold border-b border-gold/30 hover:border-gold transition-colors">Privacy Policy</button>
                          </p>
-                         <button 
-                             type="button" 
-                             onClick={() => setShowWhySs(true)}
-                             className="flex items-center gap-1 hover:text-gold transition-all duration-300 group"
-                         >
-                            <span>• Why SS?</span>
-                            <span className="text-gold tracking-normal lowercase ml-1 group-hover:scale-110 transition-transform">😊</span>
-                         </button>
+                         <p>
+                           • <button type="button" onClick={() => setShowWhySs(true)} className="text-gold border-b border-gold/30 hover:border-gold transition-colors inline-flex items-center gap-1">Why SS? <span className="text-[10px] tracking-normal lowercase -mt-0.5">😊</span></button>
+                         </p>
                          <p>• After payment, your booking will be under review (updated within 24 hrs).</p>
                          <p>• If the booking is rejected by our team, your money will be refunded to your source account.</p>
                       </div>

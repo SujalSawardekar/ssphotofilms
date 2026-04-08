@@ -280,6 +280,19 @@ const AdminBookingsDashboard = () => {
                               <div className="text-xl font-black text-dark tracking-tighter">₹{booking.amount?.toLocaleString()}</div>
                            </div>
                         </div>
+                        
+                        {/* Service Inclusions for Pending */}
+                        <div className="mb-8 space-y-3">
+                           <p className="text-[9px] font-black uppercase tracking-widest text-dark/20 border-b border-dark/5 pb-2">Service Inclusions</p>
+                           <ul className="grid grid-cols-1 gap-2">
+                              {(booking.packageFeatures as string[] || []).map((f: string, i: number) => (
+                                 <li key={i} className="flex items-center gap-2 text-[10px] text-dark/60 font-medium">
+                                    <div className="w-1 h-1 bg-gold/50 rounded-full" />
+                                    {f}
+                                 </li>
+                              ))}
+                           </ul>
+                        </div>
 
                         {/* Payment Status for Pending (NEW) */}
                         <div className="grid grid-cols-2 gap-4 mb-8 bg-[#FAF9F6]/50 p-4 rounded-xl border border-dark/5">
@@ -349,7 +362,7 @@ const AdminBookingsDashboard = () => {
                           isDone ? 'bg-blue-50 text-blue-600' : 'bg-emerald-50 text-emerald-600'
                         }`}>
                           <div className={`w-1.5 h-1.5 rounded-full ${isDone ? 'bg-blue-600' : 'bg-emerald-600 animate-pulse'}`} />
-                          <span>{isDone ? 'Concluded' : 'Active'}</span>
+                          <span>{isDone ? 'Event Done' : 'Active'}</span>
                         </div>
                       </div>
                       
@@ -378,6 +391,19 @@ const AdminBookingsDashboard = () => {
                             </p>
                           </div>
                         </div>
+                      </div>
+
+                      {/* Service Inclusions for Accepted */}
+                      <div className="mb-8 space-y-3">
+                         <p className="text-[9px] font-black uppercase tracking-widest text-dark/20 border-b border-dark/5 pb-2">Service Inclusions</p>
+                         <ul className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-2">
+                            {(booking.packageFeatures as string[] || []).map((f: string, i: number) => (
+                               <li key={i} className="flex items-center gap-2 text-[10px] text-dark/60 font-medium whitespace-nowrap overflow-hidden">
+                                  <div className="w-1 h-1 bg-gold rounded-full shrink-0" />
+                                  <span className="truncate">{f}</span>
+                               </li>
+                            ))}
+                         </ul>
                       </div>
 
                       <div className="space-y-4 mb-10 flex-1">

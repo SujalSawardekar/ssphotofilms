@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
+import Image from 'next/image';
 
 // Custom Diagonal Arrow Icon matched to user design
 const ArrowIcon = ({ className }: { className?: string }) => (
@@ -98,10 +99,12 @@ const OccasionGrid = () => {
                   <Link href={item.href} className="flex-1 flex flex-col">
                     {/* Image Container - Reduced Aspect Ratio */}
                     <div className="relative aspect-[4/3] overflow-hidden">
-                      <img 
+                      <Image 
                         src={item.image} 
                         alt={item.title} 
-                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 group-hover:rotate-3"
+                        fill
+                        className="object-cover transition-transform duration-700 group-hover:scale-110 group-hover:rotate-3"
+                        sizes="(max-width: 768px) 100vw, 33vw"
                       />
                       
                       {/* Top Right Circle Button with Scrolling Arrow - Increased size */}

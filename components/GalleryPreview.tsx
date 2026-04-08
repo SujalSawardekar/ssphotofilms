@@ -3,6 +3,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
+import Image from 'next/image';
 import { mockPhotos } from '@/lib/mockData';
 
 const GalleryPreview = () => {
@@ -32,10 +33,13 @@ const GalleryPreview = () => {
               viewport={{ once: true }}
               className="relative group overflow-hidden break-inside-avoid shadow-lg"
             >
-              <img 
+              <Image 
                 src={photo.src} 
                 alt={`Gallery ${photo.id}`} 
+                width={600}
+                height={800}
                 className="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105"
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
               />
               <div className="absolute inset-0 bg-dark/40 opacity-0 group-hover:opacity-100 transition-all duration-500 flex items-center justify-center">
                  <div className="w-12 h-12 rounded-full border border-gold flex items-center justify-center text-gold bg-dark/20 backdrop-blur-sm transform scale-50 group-hover:scale-100 transition-transform duration-500">

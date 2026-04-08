@@ -7,6 +7,7 @@ import { motion } from 'framer-motion';
 import { galleryStories } from '@/lib/galleryData';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 
 interface StoryPageProps {
   params: Promise<{ slug: string }>;
@@ -27,10 +28,13 @@ const StoryDetailPage = ({ params }: StoryPageProps) => {
       {/* Hero Header for the Story */}
       <section className="relative h-[70vh] flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0 z-0">
-          <img 
+          <Image 
             src={story.mainImage} 
             alt={story.title} 
+            fill
+            priority
             className="w-full h-full object-cover scale-105 blur-sm brightness-50"
+            sizes="100vw"
           />
         </div>
         
@@ -46,7 +50,7 @@ const StoryDetailPage = ({ params }: StoryPageProps) => {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="text-white text-5xl md:text-7xl lg:text-8xl font-cinzel font-bold leading-tight uppercase mb-4"
+            className="text-white text-3xl md:text-5xl lg:text-6xl font-cinzel font-bold leading-tight uppercase mb-4 truncate whitespace-nowrap"
           >
             {story.names}
           </motion.h1>
@@ -54,7 +58,7 @@ const StoryDetailPage = ({ params }: StoryPageProps) => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.4 }}
-            className="text-gold font-cinzel italic text-2xl md:text-3xl tracking-widest opacity-80"
+            className="text-gold font-cinzel italic text-xl md:text-2xl tracking-widest opacity-80 truncate whitespace-nowrap"
           >
             {story.title}
           </motion.p>
@@ -74,10 +78,13 @@ const StoryDetailPage = ({ params }: StoryPageProps) => {
                 viewport={{ once: true }}
                 className="relative group overflow-hidden rounded-[15px] shadow-sm transform transition-all duration-500 hover:shadow-xl"
               >
-                <img 
+                <Image 
                   src={image} 
                   alt={`${story.names} Gallery - ${idx + 1}`} 
+                  width={800}
+                  height={1200}
                   className="w-full h-auto object-cover transition-transform duration-1000 group-hover:scale-105"
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                 />
                 <div className="absolute inset-0 bg-dark/10 opacity-0 group-hover:opacity-100 transition-all duration-500" />
               </motion.div>

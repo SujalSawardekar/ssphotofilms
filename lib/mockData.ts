@@ -26,8 +26,10 @@ export interface Booking {
 
 export interface PricingPackage {
   title: string;
-  originalPrice: number;
-  discountPrice: number;
+  originalPrice: string | number;
+  discountPrice: string | number;
+  bothSidePrice?: string | number;
+  reelPrice?: string | number;
   features: string[];
   imageSrc: string;
   captionTitle: string;
@@ -37,6 +39,8 @@ export interface PricingPackage {
 export interface ServiceCategory {
   id: string;
   label: string;
+  description?: string;
+  pdfUrl?: string;
   packages: PricingPackage[];
 }
 
@@ -91,54 +95,104 @@ export const pricingCategories: ServiceCategory[] = [
   {
     id: "wedding",
     label: "Wedding",
+    description: "A signature-style photoshoot delivering 10–15 artistically crafted images and a high-impact reel, designed for standout social media presence and captured with a refined documentary aesthetic.",
+    pdfUrl: "/assets/Wedding - SS Portfolio 2025.pdf",
     packages: [
       {
-        title: "BASIC SHOOT",
-        originalPrice: 15999,
-        discountPrice: 14999,
-        features: ["Photography Only", "25 Edited images", "4 hours shoot, 2 locations & 2 Dress Changes", "Full Frame Camera & 1 Photographer with Prime lens"],
-        imageSrc: "/assets/occasion-wedding.jpg",
-        captionTitle: "A Love That Grew With Them",
-        captionSubtitle: "Kaustubh & Sayali"
+        title: "Basic Package",
+        originalPrice: "34,999",
+        discountPrice: "24,999",
+        bothSidePrice: "39,999",
+        features: [
+          "1 Cinematic Video (2-3 Min)",
+          "1 Professional Photographer",
+          "1 Traditional Videographer",
+          "30 Edited Photos",
+          "All Raw Photos",
+          "Both Side Cover: 39,999/-"
+        ],
+        imageSrc: "/assets/wedding/Wedding 1/1ssp02947-copy.jpg",
+        captionTitle: "Wedding Elegance",
+        captionSubtitle: "Pure Traditional Bliss"
       },
       {
-        title: "PREMIUM SHOOT",
-        originalPrice: 54999,
-        discountPrice: 49999,
-        features: ["Photography + Videography", "50 Edited images", "8 hours shoot, Multiple locations", "2 Photographers & Drone capture"],
-        imageSrc: "/assets/gallery-1.jpg",
-        captionTitle: "The Grand Celebration",
-        captionSubtitle: "Rahul & Sneha"
+        title: "Premium Package",
+        originalPrice: "54,999",
+        discountPrice: "44,999",
+        bothSidePrice: "64,999",
+        features: [
+          "1 Cinematic Video (4-5 Min)",
+          "1 Candid Photographer",
+          "1 Traditional Photographer",
+          "1 traditional Videographer",
+          "50 Edited Photos",
+          "1 Coffee Table Album (20 Pages)",
+          "Both Side Cover: 64,999/-"
+        ],
+        imageSrc: "/assets/wedding/Wedding 2/1ssp-(547)-copy.jpg",
+        captionTitle: "Eternal Vows",
+        captionSubtitle: "Vikram & Anjali"
       },
       {
-        title: "LUXURY SHOOT",
-        originalPrice: 84999,
-        discountPrice: 79999,
-        features: ["Candid Photo + Cinematic Video", "100 Edited images & 5min Trailer", "Full Day Coverage", "Full Team, Drone, Same Day Edit"],
-        imageSrc: "/assets/gallery-2.jpg",
-        captionTitle: "Royal Heritage Moments",
-        captionSubtitle: "Vikas & Meera"
+        title: "Signature Package",
+        originalPrice: "84,999",
+        discountPrice: "74,999",
+        bothSidePrice: "94,999",
+        features: [
+          "1 Cinematic Film (5-7 Min)",
+          "2 Candid Photographers",
+          "1 Traditional Photographer",
+          "2 traditional Videographers",
+          "100 Edited Photos",
+          "1 Premium Wedding Album (40 Pages)",
+          "Drone Coverage Included",
+          "Both Side Cover: 94,999/-"
+        ],
+        imageSrc: "/assets/wedding/Wedding 3/1DSC04230 copy.jpg",
+        captionTitle: "Royal Celebration",
+        captionSubtitle: "Kunal & Meera"
       }
     ]
   },
   {
     id: "pre-wedding",
     label: "Pre-Wedding",
+    description: "A signature-style photoshoot delivering 10–15 artistically crafted images and a high-impact reel, designed for standout social media presence and captured with a refined documentary aesthetic.",
+    pdfUrl: "/assets/Pre-wedding - SS Portfolio 2025.pdf",
     packages: [
       {
-        title: "MINI SHOOT",
-        originalPrice: 9999,
-        discountPrice: 8999,
-        features: ["Photography Only", "15 Edited images", "2 hours shoot, 1 location", "1 Photographer"],
-        imageSrc: "/assets/gallery-3.jpg",
-        captionTitle: "Sunrise Love",
-        captionSubtitle: "Ajay & Pooja"
+        title: "Basic (Only Photoshoot)",
+        originalPrice: "24,999",
+        discountPrice: "14,999",
+        features: [
+          "1 Day Shoot at 2 Locations",
+          "30 Fully Edited HD Photos",
+          "All Soft Copies Provided",
+          "Costumes & Makeup Extra"
+        ],
+        imageSrc: "/assets/prewedding/Pre wedding 1/dsc03154.jpg",
+        captionTitle: "The First Chapter",
+        captionSubtitle: "Arjun & Kavya"
       },
       {
-        title: "PREMIUM SHOOT",
-        originalPrice: 19999,
-        discountPrice: 17999,
-        features: ["Photography + Highlight Reel", "30 Edited images", "4 hours shoot", "1 Photographer, 1 Videographer"],
+        title: "Standard (Photos + Reel)",
+        originalPrice: "29,999",
+        discountPrice: "21,999",
+        features: [
+          "1 Day Shoot at 3 Locations",
+          "50 Fully Edited HD Photos",
+          "1 Cinematic Reel (60 Sec)",
+          "All Soft Copies Provided"
+        ],
+        imageSrc: "/assets/prewedding/Prewedding 2/dsc00896.jpg",
+        captionTitle: "Urban Romance",
+        captionSubtitle: "Siddharth & Ananya"
+      },
+      {
+        title: "Luxury Service",
+        originalPrice: 34999,
+        discountPrice: 29999,
+        features: ["UNLIMITED SOFTCOPYS AND FULL CINE VIDEO WITH TEASER", "30 SELECTED EDITED PHOTOS", "3/4 DRESS CHANGES", "MORNING TO EVNING SHOOT", "SOFTCOPYS PROVIDING ON GOOGLE DRIVE", "3/4 MINUTES FULL CINE VIDEO WITH 1 MINUTES TEASER", "With 2 reels"],
         imageSrc: "/assets/gallery-4.jpg",
         captionTitle: "Mountain Retreat",
         captionSubtitle: "Samir & Tanya"
@@ -148,45 +202,228 @@ export const pricingCategories: ServiceCategory[] = [
   {
     id: "baby-shoot",
     label: "Baby-Shoot",
+    pdfUrl: "/assets/Baby Shoot First Smile.pdf",
     packages: [
       {
-        title: "CUTE MOMENTS",
-        originalPrice: 8999,
-        discountPrice: 7999,
-        features: ["Indoor Studio Shoot", "15 Edited images", "2 hours shoot", "Props included"],
-        imageSrc: "/assets/occasion-baby.jpg",
-        captionTitle: "First Steps",
-        captionSubtitle: "Baby Aarav"
+        title: "STANDARD PACKAGE",
+        originalPrice: "3,500",
+        discountPrice: "2,500",
+        features: [
+          "1 INDOOR SETUP (CHOOSE THEME FROM OUR CATALOGUE)",
+          "30 MIN SESSION",
+          "10 HD RESOLUTION EDITED IMAGES",
+          "ALL SOFTCOPY PHOTOS"
+        ],
+        imageSrc: "/assets/Babyshoot/occasion-baby.jpg",
+        captionTitle: "First Smiles",
+        captionSubtitle: "Capturing Innocence"
+      },
+      {
+        title: "PROFESSIONAL PACKAGE",
+        originalPrice: "6,500",
+        discountPrice: "4,500",
+        features: [
+          "2 INDOOR SETUP (CHOOSE THEME FROM OUR CATALOGUE)",
+          "1 HRS SESSION",
+          "25 HD RESOLUTION EDITED IMAGES",
+          "ALL SOFTCOPY PHOTOS"
+        ],
+        imageSrc: "/assets/Babyshoot/gallery-8.jpg",
+        captionTitle: "Little Explorers",
+        captionSubtitle: "Playful Moments"
+      },
+      {
+        title: "PRIME PACKAGE",
+        originalPrice: "8,500",
+        discountPrice: "6,500",
+        features: [
+          "3 INDOOR SETUP (CHOOSE THEME FROM OUR CATALOGUE)",
+          "2 HRS SESSION",
+          "30 HD RESOLUTION EDITED IMAGES",
+          "ALL SOFTCOPY PHOTOS"
+        ],
+        imageSrc: "/assets/Babyshoot/gallery-5.jpeg",
+        captionTitle: "Baby Prime",
+        captionSubtitle: "Timeless Childhood"
+      },
+      {
+        title: "PLATINUM PACKAGE",
+        originalPrice: "15,500",
+        discountPrice: "12,500",
+        features: [
+          "5 INDOOR SETUPS (CHOOSE THEMES FROM OUR CATALOGUE)",
+          "2.5 HOURS SESSION",
+          "40 PROFESSIONALLY EDITED HD IMAGES",
+          "FAMILY PORTRAIT SESSION INCLUDED",
+          "1 PREMIUM PHOTO FRAME (SIZE: 8 × 10 INCHES)",
+          "ALL SOFT COPIES PROVIDED",
+          "ADD-ON: CINEMATIC REEL – ₹1,500"
+        ],
+        reelPrice: "1,500",
+        imageSrc: "/assets/Babyshoot/occasion-birthday.jpg",
+        captionTitle: "Platinum Memories",
+        captionSubtitle: "The Ultimate Celebration"
       }
     ]
   },
   {
     id: "maternity",
     label: "Maternity",
+    pdfUrl: "/assets/Maternity of First Smile.pdf",
     packages: [
       {
-        title: "CLASSIC MATERNITY",
-        originalPrice: 12999,
-        discountPrice: 11999,
-        features: ["Outdoor Sunset Shoot", "20 Edited images", "3 hours shoot", "Gown provided (1)"],
-        imageSrc: "/assets/occasion-maternity.jpg",
+        title: "STANDARD PACKAGE",
+        originalPrice: "3,999",
+        discountPrice: "2,999",
+        features: [
+          "1 INDOOR SETUP (CHOOSE THEME FROM OUR CATALOGUE)",
+          "30 MIN SESSION",
+          "10 HD RESOLUTION EDITED IMAGES",
+          "ALL SOFTCOPY PHOTOS"
+        ],
+        imageSrc: "/assets/Maternity/Maternity 1/11SSP01284 copy.jpg",
+        captionTitle: "Glow of Life",
+        captionSubtitle: "Artistic Maternity"
+      },
+      {
+        title: "PROFESSIONAL PACKAGE",
+        originalPrice: "6,999",
+        discountPrice: "4,999",
+        features: [
+          "2 INDOOR SETUP (CHOOSE THEME FROM OUR CATALOGUE)",
+          "1 HRS SESSION",
+          "20 HD RESOLUTION EDITED IMAGES",
+          "ALL SOFTCOPY PHOTOS"
+        ],
+        imageSrc: "/assets/Maternity/Maternity 2/1SSP01262 copy.jpg",
         captionTitle: "New Beginnings",
-        captionSubtitle: "Neha & Raj"
+        captionSubtitle: "Vikram & Anjali"
+      },
+      {
+        title: "PRIME PACKAGE",
+        originalPrice: "8,999",
+        discountPrice: "6,999",
+        features: [
+          "3 INDOOR SETUP (CHOOSE THEME FROM OUR CATALOGUE)",
+          "2 HRS SESSION",
+          "30 HD RESOLUTION EDITED IMAGES",
+          "ALL SOFTCOPY PHOTOS",
+          "ADD-ON: CINEMATIC REEL – ₹1,500"
+        ],
+        reelPrice: "1,500",
+        imageSrc: "/assets/Maternity/Maternity 3/01.jpg",
+        captionTitle: "Maternity Prime",
+        captionSubtitle: "Pure Anticipation"
+      },
+      {
+        title: "PLATINUM PACKAGE",
+        originalPrice: "14,999",
+        discountPrice: "11,999",
+        features: [
+          "5 INDOOR SETUPS (CHOOSE THEMES FROM OUR CATALOGUE)",
+          "2.5 HOURS SESSION",
+          "40 PROFESSIONALLY EDITED HD IMAGES",
+          "FAMILY PORTRAIT SESSION INCLUDED",
+          "1 PREMIUM PHOTO FRAME (SIZE: 12 × 18 INCHES)",
+          "ALL SOFT COPIES PROVIDED",
+          "ADD-ON: CINEMATIC REEL – ₹1,500"
+        ],
+        reelPrice: "1,500",
+        imageSrc: "/assets/Maternity/Maternity 4/11SSP03849 copy.jpg",
+        captionTitle: "Maternity Platinum",
+        captionSubtitle: "The Royal Wait"
       }
     ]
   },
   {
     id: "engagement",
     label: "Engagement",
+    description: "A signature-style photoshoot delivering 10–15 artistically crafted images and a high-impact reel, designed for standout social media presence and captured with a refined documentary aesthetic.",
+    pdfUrl: "/assets/Wedding - SS Portfolio 2025.pdf",
     packages: [
       {
-        title: "INTIMATE RING CEREMONY",
-        originalPrice: 18999,
-        discountPrice: 16999,
-        features: ["Event Coverage", "40 Edited images", "4 hours", "1 Photographer & Assistant"],
-        imageSrc: "/assets/gallery-8.jpg",
+        title: "Basic Service",
+        originalPrice: 14999,
+        discountPrice: 11999,
+        features: ["1 Traditional photographer", "All Raw photos provided", "15 pages photobook", "Closeups with edit"],
+        imageSrc: "/assets/Engagement/1SSP03053 copy.jpg",
         captionTitle: "The Promise",
         captionSubtitle: "Vikram & Anjali"
+      },
+      {
+        title: "Grand Service",
+        originalPrice: 24999,
+        discountPrice: 19999,
+        features: ["1 Traditional photographer", "1 Candid photographer", "All Raw photos provided", "Closeups with edit", "15 Pages Photobook"],
+        imageSrc: "/assets/Engagement/1SSP03215 copy.jpg",
+        captionTitle: "Eyes on Forever",
+        captionSubtitle: "Sahil & Riya"
+      },
+      {
+        title: "Luxury Service",
+        originalPrice: 34999,
+        discountPrice: 29999,
+        features: ["1 Traditional photographer", "1 Cinematographer", "1 Candid photographer", "All Raw photos provided", "Closeups with edit", "15 Pages Photobook", "Cinematic video with edit"],
+        imageSrc: "/assets/Engagement/1SSP04730 copy.jpg",
+        captionTitle: "Royal Bond",
+        captionSubtitle: "Ishaan & Tanvi"
+      }
+    ]
+  },
+  {
+    id: "portrait",
+    label: "Portrait",
+    description: "We combine precise lighting, intentional creative direction, and a disciplined studio workflow to create portraits that are refined, expressive, and truly portfolio-ready.",
+    pdfUrl: "/assets/SS Studio - Portrait Photography.pdf",
+    packages: [
+      {
+        title: "BASIC PORTRAIT",
+        originalPrice: "1,999",
+        discountPrice: "1,499",
+        features: [
+          "1 Professional Studio Setup",
+          "15 Minute Session",
+          "5 High-End Retouched Images",
+          "Single Person Session",
+          "Digital Delivery via Private Gallery",
+          "Ideal For: Profile photos, quick portrait updates"
+        ],
+        imageSrc: "/assets/Portrait/1dsc00518-copy.jpg",
+        captionTitle: "Professional Presence",
+        captionSubtitle: "Ayesha S."
+      },
+      {
+        title: "SIGNATURE PORTRAIT",
+        originalPrice: "2,999",
+        discountPrice: "2,499",
+        features: [
+          "Multi-Light Creative Setup",
+          "30 Minute Session",
+          "10 Master-Retouched Images",
+          "Wardrobe Consultation",
+          "Up to 2 Outfit Changes",
+          "Ideal For: Branding, portfolios, fine-art portraits"
+        ],
+        imageSrc: "/assets/Portrait/1dsc03312-copy.jpg",
+        captionTitle: "Creative Expressions",
+        captionSubtitle: "Devansh R."
+      },
+      {
+        title: "PREMIUM PORTRAIT",
+        originalPrice: "7,999",
+        discountPrice: "6,999",
+        features: [
+          "Luxury In-Studio Experience",
+          "90 Minute Session",
+          "25 Editorial-Grade Retouched Images",
+          "Full Creative Direction & Styling",
+          "Premium 8x10 Print Included",
+          "1 Cinematic Portrait Reel (30s)",
+          "Ideal For: Personal branding, high-end portfolios"
+        ],
+        imageSrc: "/assets/Portrait/dsc03530.jpg",
+        captionTitle: "Editorial Excellence",
+        captionSubtitle: "Riya & Kabir"
       }
     ]
   }
