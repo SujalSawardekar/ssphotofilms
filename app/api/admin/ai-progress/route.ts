@@ -3,6 +3,10 @@ import { updateEventProgress } from '@/lib/db';
 
 export const dynamic = 'force-dynamic';
 
+export async function GET() {
+  return NextResponse.json({ message: "AI Progress endpoint active" });
+}
+
 export async function POST(req: NextRequest) {
   try {
     const { album_id, current, total, last_photo, stage } = await req.json();
