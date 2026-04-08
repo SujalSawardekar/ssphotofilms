@@ -20,9 +20,9 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
-        <link 
-          href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Manrope:wght@300;400;500;600;700&family=DM+Sans:wght@300;400;500&family=Elsie:wght@400;900&display=swap" 
-          rel="stylesheet" 
+        <link
+          href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Manrope:wght@300;400;500;600;700&family=DM+Sans:wght@300;400;500&family=Elsie:wght@400;900&display=swap"
+          rel="stylesheet"
         />
       </head>
       <body suppressHydrationWarning className="min-h-screen bg-background text-foreground font-manrope selection:bg-gold selection:text-white">

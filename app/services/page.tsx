@@ -14,14 +14,14 @@ import { CheckCircle2 } from 'lucide-react';
 
 // Custom Diagonal Arrow Icon matched to the gallery stories design
 const GalleryArrow = ({ className }: { className?: string }) => (
-  <svg 
-    viewBox="0 0 24 24" 
-    fill="none" 
-    xmlns="http://www.w3.org/2000/svg" 
+  <svg
+    viewBox="0 0 24 24"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
     className={className}
     stroke="currentColor"
     strokeWidth="2"
-    strokeLinecap="round" 
+    strokeLinecap="round"
     strokeLinejoin="round"
   >
     <line x1="5" y1="12" x2="19" y2="12"></line>
@@ -32,7 +32,7 @@ const GalleryArrow = ({ className }: { className?: string }) => (
 export default function ServicesPage() {
   const router = useRouter();
   const { user } = useAuth();
-  
+
   const [activeCategoryId, setActiveCategoryId] = useState(pricingCategories[0].id);
   const [expandedPackageIdx, setExpandedPackageIdx] = useState<number | null>(0);
   const [galleryIdx, setGalleryIdx] = useState(0);
@@ -40,7 +40,7 @@ export default function ServicesPage() {
   const [reelSelections, setReelSelections] = useState<Record<number, boolean>>({});
 
   const activeCategory = pricingCategories.find(c => c.id === activeCategoryId) || pricingCategories[0];
-  
+
   const parsePrice = (p: string | number) => {
     if (typeof p === 'number') return p;
     return parseInt(p.replace(/,/g, '')) || 0;
@@ -48,7 +48,7 @@ export default function ServicesPage() {
 
   // Helper to determine coverage label
   const getCoverageLabel = (features: string[]) => {
-    const hasVideo = features.some(f => 
+    const hasVideo = features.some(f =>
       /video|film|reel|cine|videographer|cinematographer|cinematic/i.test(f)
     );
     return hasVideo ? "Photography + Videography" : "Photography Only";
@@ -96,22 +96,21 @@ export default function ServicesPage() {
 
       {/* Main Content */}
       <section className="max-w-7xl mx-auto px-6 md:px-12 py-16">
-        
+
         {/* Tabs */}
         <div className="flex flex-nowrap overflow-x-auto scrollbar-hide justify-start md:justify-between items-center border-b border-dark/10 mb-16 px-4 gap-8 pb-2">
           {pricingCategories.map((category) => (
             <button
               key={category.id}
               onClick={() => handleCategoryChange(category.id)}
-              className={`text-lg md:text-xl font-medium pb-4 px-2 whitespace-nowrap shrink-0 transition-all duration-300 relative ${
-                activeCategoryId === category.id 
-                  ? 'text-dark' 
+              className={`text-lg md:text-xl font-medium pb-4 px-2 whitespace-nowrap shrink-0 transition-all duration-300 relative ${activeCategoryId === category.id
+                  ? 'text-dark'
                   : 'text-secondary/60 hover:text-dark'
-              }`}
+                }`}
             >
               {category.label}
               {activeCategoryId === category.id && (
-                <motion.div 
+                <motion.div
                   layoutId="activeTab"
                   className="absolute bottom-0 left-0 w-full h-[3px] bg-dark"
                 />
@@ -122,7 +121,7 @@ export default function ServicesPage() {
 
         {/* Pricing Layout */}
         <div className="flex flex-col lg:flex-row gap-16">
-          
+
           {/* Left Column: Accordion */}
           <div className="w-full lg:w-1/2 flex flex-col">
             <h2 className="text-3xl lg:text-4xl font-cinzel font-bold text-dark mb-4">Pricing Plans<span className="text-gold">.</span></h2>
@@ -146,26 +145,25 @@ export default function ServicesPage() {
 
                 return (
                   <div key={idx} className="flex flex-col">
-                    <button 
+                    <button
                       onClick={() => setExpandedPackageIdx(prev => prev === idx ? null : idx)}
-                      className={`flex items-center justify-between w-full py-4 px-6 transition-colors ${
-                        isExpanded ? 'bg-transparent' : 'bg-[#F2EFEB] hover:bg-[#EAE5DF]'
-                      }`}
+                      className={`flex items-center justify-between w-full py-4 px-6 transition-colors ${isExpanded ? 'bg-transparent' : 'bg-[#F2EFEB] hover:bg-[#EAE5DF]'
+                        }`}
                     >
                       <span className="text-xl font-cinzel font-bold tracking-wide text-dark uppercase block">
                         {pkg.title}
                       </span>
-                      
+
                       {/* Only show trailing price if NOT expanded, to match UI */}
                       {!isExpanded && (
                         <div className="flex items-center space-x-3">
                           <span className="text-secondary/50 line-through text-sm font-medium">
-                            {((bothSideSelections[idx] && pkg.bothSidePrice ? parsePrice(pkg.bothSidePrice) : parsePrice(pkg.discountPrice)) + 
+                            {((bothSideSelections[idx] && pkg.bothSidePrice ? parsePrice(pkg.bothSidePrice) : parsePrice(pkg.discountPrice)) +
                               (bothSideSelections[idx] && pkg.bothSidePrice ? (parsePrice(pkg.originalPrice) - parsePrice(pkg.discountPrice)) : (parsePrice(pkg.originalPrice) - parsePrice(pkg.discountPrice))) +
                               (reelSelections[idx] && pkg.reelPrice ? parsePrice(pkg.reelPrice) : 0)).toLocaleString('en-IN')}/-
                           </span>
                           <span className="text-dark font-bold text-lg">
-                            {((bothSideSelections[idx] && pkg.bothSidePrice ? parsePrice(pkg.bothSidePrice) : parsePrice(pkg.discountPrice)) + 
+                            {((bothSideSelections[idx] && pkg.bothSidePrice ? parsePrice(pkg.bothSidePrice) : parsePrice(pkg.discountPrice)) +
                               (reelSelections[idx] && pkg.reelPrice ? parsePrice(pkg.reelPrice) : 0)).toLocaleString('en-IN')} /-
                           </span>
                         </div>
@@ -174,7 +172,7 @@ export default function ServicesPage() {
 
                     <AnimatePresence>
                       {isExpanded && (
-                        <motion.div 
+                        <motion.div
                           initial={{ height: 0, opacity: 0 }}
                           animate={{ height: 'auto', opacity: 1 }}
                           exit={{ height: 0, opacity: 0 }}
@@ -182,30 +180,30 @@ export default function ServicesPage() {
                         >
                           <div className="px-6 py-4 flex flex-col">
                             {/* Inner Pricing Display specifically for expanded state */}
-                             <div className="flex items-center space-x-3 justify-end w-full mb-6">
-                                <span className="text-secondary/50 line-through text-lg font-medium">
-                                  {((bothSideSelections[idx] && pkg.bothSidePrice ? parsePrice(pkg.bothSidePrice) : parsePrice(pkg.discountPrice)) + 
-                                    (parsePrice(pkg.originalPrice) - parsePrice(pkg.discountPrice)) + 
-                                    (reelSelections[idx] && pkg.reelPrice ? parsePrice(pkg.reelPrice) : 0)).toLocaleString('en-IN')}/-
-                                </span>
-                                <span className="text-dark font-bold text-2xl">
-                                  {((bothSideSelections[idx] && pkg.bothSidePrice ? parsePrice(pkg.bothSidePrice) : parsePrice(pkg.discountPrice)) + 
-                                    (reelSelections[idx] && pkg.reelPrice ? parsePrice(pkg.reelPrice) : 0)).toLocaleString('en-IN')} /-
-                                </span>
-                             </div>
+                            <div className="flex items-center space-x-3 justify-end w-full mb-6">
+                              <span className="text-secondary/50 line-through text-lg font-medium">
+                                {((bothSideSelections[idx] && pkg.bothSidePrice ? parsePrice(pkg.bothSidePrice) : parsePrice(pkg.discountPrice)) +
+                                  (parsePrice(pkg.originalPrice) - parsePrice(pkg.discountPrice)) +
+                                  (reelSelections[idx] && pkg.reelPrice ? parsePrice(pkg.reelPrice) : 0)).toLocaleString('en-IN')}/-
+                              </span>
+                              <span className="text-dark font-bold text-2xl">
+                                {((bothSideSelections[idx] && pkg.bothSidePrice ? parsePrice(pkg.bothSidePrice) : parsePrice(pkg.discountPrice)) +
+                                  (reelSelections[idx] && pkg.reelPrice ? parsePrice(pkg.reelPrice) : 0)).toLocaleString('en-IN')} /-
+                              </span>
+                            </div>
 
                             <div className="text-[10px] font-black uppercase tracking-widest text-[#FF2D55] italic mb-6 decoration-gold underline underline-offset-8">
-                               {bothSideSelections[idx] ? "Full Both Side Coverage" : getCoverageLabel(pkg.features)}
+                              {bothSideSelections[idx] ? "Full Both Side Coverage" : getCoverageLabel(pkg.features)}
                             </div>
 
                             <ul className="space-y-3 mb-6">
                               {pkg.features.map((feature, fIdx) => {
                                 const isBothSideFeature = feature.toLowerCase().includes("both side");
                                 const isReelFeature = feature.toLowerCase().includes("add-on: cinematic reel");
-                                
+
                                 return (
-                                  <li 
-                                    key={fIdx} 
+                                  <li
+                                    key={fIdx}
                                     onClick={() => {
                                       if (isBothSideFeature && pkg.bothSidePrice) {
                                         setBothSideSelections(prev => ({ ...prev, [idx]: !prev[idx] }));
@@ -213,53 +211,50 @@ export default function ServicesPage() {
                                         setReelSelections(prev => ({ ...prev, [idx]: !prev[idx] }));
                                       }
                                     }}
-                                    className={`flex items-start transition-all duration-300 ${
-                                      (isBothSideFeature && pkg.bothSidePrice) || (isReelFeature && pkg.reelPrice)
-                                        ? `cursor-pointer p-2 rounded-lg border-2 ${
-                                            (isBothSideFeature && bothSideSelections[idx]) || (isReelFeature && reelSelections[idx])
-                                              ? 'bg-gold/10 border-gold shadow-md' 
-                                              : 'bg-transparent border-dark/5 hover:border-gold/30'
-                                          }` 
+                                    className={`flex items-start transition-all duration-300 ${(isBothSideFeature && pkg.bothSidePrice) || (isReelFeature && pkg.reelPrice)
+                                        ? `cursor-pointer p-2 rounded-lg border-2 ${(isBothSideFeature && bothSideSelections[idx]) || (isReelFeature && reelSelections[idx])
+                                          ? 'bg-gold/10 border-gold shadow-md'
+                                          : 'bg-transparent border-dark/5 hover:border-gold/30'
+                                        }`
                                         : 'text-dark'
-                                    }`}
+                                      }`}
                                   >
-                                    <div className={`mt-2 shrink-0 mr-3 ${
-                                      (isBothSideFeature && bothSideSelections[idx]) || (isReelFeature && reelSelections[idx])
-                                        ? 'text-gold' 
+                                    <div className={`mt-2 shrink-0 mr-3 ${(isBothSideFeature && bothSideSelections[idx]) || (isReelFeature && reelSelections[idx])
+                                        ? 'text-gold'
                                         : 'text-dark/40'
-                                    }`}>
-                                       {(isBothSideFeature && bothSideSelections[idx]) || (isReelFeature && reelSelections[idx]) 
-                                         ? <CheckCircle2 size={14} /> 
-                                         : <div className="w-1.5 h-1.5 rounded-full bg-current" />}
+                                      }`}>
+                                      {(isBothSideFeature && bothSideSelections[idx]) || (isReelFeature && reelSelections[idx])
+                                        ? <CheckCircle2 size={14} />
+                                        : <div className="w-1.5 h-1.5 rounded-full bg-current" />}
                                     </div>
                                     <div className="flex flex-col">
-                                       <span className={`text-base font-medium leading-relaxed tracking-tight ${(isBothSideFeature || isReelFeature) ? 'font-bold' : ''}`}>
-                                          {feature}
-                                       </span>
-                                       {(isBothSideFeature || isReelFeature) && (
-                                         <span className="text-[9px] font-black uppercase tracking-widest text-gold mt-1">
-                                            {(isBothSideFeature && bothSideSelections[idx]) || (isReelFeature && reelSelections[idx]) 
-                                              ? "Selected ✓" 
-                                              : "Click to select add-on"}
-                                         </span>
-                                       )}
+                                      <span className={`text-base font-medium leading-relaxed tracking-tight ${(isBothSideFeature || isReelFeature) ? 'font-bold' : ''}`}>
+                                        {feature}
+                                      </span>
+                                      {(isBothSideFeature || isReelFeature) && (
+                                        <span className="text-[9px] font-black uppercase tracking-widest text-gold mt-1">
+                                          {(isBothSideFeature && bothSideSelections[idx]) || (isReelFeature && reelSelections[idx])
+                                            ? "Selected ✓"
+                                            : "Click to select add-on"}
+                                        </span>
+                                      )}
                                     </div>
                                   </li>
                                 );
                               })}
                             </ul>
-                            
+
                             <div className="text-[#E74C3C] text-[10px] font-black uppercase tracking-widest mb-2">OFFER PRICE</div>
                             <div className="flex items-center space-x-3">
-                               <span className="text-secondary/50 line-through text-lg font-medium">
-                                 {((bothSideSelections[idx] && pkg.bothSidePrice ? parsePrice(pkg.bothSidePrice) : parsePrice(pkg.discountPrice)) + 
-                                   (parsePrice(pkg.originalPrice) - parsePrice(pkg.discountPrice)) + 
-                                   (reelSelections[idx] && pkg.reelPrice ? parsePrice(pkg.reelPrice) : 0)).toLocaleString('en-IN')}/-
-                               </span>
-                               <span className="text-dark font-bold text-3xl font-cinzel tracking-tighter">
-                                  ₹{((bothSideSelections[idx] && pkg.bothSidePrice ? parsePrice(pkg.bothSidePrice) : parsePrice(pkg.discountPrice)) + 
-                                     (reelSelections[idx] && pkg.reelPrice ? parsePrice(pkg.reelPrice) : 0)).toLocaleString('en-IN')}/-
-                                </span>
+                              <span className="text-secondary/50 line-through text-lg font-medium">
+                                {((bothSideSelections[idx] && pkg.bothSidePrice ? parsePrice(pkg.bothSidePrice) : parsePrice(pkg.discountPrice)) +
+                                  (parsePrice(pkg.originalPrice) - parsePrice(pkg.discountPrice)) +
+                                  (reelSelections[idx] && pkg.reelPrice ? parsePrice(pkg.reelPrice) : 0)).toLocaleString('en-IN')}/-
+                              </span>
+                              <span className="text-dark font-bold text-3xl font-cinzel tracking-tighter">
+                                ₹{((bothSideSelections[idx] && pkg.bothSidePrice ? parsePrice(pkg.bothSidePrice) : parsePrice(pkg.discountPrice)) +
+                                  (reelSelections[idx] && pkg.reelPrice ? parsePrice(pkg.reelPrice) : 0)).toLocaleString('en-IN')}/-
+                              </span>
                             </div>
                           </div>
                         </motion.div>
@@ -272,7 +267,7 @@ export default function ServicesPage() {
 
             {/* Action Buttons */}
             <div className="flex flex-col sm:flex-row items-center gap-6 mb-8">
-              <Link 
+              <Link
                 href={`/booking?package=${encodeURIComponent(activePackage?.title || activeCategory.packages[0].title)}&event=${encodeURIComponent(activeCategory.label)}${expandedPackageIdx !== null && bothSideSelections[expandedPackageIdx] ? '&bothSide=true' : ''}${expandedPackageIdx !== null && reelSelections[expandedPackageIdx] ? '&reel=true' : ''}`}
                 className="bg-[#424340] inline-block text-white px-12 py-5 rounded-xl text-[10px] font-black tracking-[0.4em] uppercase transition-all duration-500 relative overflow-hidden group shadow-2xl hover:scale-105 text-center w-full sm:w-auto"
               >
@@ -282,7 +277,7 @@ export default function ServicesPage() {
               </Link>
 
               {activeCategory.pdfUrl && (
-                <a 
+                <a
                   href={activeCategory.pdfUrl}
                   target="_blank"
                   rel="noopener noreferrer"
@@ -297,7 +292,7 @@ export default function ServicesPage() {
             {/* Creatively Styled Category Description (Signature Experience) - Glass Effect */}
             <AnimatePresence mode="wait">
               {activeCategory.description && (
-                <motion.div 
+                <motion.div
                   key={activeCategory.id}
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -308,26 +303,26 @@ export default function ServicesPage() {
                   <div className="bg-white/40 backdrop-blur-xl p-5 md:p-6 rounded-2xl border border-white/60 shadow-[0_8px_32px_0_rgba(0,0,0,0.05)] relative overflow-hidden">
                     {/* Subtle Background Text/Icon - Minimalist */}
                     <div className="absolute -right-2 -bottom-2 opacity-[0.03] pointer-events-none">
-                       <span className="text-6xl font-black text-dark tracking-tighter">SS</span>
+                      <span className="text-6xl font-black text-dark tracking-tighter">SS</span>
                     </div>
 
                     <div className="relative z-10 space-y-3">
                       <div className="flex items-center gap-2">
-                         <div className="h-[1px] w-6 bg-gold/50" />
-                         <span className="text-[9px] font-black uppercase tracking-[0.4em] text-gold">The Signature Experience</span>
+                        <div className="h-[1px] w-6 bg-gold/50" />
+                        <span className="text-[9px] font-black uppercase tracking-[0.4em] text-gold">The Signature Experience</span>
                       </div>
-                      
+
                       <p className="text-dark/80 font-manrope font-medium text-sm md:text-base leading-relaxed tracking-wide">
                         {activeCategory.description}
                       </p>
 
                       <div className="flex items-center gap-1.5 pt-1">
-                         <div className="w-1 h-1 rounded-full bg-gold/40" />
-                         <div className="w-1 h-1 rounded-full bg-gold/60" />
-                         <div className="w-1 h-1 rounded-full bg-gold/80" />
+                        <div className="w-1 h-1 rounded-full bg-gold/40" />
+                        <div className="w-1 h-1 rounded-full bg-gold/60" />
+                        <div className="w-1 h-1 rounded-full bg-gold/80" />
                       </div>
                     </div>
-                    
+
                     {/* Gold accent line inside glass */}
                     <div className="absolute left-0 top-0 bottom-0 w-1 bg-gold/40" />
                   </div>
@@ -340,7 +335,7 @@ export default function ServicesPage() {
           {/* Right Column: Featured Image (Styled like Gallery Stories) */}
           <div className="w-full lg:w-1/2 flex items-start justify-center p-4 lg:sticky lg:top-40 h-fit">
             <AnimatePresence mode="wait">
-              <motion.div 
+              <motion.div
                 key={`${activeCategoryId}-${galleryIdx}`}
                 initial={{ opacity: 0, scale: 0.98 }}
                 animate={{ opacity: 1, scale: 1 }}
@@ -348,26 +343,26 @@ export default function ServicesPage() {
                 transition={{ duration: 0.8, ease: "easeInOut" }}
                 className="relative w-full aspect-[4/5] bg-dark rounded-[15px] overflow-hidden shadow-2xl group cursor-pointer"
               >
-                <Image 
-                  src={activeGalleryPackage.imageSrc} 
-                  alt={activeGalleryPackage.captionTitle} 
+                <Image
+                  src={activeGalleryPackage.imageSrc}
+                  alt={activeGalleryPackage.captionTitle}
                   fill
                   className="w-full h-full object-cover transition-all duration-1000"
                   sizes="(max-width: 1024px) 100vw, 50vw"
                   priority
                 />
-                
+
                 {/* Story-style Overlay Info */}
                 <div className="absolute bottom-12 left-12 z-10 text-white pointer-events-none pr-12">
-                   <p className="text-[10px] md:text-xs font-manrope font-bold uppercase tracking-[0.5em] mb-4 opacity-80">
-                     JUNE 23, 2025
-                   </p>
-                   <h3 className="text-2xl md:text-4xl lg:text-5xl font-cinzel font-bold leading-tight tracking-wide mb-2 uppercase">
-                     {activeGalleryPackage.captionTitle}
-                   </h3>
-                   <p className="text-lg md:text-2xl font-cinzel italic opacity-90">
-                     - {activeGalleryPackage.captionSubtitle}
-                   </p>
+                  <p className="text-[10px] md:text-xs font-manrope font-bold uppercase tracking-[0.5em] mb-4 opacity-80">
+                    JUNE 23, 2025
+                  </p>
+                  <h3 className="text-2xl md:text-4xl lg:text-5xl font-cinzel font-bold leading-tight tracking-wide mb-2 uppercase">
+                    {activeGalleryPackage.captionTitle}
+                  </h3>
+                  <p className="text-lg md:text-2xl font-cinzel italic opacity-90">
+                    - {activeGalleryPackage.captionSubtitle}
+                  </p>
                 </div>
 
                 {/* Dark Gradient Overlay */}
@@ -375,13 +370,13 @@ export default function ServicesPage() {
 
                 {/* Navigation Arrows (Interactive) */}
                 <div className="absolute inset-0 flex items-center justify-between px-8 z-20 pointer-events-none opacity-40 group-hover:opacity-100 transition-opacity">
-                  <button 
+                  <button
                     onClick={(e) => { e.preventDefault(); prevGallery(); }}
                     className="pointer-events-auto p-4 bg-white/10 hover:bg-white text-white hover:text-dark rounded-full transition-all duration-500 scale-90 md:scale-100"
                   >
                     <GalleryArrow className="w-6 h-6 rotate-180" />
                   </button>
-                  <button 
+                  <button
                     onClick={(e) => { e.preventDefault(); nextGallery(); }}
                     className="pointer-events-auto p-4 bg-white/10 hover:bg-white text-white hover:text-dark rounded-full transition-all duration-500 scale-90 md:scale-100"
                   >

@@ -15,7 +15,7 @@ export default function AboutPage() {
       <section className="relative w-full h-screen flex items-center justify-center">
         <div className="absolute inset-0 z-0">
           <Image
-            src="/assets/about-hero-bg.jpg"
+            src="/assets/prewedding/Pre wedding 1/ssp02832.jpg"
             alt="About SS Photo & Films"
             fill
             priority
