@@ -1,6 +1,6 @@
 "use client";
 
-import React from 'react';
+import React, { Suspense } from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import GalleryColumnLayout from '@/components/GalleryColumnLayout';
@@ -11,7 +11,9 @@ const GalleryPage = () => {
       <Navbar transparentDarkText={true} />
       
       {/* The main interactive gallery system */}
-      <GalleryColumnLayout />
+      <Suspense fallback={<div className="min-h-screen flex items-center justify-center font-cinzel text-dark/20 uppercase tracking-widest">Loading Gallery...</div>}>
+        <GalleryColumnLayout />
+      </Suspense>
 
       <Footer />
     </main>

@@ -30,25 +30,40 @@ def generate_face_embeddings(image_path: str) -> List[Dict[str, Any]]:
         except Exception as exif_e:
             pass # fallback to original pil_img if exif_transpose fails
             
-        # Speed Optimization: AI-Only Resize (Fast Resolution)
-        # We only resize this temp copy for the face detection. 
-        # Original high-res file is never touched.
-        MAX_SIZE = (1024, 1024)
+        # Group Photo Optimization: AI-Only Resize (2048px for Detail)
+        # We use 2048px to catch faces in large group shots.
+        MAX_SIZE = (2048, 2048)
         pil_img.thumbnail(MAX_SIZE, Image.Resampling.LANCZOS)
         
         image = np.array(pil_img)
+        
+        # High-Precision: Apply CLAHE (Contrast Limited Adaptive Histogram Equalization)
+        # This enhances local details (eyes/nose/mouth) for more unique embeddings.
+        try:
+            import cv2
+            lab = cv2.cvtColor(image, cv2.COLOR_RGB2LAB)
+            l, a, b = cv2.split(lab)
+            clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8,8))
+            cl = clahe.apply(l)
+            limg = cv2.merge((cl, a, b))
+            image = cv2.cvtColor(limg, cv2.COLOR_LAB2RGB)
+        except Exception as cv_e:
+            print(f"DEBUG: CLAHE preprocessing skipped: {cv_e}")
+            
     except Exception as e:
         print(f"Error loading image {image_path}: {e}")
         return []
         
+    # Smarter Upscaling: Try standard detection (upsample=1) first for speed and memory safety
     face_locations = face_recognition.face_locations(image, number_of_times_to_upsample=1)
     
-    # Fallback for 0 faces: try upsample=2 (finds smaller faces)
+    # Fallback: Only use "Deep Scan" (upsample=2) if no faces were found initially
     if not face_locations:
-        print(f"\n  [info] 0 faces initially detected in {os.path.basename(image_path)}, retrying with upsample=2...", end="")
+        print(f"\n  [info] No faces found with standard scan. Escalating to Deep Scan (upsample=2) for {os.path.basename(image_path)}...", end="")
         face_locations = face_recognition.face_locations(image, number_of_times_to_upsample=2)
-        
-    face_encodings = face_recognition.face_encodings(image, face_locations)
+    
+    # Deep Scanning: num_jitters=5 for a perfect balance of speed and high accuracy
+    face_encodings = face_recognition.face_encodings(image, face_locations, num_jitters=5)
     results = []
     
     for location, encoding in zip(face_locations, face_encodings):
@@ -56,8 +71,8 @@ def generate_face_embeddings(image_path: str) -> List[Dict[str, Any]]:
         width = right - left
         height = bottom - top
         
-        # Filter very small phantom boxes
-        if width < 15 or height < 15:
+        # Group Mode Filter: Ignore only tiny noise (8px instead of 15px)
+        if width < 8 or height < 8:
             print(f"\n  [warn] Ignored tiny face boundary ({width}x{height}) in {os.path.basename(image_path)}", end="")
             continue
             

@@ -1,4 +1,4 @@
-// Database utilities for ss-photo-films
+"use server";
 
 import prisma from './prisma';
 import { User, Booking, ClientQuery, TeamApplication, ClientQueryMessage, Event, Photo } from '@prisma/client';
@@ -125,7 +125,9 @@ export const addBooking = async (bookingData: any): Promise<Booking> => {
       paymentMethod: bookingData.paymentMethod || "Cash",
       isCustomPrice: bookingData.isCustomPrice || false,
       isOffline: bookingData.isOffline || false,
-      travelCharges: bookingData.travelCharges || 0
+      travelCharges: bookingData.travelCharges || 0,
+      includeBothSide: bookingData.includeBothSide || false,
+      includeReel: bookingData.includeReel || false
     }
   });
 };

@@ -4,6 +4,11 @@
 /node_modules
 /.pnp
 .pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
 
 # testing
 /coverage
@@ -18,12 +23,14 @@
 # misc
 .DS_Store
 *.pem
+
+# debug
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-# env files
+# env files (can opt-in for committing if needed)
 .env*
 
 # vercel
@@ -33,21 +40,28 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# Prisma
 /lib/generated/prisma
 
 # Python virtual environments (AI engine)
-**/__pycache__/
-**/.venv/
-**/venv/
-**/.venv_ai/
-*.py[cod]
-*$py.class
+.venv_ai/
+.venv/
+venv/
+__pycache__/
+*.pyc
+*.pyo
 
-# User Data & AI Engine temporary files
-face_recognition_engine/user_uploads/*
-face_recognition_engine/album_images/*
-face_recognition_engine/databases/*
-!face_recognition_engine/user_uploads/.gitkeep
-!face_recognition_engine/album_images/.gitkeep
-!face_recognition_engine/databases/.gitkeep
+# Face Recognition Engine specific
+face_recognition_engine/user_uploads/
+face_recognition_engine/databases/*.csv
+face_recognition_engine/databases/*.zip
+
+# Caches and logs
+.next/cache/
+*.sst
+*.log
+*.zip
+
+# Large assets in public/ (Optional but recommended for push success)
+public/assets/wedding/
+public/assets/Maternity/
+public/assets/Engagement/

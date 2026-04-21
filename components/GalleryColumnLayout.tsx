@@ -3,6 +3,8 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
+import Image from 'next/image';
+import { useSearchParams } from 'next/navigation';
 import { galleryCategories, galleryStories, Story } from '@/lib/galleryData';
 import { cn } from '@/lib/utils'; // Generic utility for class merging
 
@@ -24,8 +26,34 @@ const GalleryArrow = ({ className }: { className?: string }) => (
 );
 
 const GalleryColumnLayout = () => {
+  const searchParams = useSearchParams();
   const [categoryIndex, setCategoryIndex] = useState(0);
   const [storyIndex, setStoryIndex] = useState(0);
+
+  // Sync category index from URL search params
+  useEffect(() => {
+    const categoryQuery = searchParams.get('category');
+    if (categoryQuery) {
+      // Normalize query strings to match galleryCategories constants
+      const queryMap: Record<string, string> = {
+        'wedding': 'WEDDINGS',
+        'haldi': 'HALDI',
+        'pre-wedding': 'PRE-WEDDING',
+        'maternity': 'MATERNITY',
+        'kids': 'BABY & KIDS',
+        'engagement': 'ENGAGEMENT',
+        'portrait': 'PORTRAIT'
+      };
+      
+      const normalizedCategory = queryMap[categoryQuery.toLowerCase()];
+      const targetIndex = galleryCategories.findIndex(c => c === normalizedCategory);
+      
+      if (targetIndex !== -1) {
+        setCategoryIndex(targetIndex);
+        setStoryIndex(0);
+      }
+    }
+  }, [searchParams]);
 
   const activeCategory = galleryCategories[categoryIndex];
   const filteredStories = galleryStories.filter(s => s.category === activeCategory);
@@ -58,7 +86,7 @@ const GalleryColumnLayout = () => {
     setStoryIndex((prev) => (prev - 1 + filteredStories.length) % filteredStories.length);
   };
 
-  const currentStory = filteredStories[storyIndex] || galleryStories[0];
+  const currentStory = filteredStories[storyIndex] || filteredStories[0] || galleryStories[0];
 
   return (
     <div className="flex flex-col lg:flex-row min-h-screen pb-40 bg-background text-dark relative">
@@ -75,21 +103,24 @@ const GalleryColumnLayout = () => {
             className="relative group cursor-pointer overflow-hidden h-full rounded-[15px] shadow-2xl"
           >
             <Link href={`/gallery/${currentStory.slug}`} className="block h-full">
-              <img 
+              <Image 
                 src={currentStory.mainImage} 
                 alt={currentStory.title} 
+                fill
+                priority
+                unoptimized
                 className="w-full h-full object-cover grayscale brightness-90 group-hover:grayscale-0 group-hover:scale-105 transition-all duration-1000"
+                sizes="(max-width: 1024px) 100vw, 50vw"
               />
               
-              {/* Story Overlay Info */}
-              <div className="absolute bottom-12 left-12 z-10 text-white pointer-events-none pr-12">
-                 <p className="text-xs md:text-xs font-manrope font-bold uppercase tracking-[0.5em] mb-4 opacity-80">
+              <div className="absolute bottom-12 left-12 z-10 text-white pointer-events-none max-w-[80%] overflow-hidden">
+                 <p className="text-[10px] md:text-xs font-manrope font-bold uppercase tracking-[0.5em] mb-3 opacity-80 whitespace-nowrap overflow-hidden text-ellipsis">
                    {currentStory.date}
                  </p>
-                 <h3 className="text-2xl md:text-4xl lg:text-5xl font-cinzel font-bold leading-tight tracking-wide mb-2 uppercase">
+                 <h3 className="text-lg md:text-xl lg:text-2xl font-cinzel font-bold leading-tight tracking-wide mb-1 uppercase truncate whitespace-nowrap overflow-hidden text-ellipsis">
                    {currentStory.title}
                  </h3>
-                 <p className="text-lg md:text-2xl font-cinzel italic opacity-90">
+                 <p className="text-sm md:text-base font-cinzel italic opacity-90 truncate whitespace-nowrap overflow-hidden text-ellipsis">
                    - {currentStory.names}
                  </p>
               </div>
@@ -164,22 +195,25 @@ const GalleryColumnLayout = () => {
               )}
             >
               <Link href={`/gallery/${story.slug}`} className="relative aspect-[3/4] overflow-hidden rounded-[15px] shadow-lg">
-                <img 
+                <Image 
                   src={story.mainImage} 
                   alt={story.title} 
+                  fill
+                  unoptimized
                   className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 25vw, 15vw"
                 />
                 <div className="absolute inset-0 bg-dark/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
               </Link>
               
-              <div className="space-y-2">
-                 <p className="text-xs md:text-sm font-manrope font-bold text-dark/40 uppercase tracking-[0.4rem]">
+              <div className="space-y-2 overflow-hidden">
+                 <p className="text-xs md:text-sm font-manrope font-bold text-dark/40 uppercase tracking-[0.4rem] whitespace-nowrap overflow-hidden text-ellipsis">
                    {story.date} / {story.category}
                  </p>
-                 <h4 className="text-lg md:text-xl font-cinzel font-bold text-dark/80 group-hover:text-gold transition-colors duration-300">
+                 <h4 className="text-md md:text-lg font-cinzel font-bold text-dark/80 group-hover:text-gold transition-colors duration-300 truncate whitespace-nowrap overflow-hidden text-ellipsis">
                    {story.title}
                  </h4>
-                 <p className="text-dark/50 font-cinzel italic text-sm md:text-base">
+                 <p className="text-dark/50 font-cinzel italic text-xs md:text-sm truncate whitespace-nowrap overflow-hidden text-ellipsis">
                    - {story.names}
                  </p>
               </div>

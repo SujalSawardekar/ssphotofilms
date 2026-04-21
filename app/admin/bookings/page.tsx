@@ -21,6 +21,8 @@ import Footer from '@/components/Footer';
 import { motion, AnimatePresence } from 'framer-motion';
 import AdminCalendar from '@/components/AdminCalendar';
 import Link from 'next/link';
+import { pricingCategories } from '@/lib/mockData';
+import { parsePrice } from '@/lib/utils';
 
 const AdminBookingsDashboard = () => {
   const [bookings, setBookings] = useState<any[]>([]);
@@ -29,6 +31,7 @@ const AdminBookingsDashboard = () => {
   const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
   const [selectedBookingId, setSelectedBookingId] = useState<string | null>(null);
   const [paymentData, setPaymentData] = useState({ amount: 0, method: 'Cash' });
+  const [selectedBookingDetails, setSelectedBookingDetails] = useState<any | null>(null);
   
   // Custom UI State
   const [notifications, setNotifications] = useState<{id: number, message: string, type: 'success' | 'error'}[]>([]);
@@ -67,7 +70,9 @@ const AdminBookingsDashboard = () => {
     advancePaid: 0,
     paymentMethod: 'Cash',
     isCustomPrice: false,
-    message: 'Offline/Manual Booking'
+    message: 'Offline/Manual Booking',
+    packageCategory: 'wedding',
+    packageTitle: 'Basic Package'
   });
 
   useEffect(() => {
@@ -197,8 +202,24 @@ const AdminBookingsDashboard = () => {
     setFormData({
       clientName: '', email: '', phone: '', eventType: 'Wedding', eventDate: '',
       location: '', hours: 4, amount: 0, advancePaid: 0, paymentMethod: 'Cash',
-      isCustomPrice: false, message: 'Offline/Manual Booking'
+      isCustomPrice: false, message: 'Offline/Manual Booking',
+      packageCategory: 'wedding',
+      packageTitle: 'Basic Package'
     });
+  };
+
+  const handlePackageChange = (category: string, title: string) => {
+    const pkg = pricingCategories.find(c => c.id === category)?.packages.find(p => p.title === title);
+    if (pkg) {
+      setFormData({
+        ...formData,
+        packageCategory: category,
+        packageTitle: title,
+        eventType: pricingCategories.find(c => c.id === category)?.label || 'Wedding',
+        packageType: title,
+        amount: parsePrice(pkg.discountPrice)
+      } as any);
+    }
   };
 
   const handleNumChange = (field: string, val: string) => {
@@ -281,26 +302,20 @@ const AdminBookingsDashboard = () => {
                            </div>
                         </div>
 
-                        {/* Payment Status for Pending (NEW) */}
+                        {/* Payment Status for Pending */}
                         <div className="grid grid-cols-2 gap-4 mb-8 bg-[#FAF9F6]/50 p-4 rounded-xl border border-dark/5">
-                           <div className="space-y-1">
+                           <div className="space-y-1 text-left">
                               <p className="text-[8px] font-black uppercase tracking-widest text-dark/30">Paid So Far</p>
-                              <p className="text-sm font-black text-emerald-600">₹{(booking.totalPaid || 0).toLocaleString()}</p>
+                              <p className="text-sm font-black text-emerald-600">₹{Number(booking.totalPaid || 0).toLocaleString()}</p>
                            </div>
                            <div className="space-y-1 text-right">
                               <p className="text-[8px] font-black uppercase tracking-widest text-dark/30">
-                                 {booking.isOffline ? 'Remaining' : 'Payable'}
+                                 {booking.isOffline ? 'Balance Due' : 'Outstanding'}
                               </p>
-                              <p className={`text-sm font-black ${(booking.amount - (booking.totalPaid || 0)) > 0 ? (booking.isOffline ? 'text-red-500' : 'text-dark') : 'text-emerald-600'}`}>
-                                 ₹{(booking.amount - (booking.totalPaid || 0)).toLocaleString()}
+                              <p className={`text-sm font-black ${(Number(booking.amount) - Number(booking.totalPaid || 0)) > 0 ? (booking.isOffline ? 'text-red-500' : 'text-dark') : 'text-emerald-600'}`}>
+                                 ₹{(Number(booking.amount) - Number(booking.totalPaid || 0)).toLocaleString()}
                               </p>
                            </div>
-                           {booking.razorpayPaymentId && (
-                              <div className="col-span-2 mt-2 pt-2 border-t border-dark/5 flex items-center justify-center gap-2">
-                                 <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
-                                 <span className="text-[9px] font-black text-emerald-600 uppercase tracking-widest">Paid Online via Razorpay</span>
-                              </div>
-                           )}
                         </div>
 
                         {booking.message && (
@@ -313,8 +328,8 @@ const AdminBookingsDashboard = () => {
                           <button onClick={() => handleStatusChange(booking.id, 'Confirmed')} className="flex items-center justify-center space-x-2 py-4 bg-[#D1FAE5] text-[#059669] text-[10px] uppercase tracking-widest font-black rounded-lg hover:bg-emerald-600 hover:text-white transition-all">
                              <Check size={14} /><span>Accept Booking</span>
                           </button>
-                          <button onClick={() => handleStatusChangeSafe(booking.id, 'Rejected')} className="flex items-center justify-center space-x-2 py-4 bg-[#FCE7F3] text-[#BE185D] text-[10px] uppercase tracking-widest font-black rounded-lg hover:bg-rose-600 hover:text-white transition-all">
-                             <XCircle size={14} /><span>Decline</span>
+                          <button onClick={() => setSelectedBookingDetails(booking)} className="flex items-center justify-center space-x-2 py-4 border border-dark/10 text-dark text-[10px] uppercase tracking-widest font-black rounded-lg hover:bg-dark hover:text-white transition-all">
+                             <Box size={14} /><span>View Details</span>
                           </button>
                         </div>
                       </motion.div>
@@ -329,7 +344,7 @@ const AdminBookingsDashboard = () => {
               <div className="flex items-center space-x-3"><CheckCircle2 size={20} className="text-[#059669]" /><h2 className="text-xl font-manrope font-medium text-dark">Accepted Bookings ({acceptedBookings.length})</h2></div>
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 {acceptedBookings.map(booking => {
-                  const remaining = booking.amount - (booking.totalPaid || 0);
+                  const remaining = Number(booking.amount) - (Number(booking.totalPaid) || 0);
                   const isDone = new Date(booking.eventDate) < new Date();
 
                   return (
@@ -337,7 +352,7 @@ const AdminBookingsDashboard = () => {
                       {/* Premium Accent */}
                       <div className="absolute top-0 left-0 w-2 h-full bg-gold opacity-30 group-hover:opacity-100 transition-opacity" />
                       
-                      <div className="flex justify-between items-start mb-6">
+                      <div className="flex justify-between items-start mb-6 text-left">
                         <div className="space-y-1">
                           <div className="flex items-center space-x-2">
                              <p className="text-[10px] font-black uppercase tracking-[0.3em] text-[#FF2D55] italic">Premium Event</p>
@@ -354,56 +369,51 @@ const AdminBookingsDashboard = () => {
                       </div>
                       
                       <div className="grid grid-cols-2 gap-6 mb-8 p-6 bg-[#FAF9F6] rounded-xl border border-dark/5">
-                        <div className="space-y-4">
+                        <div className="space-y-4 text-left">
                           <div className="space-y-1">
                             <p className="text-[8px] font-black uppercase tracking-widest text-dark/30">Package</p>
-                            <p className="text-xs font-bold text-dark uppercase">{booking.packageType || 'Wedding Shoot'}</p>
+                            <p className="text-xs font-bold text-dark uppercase truncate">{booking.packageType || 'Professional Shoot'}</p>
                           </div>
                           <div className="space-y-1">
                             <p className="text-[8px] font-black uppercase tracking-widest text-dark/30">Total Amount</p>
-                            <p className="text-md font-black text-dark">₹{booking.amount.toLocaleString()}</p>
+                            <p className="text-md font-black text-dark">₹{Number(booking.amount).toLocaleString()}</p>
                           </div>
                         </div>
                         <div className="space-y-4 text-right">
                           <div className="space-y-1">
                             <p className="text-[8px] font-black uppercase tracking-widest text-dark/30">Paid So Far</p>
-                            <p className="text-md font-black text-emerald-600">₹{(booking.totalPaid || 0).toLocaleString()}</p>
+                            <p className="text-md font-black text-emerald-600">₹{Number(booking.totalPaid || 0).toLocaleString()}</p>
                           </div>
                           <div className="space-y-1">
                             <p className="text-[8px] font-black uppercase tracking-widest text-dark/30">
-                               {booking.isOffline ? 'Remaining' : 'Payable'}
+                               Balance Remaining
                             </p>
                             <p className={`text-md font-black ${remaining > 0 ? (booking.isOffline ? 'text-red-500' : 'text-dark') : 'text-emerald-600'}`}>
-                              ₹{remaining.toLocaleString()}
+                              {remaining <= 0 ? (
+                                <span className="flex items-center justify-end gap-1"><CheckCircle2 size={12} /> PAID</span>
+                              ) : (
+                                `₹${Number(remaining).toLocaleString()}`
+                              )}
                             </p>
                           </div>
                         </div>
                       </div>
 
-                      <div className="space-y-4 mb-10 flex-1">
-                         <p className="text-[9px] font-black uppercase tracking-widest text-dark/20 border-b border-dark/5 pb-2">Technical Summary</p>
-                         <div className="grid grid-cols-2 gap-2 mt-2">
-                            <div className="flex items-center text-[10px] text-dark/60"><CalendarIcon size={12} className="mr-2 text-gold" /> {new Date(booking.eventDate).toLocaleDateString('en-GB')}</div>
-                            <div className="flex items-center text-[10px] text-dark/60"><MapPin size={12} className="mr-2 text-gold" /> {booking.location}</div>
-                         </div>
-                      </div>
-
-                      <div className="grid grid-cols-2 gap-4">
+                      <div className="grid grid-cols-3 gap-3">
                         {remaining <= 0 ? (
-                          <div className="flex items-center justify-center space-x-2 py-4 bg-emerald-50 text-emerald-600 text-[10px] uppercase tracking-widest font-black rounded-lg border border-emerald-200">
-                             <CheckCircle2 size={14} /><span>Full Payment Received</span>
+                          <div className="flex items-center justify-center space-x-2 py-3 bg-emerald-50 text-emerald-600 text-[9px] uppercase tracking-widest font-black rounded-lg border border-emerald-200">
+                             <CheckCircle2 size={12} /><span>Fully Paid</span>
                           </div>
-                        ) : booking.isOffline ? (
-                          <button onClick={() => handleAddInstallment(booking.id)} className="flex items-center justify-center space-x-2 py-4 bg-emerald-600 text-white text-[9px] uppercase tracking-widest font-black rounded-lg hover:bg-emerald-700 transition-all shadow-lg">
-                             <Plus size={14} /><span>Record Payment</span>
-                          </button>
                         ) : (
-                          <div className="flex items-center justify-center space-x-2 py-4 bg-[#FAF9F6] text-dark/40 text-[9px] uppercase tracking-widest font-black rounded-lg border border-dark/5 italic">
-                             <span>Online Payment Pending</span>
-                          </div>
+                          <button onClick={() => handleAddInstallment(booking.id)} className="flex items-center justify-center space-x-2 py-3 bg-emerald-600 text-white text-[9px] uppercase tracking-widest font-black rounded-lg hover:bg-emerald-700 transition-all shadow-lg">
+                             <Plus size={12} /><span>Add Pay</span>
+                          </button>
                         )}
-                        <Link href={`/admin/bookings/${booking.id}/invoice`} className="flex items-center justify-center space-x-2 py-4 border border-dark/10 text-dark text-[9px] uppercase tracking-widest font-black rounded-lg hover:bg-dark hover:text-white transition-all">
-                          <FileText size={14} /><span>Detailed Invoice</span>
+                        <button onClick={() => setSelectedBookingDetails(booking)} className="flex items-center justify-center space-x-2 py-3 border border-dark/10 text-dark text-[9px] uppercase tracking-widest font-black rounded-lg hover:bg-dark hover:text-white transition-all">
+                           <Box size={12} /><span>Details</span>
+                        </button>
+                        <Link href={`/admin/bookings/${booking.id}/invoice`} className="flex items-center justify-center space-x-2 py-3 bg-dark text-gold text-[9px] uppercase tracking-widest font-black rounded-lg hover:bg-gold hover:text-dark transition-all">
+                           <FileText size={12} /><span>Invoice</span>
                         </Link>
                       </div>
 
@@ -420,22 +430,124 @@ const AdminBookingsDashboard = () => {
       <AnimatePresence>
         {isManualModalOpen && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-dark/60 backdrop-blur-md">
-             <motion.div initial={{opacity:0, scale:0.95}} animate={{opacity:1, scale:1}} exit={{opacity:0, scale:0.95}} className="bg-white w-full max-w-xl rounded-2xl shadow-2xl p-10 max-h-[90vh] overflow-y-auto">
+             <motion.div initial={{opacity:0, scale:0.95}} animate={{opacity:1, scale:1}} exit={{opacity:0, scale:0.95}} className="bg-white w-full max-w-2xl rounded-2xl shadow-2xl p-10 max-h-[90vh] overflow-y-auto">
                 <div className="flex justify-between items-center mb-10 border-b border-dark/5 pb-6">
                    <h2 className="text-3xl font-cinzel font-bold text-dark uppercase tracking-widest">Manual Booking</h2>
                    <button onClick={() => setIsManualModalOpen(false)} className="text-dark/20 hover:text-red-500"><XCircle size={24} /></button>
                 </div>
-                <form onSubmit={handleManualSubmit} className="space-y-6">
-                   <div className="grid grid-cols-2 gap-6">
-                      <div className="flex flex-col space-y-1.5"><label className="text-[10px] font-black text-dark/30 uppercase tracking-widest">Name</label><input required className="px-4 py-2.5 bg-[#FAF9F6] border border-dark/5 rounded-md focus:outline-none focus:border-gold text-sm" value={formData.clientName} onChange={e => setFormData({...formData, clientName: e.target.value})} /></div>
-                      <div className="flex flex-col space-y-1.5"><label className="text-[10px] font-black text-dark/30 uppercase tracking-widest">Phone</label><input required type="tel" pattern="[6-9][0-9]{9}" placeholder="10-digit number" className="px-4 py-2.5 bg-[#FAF9F6] border border-dark/5 rounded-md focus:outline-none focus:border-gold text-sm" value={formData.phone} onChange={e => setFormData({...formData, phone: e.target.value})} /></div>
-                      <div className="flex flex-col space-y-1.5"><label className="text-[10px] font-black text-dark/30 uppercase tracking-widest">Date</label><input required type="datetime-local" className="px-4 py-2.5 bg-[#FAF9F6] border border-dark/5 rounded-md focus:outline-none focus:border-gold text-sm" value={formData.eventDate} onChange={e => setFormData({...formData, eventDate: e.target.value})} /></div>
+                <form onSubmit={handleManualSubmit} className="space-y-8">
+                   <div className="grid grid-cols-2 gap-8 text-left">
+                      <div className="flex flex-col space-y-1.5"><label className="text-[10px] font-black text-dark/30 uppercase tracking-widest">Client Name</label><input required className="px-4 py-2.5 bg-[#FAF9F6] border border-dark/5 rounded-md focus:outline-none focus:border-gold text-sm" value={formData.clientName} onChange={e => setFormData({...formData, clientName: e.target.value})} /></div>
+                      <div className="flex flex-col space-y-1.5"><label className="text-[10px] font-black text-dark/30 uppercase tracking-widest">Phone Number</label><input required type="tel" pattern="[6-9][0-9]{9}" placeholder="10-digit number" className="px-4 py-2.5 bg-[#FAF9F6] border border-dark/5 rounded-md focus:outline-none focus:border-gold text-sm" value={formData.phone} onChange={e => setFormData({...formData, phone: e.target.value})} /></div>
+                      
+                      {/* Package Selection */}
+                      <div className="flex flex-col space-y-1.5">
+                        <label className="text-[10px] font-black text-dark/30 uppercase tracking-widest">Service Category</label>
+                        <select className="px-4 py-2.5 bg-[#FAF9F6] border border-dark/5 rounded-md text-sm" value={formData.packageCategory} onChange={e => handlePackageChange(e.target.value, formData.packageTitle)}>
+                          {pricingCategories.map(c => <option key={c.id} value={c.id}>{c.label}</option>)}
+                        </select>
+                      </div>
+                      <div className="flex flex-col space-y-1.5">
+                        <label className="text-[10px] font-black text-dark/30 uppercase tracking-widest">Package Tier</label>
+                        <select className="px-4 py-2.5 bg-[#FAF9F6] border border-dark/5 rounded-md text-sm" value={formData.packageTitle} onChange={e => handlePackageChange(formData.packageCategory, e.target.value)}>
+                          {pricingCategories.find(c => c.id === formData.packageCategory)?.packages.map(p => <option key={p.title} value={p.title}>{p.title}</option>)}
+                        </select>
+                      </div>
+
+                      <div className="flex flex-col space-y-1.5"><label className="text-[10px] font-black text-dark/30 uppercase tracking-widest">Event Date</label><input required type="datetime-local" className="px-4 py-2.5 bg-[#FAF9F6] border border-dark/5 rounded-md focus:outline-none focus:border-gold text-sm" value={formData.eventDate} onChange={e => setFormData({...formData, eventDate: e.target.value})} /></div>
                       <div className="flex flex-col space-y-1.5"><label className="text-[10px] font-black text-dark/30 uppercase tracking-widest">Location</label><input required className="px-4 py-2.5 bg-[#FAF9F6] border border-dark/5 rounded-md focus:outline-none focus:border-gold text-sm" value={formData.location} onChange={e => setFormData({...formData, location: e.target.value})} /></div>
-                      <div className="flex flex-col space-y-1.5"><label className="text-[10px] font-black text-dark/30 uppercase tracking-widest">Amount (₹)</label><input required type="number" min="1" className="px-4 py-2.5 border-2 border-dark/10 rounded-md focus:border-gold text-sm font-bold" value={formData.amount} onChange={e => handleNumChange('amount', e.target.value)} /></div>
-                      <div className="flex flex-col space-y-1.5"><label className="text-[10px] font-black text-dark/30 uppercase tracking-widest">Advance (₹)</label><input type="number" min="0" className="px-4 py-2.5 border-2 border-emerald-100 rounded-md focus:border-emerald-500 text-sm font-bold text-emerald-600" value={formData.advancePaid} onChange={e => handleNumChange('advancePaid', e.target.value)} /></div>
+                      
+                      <div className="flex flex-col space-y-1.5"><label className="text-[10px] font-black text-dark/30 uppercase tracking-widest">Total Amount (₹)</label><input required type="number" min="1" className="px-4 py-2.5 border-2 border-dark/10 rounded-md focus:border-gold text-sm font-bold" value={formData.amount} onChange={e => handleNumChange('amount', e.target.value)} /></div>
+                      <div className="flex flex-col space-y-1.5"><label className="text-[10px] font-black text-dark/30 uppercase tracking-widest">Advance Paid (₹)</label><input type="number" min="0" className="px-4 py-2.5 border-2 border-emerald-100 rounded-md focus:border-emerald-500 text-sm font-bold text-emerald-600" value={formData.advancePaid} onChange={e => handleNumChange('advancePaid', e.target.value)} /></div>
                    </div>
                    <button type="submit" className="w-full py-4 bg-dark text-white text-[12px] font-black uppercase tracking-[0.3em] rounded-lg hover:bg-gold transition-all">Confirm Offline Booking</button>
                 </form>
+             </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* Details Modal */}
+      <AnimatePresence>
+        {selectedBookingDetails && (
+          <div className="fixed inset-0 z-[150] flex items-center justify-center p-4 bg-dark/80 backdrop-blur-md">
+             <motion.div initial={{opacity:0, y:20}} animate={{opacity:1, y:0}} exit={{opacity:0, y:20}} className="bg-white w-full max-w-2xl rounded-3xl shadow-2xl p-10 overflow-hidden flex flex-col max-h-[90vh]">
+                <div className="flex justify-between items-center mb-8 border-b border-dark/5 pb-4">
+                  <div className="text-left">
+                    <p className="text-[10px] font-black text-gold uppercase tracking-[0.3em] mb-1">{selectedBookingDetails.eventType}</p>
+                    <h2 className="text-2xl font-cinzel font-bold text-dark">{selectedBookingDetails.clientName}</h2>
+                  </div>
+                  <button onClick={() => setSelectedBookingDetails(null)} className="p-2 text-dark/20 hover:text-red-500 transition-colors"><XCircle size={24} /></button>
+                </div>
+
+                <div className="flex-1 overflow-y-auto space-y-10 pr-4">
+                  <div className="grid grid-cols-2 gap-10 text-left">
+                    <div className="space-y-1">
+                      <p className="text-[9px] font-black text-dark/30 uppercase tracking-widest">Package Features</p>
+                      <ul className="space-y-2">
+                        {selectedBookingDetails.packageFeatures?.map((f: string, i: number) => (
+                          <li key={i} className="text-xs text-dark/70 flex items-start">
+                            <Check size={10} className="mr-2 mt-1 text-emerald-500 shrink-0" /> {f}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                    <div className="space-y-6">
+                      <div className="space-y-2">
+                        <p className="text-[9px] font-black text-dark/30 uppercase tracking-widest">Premium Upgrades</p>
+                        <div className="flex flex-wrap gap-2">
+                          {selectedBookingDetails.includeBothSide && <span className="px-3 py-1 bg-gold/10 text-gold text-[8px] font-black uppercase rounded-full">Both Side Coverage</span>}
+                          {selectedBookingDetails.includeReel && <span className="px-3 py-1 bg-[#FF2D55]/10 text-[#FF2D55] text-[8px] font-black uppercase rounded-full">Cinematic Reel</span>}
+                        </div>
+                      </div>
+                      <div className="space-y-1">
+                         <p className="text-[9px] font-black text-dark/30 uppercase tracking-widest">Total Transaction</p>
+                         <p className="text-2xl font-cinzel font-bold text-dark">₹{Number(selectedBookingDetails.amount).toLocaleString()}</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {selectedBookingDetails.installments?.length > 0 && (
+                    <div className="space-y-4">
+                      <p className="text-[10px] font-black text-dark/30 uppercase tracking-[0.2em] border-b border-dark/5 pb-2 text-left">Payment Installments</p>
+                      <table className="w-full text-left text-xs">
+                        <thead>
+                          <tr className="text-dark/40 border-b border-dark/5 italic">
+                            <th className="py-2 font-medium">Date</th>
+                            <th className="py-2 font-medium">Method</th>
+                            <th className="py-2 font-medium text-right">Amount</th>
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-dark/5">
+                          {selectedBookingDetails.installments.map((inst: any, i: number) => (
+                            <tr key={inst.id}>
+                              <td className="py-3">{new Date(inst.date).toLocaleDateString()}</td>
+                              <td className="py-3 uppercase font-black text-[9px] tracking-widest">{inst.method}</td>
+                              <td className="py-3 text-right font-bold">₹{Number(inst.amount).toLocaleString()}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                        <tfoot>
+                          <tr className="border-t-2 border-dark">
+                            <td colSpan={2} className="py-4 font-black uppercase tracking-widest">Total Received</td>
+                            <td className="py-4 text-right font-black text-emerald-600 text-sm">₹{Number(selectedBookingDetails.totalPaid).toLocaleString()}</td>
+                          </tr>
+                        </tfoot>
+                      </table>
+                    </div>
+                  )}
+
+                  {selectedBookingDetails.message && (
+                    <div className="p-6 bg-[#FAF9F6] rounded-2xl border border-dark/5 text-left">
+                      <p className="text-[9px] font-black text-dark/30 uppercase tracking-widest mb-2">Message/Notes</p>
+                      <p className="text-sm italic text-dark/60">"{selectedBookingDetails.message}"</p>
+                    </div>
+                  )}
+                </div>
+                
+                <div className="mt-8 pt-6 border-t border-dark/5 flex justify-end">
+                  <button onClick={() => setSelectedBookingDetails(null)} className="px-8 py-3 bg-dark text-white text-[10px] font-black uppercase tracking-widest rounded-xl hover:bg-gold transition-all">Close Details</button>
+                </div>
              </motion.div>
           </div>
         )}

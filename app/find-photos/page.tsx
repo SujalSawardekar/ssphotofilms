@@ -43,6 +43,15 @@ const FindPhotosPage = () => {
   const [currentScanIndex, setCurrentScanIndex] = useState(0);
   const [isFinishingScan, setIsFinishingScan] = useState(false);
   const [selectedPreviewImage, setSelectedPreviewImage] = useState<string | null>(null);
+  const [apiBaseUrl, setApiBaseUrl] = useState('http://127.0.0.1:5001');
+
+  useEffect(() => {
+    // Dynamically set API base URL based on the current hostname
+    if (typeof window !== 'undefined') {
+      const hostname = window.location.hostname;
+      setApiBaseUrl(`http://${hostname}:5001`);
+    }
+  }, []);
 
   useEffect(() => {
     getEvents(true).then(data => {
@@ -85,7 +94,7 @@ const FindPhotosPage = () => {
       formData.append('album_id', selectedEventId);
       formData.append('face_image', imageFile);
 
-      const res = await fetch('http://127.0.0.1:5001/api/v1/shortlist', {
+      const res = await fetch(`${apiBaseUrl}/api/v1/shortlist`, {
         method: 'POST',
         body: formData
       });
@@ -124,7 +133,7 @@ const FindPhotosPage = () => {
     
     setIsDownloading(true);
     try {
-      const res = await fetch('http://127.0.0.1:5001/download_zip', {
+      const res = await fetch(`${apiBaseUrl}/download_zip`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -157,7 +166,7 @@ const FindPhotosPage = () => {
     if (!selectedEventId) return;
     
     try {
-      const res = await fetch(`http://127.0.0.1:5001/serve_image/${selectedEventId}/${filename}`);
+      const res = await fetch(`${apiBaseUrl}/serve_image/${selectedEventId}/${filename}`);
       if (res.ok) {
         const blob = await res.blob();
         const url = window.URL.createObjectURL(blob);
@@ -412,7 +421,7 @@ const FindPhotosPage = () => {
                            className="group relative aspect-[4/5] bg-dark/5 overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-700"
                          >
                             <img 
-                              src={`http://127.0.0.1:5001/serve_image/${selectedEventId}/${encodeURIComponent(filename)}`} 
+                              src={`${apiBaseUrl}/serve_image/${selectedEventId}/${encodeURIComponent(filename)}`} 
                               alt="Result" 
                               className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
                             />
@@ -502,7 +511,7 @@ const FindPhotosPage = () => {
               {/* Preview Image */}
               <div className="relative w-full h-full rounded-none overflow-hidden shadow-2xl ring-1 ring-white/10 bg-dark/50">
                 <img 
-                  src={`http://127.0.0.1:5001/serve_image/${selectedEventId}/${encodeURIComponent(selectedPreviewImage)}`} 
+                  src={`${apiBaseUrl}/serve_image/${selectedEventId}/${encodeURIComponent(selectedPreviewImage)}`} 
                   alt="Full Preview" 
                   className="w-full h-full object-contain"
                 />

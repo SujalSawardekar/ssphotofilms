@@ -63,6 +63,11 @@ export default function RegisterPage() {
       return;
     }
 
+    if (formData.phone.length !== 10) {
+      setError("Please enter a valid 10-digit mobile number.");
+      return;
+    }
+
     setLoading(true);
 
     try {
@@ -160,10 +165,15 @@ export default function RegisterPage() {
                 <input
                   type="tel"
                   required
-                  placeholder="+91 00000 00000"
+                  placeholder="10 Digit Mobile Number"
                   className="w-full bg-white/50 border border-white/60 focus:border-dark/20 px-6 py-3 text-sm font-bold shadow-sm outline-none transition-all placeholder:text-dark/10 rounded-xl backdrop-blur-md"
                   value={formData.phone}
-                  onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                  onChange={(e) => {
+                    const value = e.target.value.replace(/\D/g, '');
+                    if (value.length <= 10) {
+                      setFormData({ ...formData, phone: value });
+                    }
+                  }}
                 />
               </div>
               <div className="space-y-1.5">

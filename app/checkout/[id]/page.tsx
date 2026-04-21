@@ -149,14 +149,25 @@ export default function CheckoutPage() {
                </div>
 
                <div className="space-y-6">
-                  <p className="text-xs font-bold text-secondary uppercase tracking-widest italic decoration-gold underline-offset-8 underline">Photography Only</p>
+                  <p className="text-xs font-bold text-secondary uppercase tracking-widest italic decoration-gold underline-offset-8 underline">
+                    {booking.includeBothSide ? "Full Both Side Coverage" : "Photography Only"}
+                  </p>
                   <ul className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-3">
-                    {booking.packageFeatures.map((f: string, i: number) => (
-                      <li key={i} className="flex items-start gap-4">
-                        <div className="w-1 h-1 bg-gold mt-2 rounded-full shrink-0" />
-                        <span className="text-[11px] font-medium text-dark/70 leading-relaxed uppercase tracking-tight">{f}</span>
-                      </li>
-                    ))}
+                    {booking.packageFeatures
+                      .filter((f: string) => {
+                        const isBothSide = f.toLowerCase().includes("both side");
+                        const isReel = f.toLowerCase().includes("reel");
+                        // Only show if it matches the boolean flag or if it's NOT an addon string
+                        if (isBothSide) return booking.includeBothSide;
+                        if (isReel) return booking.includeReel;
+                        return true;
+                      })
+                      .map((f: string, i: number) => (
+                        <li key={i} className="flex items-start gap-4">
+                          <div className="w-1 h-1 bg-gold mt-2 rounded-full shrink-0" />
+                          <span className="text-[11px] font-medium text-dark/70 leading-relaxed uppercase tracking-tight">{f}</span>
+                        </li>
+                      ))}
                   </ul>
                   <div className="pt-6 border-t border-dark/5">
                     <p className="text-[9px] font-black text-dark/30 uppercase tracking-[0.2em] leading-relaxed">1 Photographer with Prime lens and technical lighting Setup.</p>
@@ -179,6 +190,20 @@ export default function CheckoutPage() {
                         <div className="flex justify-between items-center text-[11px] font-bold text-[#FF2D55]">
                           <span>Traveling Charges</span>
                           <span>+ ₹{booking.travelCharges.toLocaleString('en-IN')}</span>
+                        </div>
+                      )}
+                      
+                      {booking.includeReel && (
+                        <div className="flex justify-between items-center text-[11px] font-bold text-[#FF2D55]">
+                          <span>Cinematic Reel Add-on</span>
+                          <span>+ Included</span>
+                        </div>
+                      )}
+
+                      {booking.includeBothSide && (
+                        <div className="flex justify-between items-center text-[11px] font-bold text-gold">
+                          <span>Both Side Coverage Upgrade</span>
+                          <span>+ Included</span>
                         </div>
                       )}
                     </div>

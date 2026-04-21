@@ -13,7 +13,7 @@ start "SS Frontend" cmd /k "cd /d "%PROJECT_ROOT%" && npm run dev"
 
 echo.
 echo [2/2] Starting AI Engine (Python) on http://localhost:5001...
-start "SS AI Engine" cmd /k "cd /d "%PROJECT_ROOT%\face_recognition_engine" && ..\.venv\Scripts\python app.py"
+start "SS AI Engine" cmd /k "cd /d "%PROJECT_ROOT%\face_recognition_engine" && ".\.venv_ai\Scripts\python.exe" app.py"
 
 echo.
 echo SUCCESS: Both components are starting in separate windows.

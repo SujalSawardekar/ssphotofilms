@@ -1,10 +1,11 @@
 import React from 'react';
+import { mockStats } from '@/lib/mockData';
 
 const StatsBar = () => {
   const stats = [
-    { value: '500+', label: 'Events Covered' },
-    { value: '50,000+', label: 'Photos Delivered' },
-    { value: '8 Years', label: 'Storytelling' },
+    { value: `${mockStats.totalBookings}+`, label: 'Events Covered' },
+    { value: `${mockStats.yearexp.toLocaleString()}+`, label: 'Years Experience' },
+    { value: `${mockStats.eventsThisMonth}+`, label: 'Successfull Stories' },
   ];
 
   return (
@@ -19,7 +20,7 @@ const StatsBar = () => {
               {stat.label}
             </p>
             {idx < stats.length - 1 && (
-               <div className="hidden md:block absolute right-[-10px] top-1/2 -translate-y-1/2 w-[1px] h-16 bg-gold/20" />
+              <div className="hidden md:block absolute right-[-10px] top-1/2 -translate-y-1/2 w-[1px] h-16 bg-gold/20" />
             )}
           </div>
         ))}

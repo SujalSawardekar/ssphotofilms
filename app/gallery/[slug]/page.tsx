@@ -46,7 +46,7 @@ const StoryDetailPage = ({ params }: StoryPageProps) => {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="text-white text-5xl md:text-7xl lg:text-8xl font-cinzel font-bold leading-tight uppercase mb-4"
+            className="text-white text-xl md:text-3xl lg:text-5xl font-cinzel font-bold leading-tight uppercase mb-4 whitespace-nowrap overflow-hidden text-ellipsis"
           >
             {story.names}
           </motion.h1>
@@ -54,7 +54,7 @@ const StoryDetailPage = ({ params }: StoryPageProps) => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.4 }}
-            className="text-gold font-cinzel italic text-2xl md:text-3xl tracking-widest opacity-80"
+            className="text-gold font-cinzel italic text-base md:text-lg lg:text-xl tracking-widest opacity-80 whitespace-nowrap overflow-hidden text-ellipsis"
           >
             {story.title}
           </motion.p>

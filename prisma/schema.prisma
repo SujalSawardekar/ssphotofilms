@@ -1,6 +1,5 @@
 generator client {
   provider = "prisma-client-js"
-  binaryTargets = ["native", "windows", "debian-openssl-1.1.x", "rhel-openssl-1.0.x"]
 }
 
 datasource db {
@@ -52,6 +51,8 @@ model Booking {
   photographerName   String?
   travelCharges      Int                  @default(0)
   packageFeatures    String[]
+  includeBothSide    Boolean              @default(false)
+  includeReel        Boolean              @default(false)
   user               User?                @relation(fields: [userId], references: [id])
   installments       PaymentInstallment[]
 }

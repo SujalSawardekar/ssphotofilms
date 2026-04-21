@@ -9,6 +9,7 @@ import Footer from '@/components/Footer';
 import ClientSidebar from '@/components/ClientSidebar';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
+import InvoiceModal from '@/components/InvoiceModal';
 
 const ClientDashboard = () => {
   const { user } = useAuth();
@@ -27,6 +28,7 @@ const ClientDashboard = () => {
     newPassword: '',
     confirmPassword: ''
   });
+  const [selectedInvoiceBooking, setSelectedInvoiceBooking] = useState<Booking | null>(null);
 
   const clientName = user?.name || "";
   const clientEmail = user?.email || "";
@@ -202,6 +204,15 @@ const ClientDashboard = () => {
                         <p className="text-xs font-bold uppercase tracking-widest text-dark">Assigned: {(booking as any).photographerName}</p>
                       </div>
                     )}
+
+                    <div className="flex items-center gap-3 mt-4 no-print">
+                      <button 
+                        onClick={() => setSelectedInvoiceBooking(booking)}
+                        className="px-6 py-2.5 bg-dark text-gold text-[10px] font-bold uppercase tracking-widest rounded-lg hover:bg-gold hover:text-dark transition-all shadow-lg shadow-dark/10"
+                      >
+                        View Invoice
+                      </button>
+                    </div>
                   </div>
                 </div>
               ))}
@@ -473,6 +484,16 @@ const ClientDashboard = () => {
               </div>
             </motion.div>
           </div>
+        )}
+      </AnimatePresence>
+
+      {/* Invoice Modal */}
+      <AnimatePresence>
+        {selectedInvoiceBooking && (
+          <InvoiceModal 
+            booking={selectedInvoiceBooking} 
+            onClose={() => setSelectedInvoiceBooking(null)} 
+          />
         )}
       </AnimatePresence>
     </div>

@@ -10,7 +10,8 @@ import { isValidFutureDate } from '@/lib/utils';
 import { useAuth } from '@/lib/authContext';
 import { motion, AnimatePresence } from 'framer-motion';
 import { indianCities, City } from '@/lib/indianCities';
-import { Search, MapPin, ChevronDown, CheckCircle2, AlertCircle, ArrowRight } from 'lucide-react';
+import { Search, MapPin, ChevronDown, CheckCircle2, AlertCircle, ArrowRight, LayoutDashboard, Home, Box, ShieldCheck } from 'lucide-react';
+import { parsePrice } from '@/lib/utils';
 
 function BookingFormContent() {
   const router = useRouter();
@@ -21,10 +22,14 @@ function BookingFormContent() {
 
   const preselectedEvent = searchParams.get('event') || 'Wedding';
   const preselectedPackageTitle = searchParams.get('package') || 'BASIC SHOOT';
+  const initialBothSide = searchParams.get('bothSide') === 'true';
+  const initialReel = searchParams.get('reel') === 'true';
 
   // Find the matching package data
   const categoryData = pricingCategories.find(c => c.label.toLowerCase() === preselectedEvent.toLowerCase()) || pricingCategories[0];
   const packageData = categoryData.packages.find(p => p.title.toLowerCase() === preselectedPackageTitle.toLowerCase()) || categoryData.packages[0];
+
+  const [hasMounted, setHasMounted] = useState(false);
 
   const [formData, setFormData] = useState({
     firstName: '',
@@ -42,6 +47,8 @@ function BookingFormContent() {
   
   // Pricing Logic States
   const [isPriceChecked, setIsPriceChecked] = useState(false);
+  const [isBothSide, setIsBothSide] = useState(initialBothSide);
+  const [isReel, setIsReel] = useState(initialReel);
   const [surcharge, setSurcharge] = useState(0);
   const [loading, setLoading] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
@@ -62,6 +69,7 @@ function BookingFormContent() {
   };
 
   useEffect(() => {
+    setHasMounted(true);
     // Load Razorpay SDK
     const script = document.createElement('script');
     script.src = 'https://checkout.razorpay.com/v1/checkout.js';
@@ -122,7 +130,19 @@ function BookingFormContent() {
     }, 1000);
   };
 
-  const currentTotal = packageData.discountPrice + surcharge;
+  const calculateCurrentTotal = () => {
+    const base = parsePrice(packageData.discountPrice);
+    const upgrade = (isBothSide && packageData.bothSidePrice) ? (parsePrice(packageData.bothSidePrice) - base) : 0;
+    
+    // Reel price is ₹1,500 as requested by the user, or as defined in packageData
+    const reelPriceVal = packageData.reelPrice ? parsePrice(packageData.reelPrice) : 1500;
+    const reel = isReel ? reelPriceVal : 0;
+    
+    // Explicitly add numbers to avoid string concatenation "0" bug
+    return Number(base) + Number(upgrade) + Number(reel) + Number(surcharge);
+  };
+
+  const currentTotal = calculateCurrentTotal();
 
   const handleProceedToPay = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -138,6 +158,11 @@ function BookingFormContent() {
 
     if (!formData.city) {
       showNotification("Please select your city to continue.", "error");
+      return;
+    }
+
+    if (formData.phone.length !== 10) {
+      showNotification("Please enter a valid 10-digit mobile number.", "error");
       return;
     }
 
@@ -158,7 +183,9 @@ function BookingFormContent() {
         travelCharges: surcharge,
         packageType: packageData.title,
         packageFeatures: packageData.features,
-        message: `City: ${formData.city}`,
+        includeBothSide: isBothSide,
+        includeReel: isReel,
+        message: `City: ${formData.city}${isBothSide ? ' | Both Side Included' : ''}${isReel ? ' | Reel Add-on Included' : ''}`,
         paymentMethod: "Razorpay"
       };
 
@@ -173,6 +200,17 @@ function BookingFormContent() {
       setLoading(false);
     }
   };
+
+  if (!hasMounted) {
+    return (
+      <div className="w-full flex items-center justify-center min-h-screen bg-white font-cinzel">
+        <div className="flex flex-col items-center gap-4">
+          <div className="w-12 h-12 border-4 border-dark/10 border-t-gold rounded-full animate-spin" />
+          <p className="text-[11px] font-black tracking-[0.3em] uppercase opacity-40">Loading Premium Experience...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="w-full flex flex-col items-center justify-start bg-white min-h-screen pt-[160px]">
@@ -207,23 +245,93 @@ function BookingFormContent() {
                        <h2 className="text-4xl font-cinzel font-bold text-dark">{packageData.title}<span className="text-gold">.</span></h2>
                     </div>
 
-                    <div className="space-y-4">
-                       <p className="text-xs font-bold text-secondary uppercase tracking-widest italic decoration-gold underline-offset-4 underline">Photography Only</p>
-                       <ul className="space-y-3">
-                          {packageData.features.map((f, i) => (
-                            <li key={i} className="flex items-start gap-4">
-                               <div className="w-1 h-1 bg-dark mt-2 rounded-full shrink-0" />
-                               <span className="text-sm font-medium text-dark/70 leading-relaxed">{f}</span>
-                            </li>
-                          ))}
-                       </ul>
+                     <div className="space-y-4">
+                        <div className="flex items-center justify-between">
+                          <p className="text-xs font-bold text-secondary uppercase tracking-widest italic decoration-gold underline-offset-4 underline">
+                            {isBothSide ? "Full Both Side Coverage" : "Photography Only"}
+                          </p>
+                        </div>
+                        <ul className="space-y-3">
+                           {packageData.features
+                             .filter(f => !f.toLowerCase().includes("both side") && !f.toLowerCase().includes("reel"))
+                             .map((f, i) => (
+                               <li key={i} className="flex items-start gap-4 transition-all duration-300">
+                                  <div className="mt-2 shrink-0 text-dark/40">
+                                     <div className="w-1 h-1 bg-current rounded-full" />
+                                  </div>
+                                  <div className="flex flex-col">
+                                    <span className="text-sm leading-relaxed font-medium text-dark/70">
+                                      {f}
+                                    </span>
+                                  </div>
+                               </li>
+                            ))}
+                        </ul>
+
+                        {/* Dedicated Add-ons Section - Show ONLY if keywords exist in original features */}
+                        {(packageData.features.some(f => f.toLowerCase().includes("both side")) || 
+                          packageData.features.some(f => f.toLowerCase().includes("reel"))) && (
+                          <div className="mt-10 pt-10 border-t border-dark/5 space-y-6">
+                             <p className="text-[10px] font-black text-secondary uppercase tracking-[0.3em]">Premium Upgrades</p>
+                             <div className="grid grid-cols-1 gap-4">
+                                {/* Both Side Toggle */}
+                                {packageData.features.some(f => f.toLowerCase().includes("both side")) && (
+                                  <div 
+                                    onClick={() => setIsBothSide(!isBothSide)}
+                                    className={`p-4 rounded-2xl border transition-all cursor-pointer flex items-center justify-between ${isBothSide ? 'border-gold bg-gold/5 shadow-lg shadow-gold/10' : 'border-dark/5 bg-white hover:border-gold/30'}`}
+                                  >
+                                     <div className="flex items-center gap-4">
+                                        <div className={`p-2 rounded-lg ${isBothSide ? 'bg-gold text-white' : 'bg-[#F9F9F9] text-dark/30'}`}>
+                                           <Box size={18} />
+                                        </div>
+                                        <div>
+                                           <p className="text-sm font-bold text-dark">Both Side Coverage</p>
+                                           <p className="text-[9px] font-bold text-secondary uppercase tracking-widest mt-0.5">Recommended for Weddings</p>
+                                        </div>
+                                     </div>
+                                     <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all ${isBothSide ? 'bg-gold border-gold text-white' : 'border-dark/10'}`}>
+                                        {isBothSide && <CheckCircle2 size={12} />}
+                                     </div>
+                                  </div>
+                                )}
+
+                                {/* Reel Toggle */}
+                                {packageData.features.some(f => f.toLowerCase().includes("reel")) && (
+                                  <div 
+                                    onClick={() => setIsReel(!isReel)}
+                                    className={`p-4 rounded-2xl border transition-all cursor-pointer flex items-center justify-between ${isReel ? 'border-[#FF2D55] bg-[#FF2D55]/5 shadow-lg shadow-red-500/10' : 'border-dark/5 bg-white hover:border-red-500/30'}`}
+                                  >
+                                     <div className="flex items-center gap-4">
+                                        <div className={`p-2 rounded-lg ${isReel ? 'bg-[#FF2D55] text-white' : 'bg-[#F9F9F9] text-dark/30'}`}>
+                                           <ShieldCheck size={18} />
+                                        </div>
+                                        <div>
+                                           <p className="text-sm font-bold text-dark">Cinematic Reel (Add-on)</p>
+                                           <p className="text-[9px] font-bold text-secondary uppercase tracking-widest mt-0.5">₹1,500 | High Impact Edit</p>
+                                        </div>
+                                     </div>
+                                     <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all ${isReel ? 'bg-[#FF2D55] border-[#FF2D55] text-white' : 'border-dark/10'}`}>
+                                        {isReel && <CheckCircle2 size={12} />}
+                                     </div>
+                                  </div>
+                                )}
+                             </div>
+                          </div>
+                        )}
                      </div>
 
                     <div className="pt-6 border-t border-dark/5 space-y-1">
                        <p className="text-xs font-bold text-[#FF2D55] uppercase tracking-widest">Starts at:</p>
                        <div className="flex items-baseline space-x-3">
-                          <span className="text-2xl font-cinzel font-bold text-dark/20 line-through Decoration-dark/10">₹{packageData.originalPrice}/-</span>
-                          <span className="text-4xl font-cinzel font-bold text-dark">₹{currentTotal}/-</span>
+                          <span className="text-2xl font-cinzel font-bold text-dark/20 line-through decoration-dark/10">
+                            ₹{(() => {
+                              const baseOrig = parsePrice(packageData.originalPrice);
+                              const upgrade = (isBothSide && packageData.bothSidePrice) ? (parsePrice(packageData.bothSidePrice) - parsePrice(packageData.discountPrice)) : 0;
+                              const reelCharge = (isReel && packageData.reelPrice) ? parsePrice(packageData.reelPrice) : 0;
+                              return (baseOrig + upgrade + reelCharge).toLocaleString('en-IN');
+                            })()}/-
+                          </span>
+                          <span className="text-4xl font-cinzel font-bold text-dark">₹{currentTotal.toLocaleString('en-IN')}/-</span>
                        </div>
                     </div>
 
@@ -322,8 +430,22 @@ function BookingFormContent() {
                       {/* Phone & Date Row */}
                       <div className="space-y-4">
                          <label className="text-2xl font-cinzel font-bold text-dark">Your Phone Number</label>
-                         <input required type="tel" value={formData.phone} onChange={(e) => setFormData({...formData, phone: e.target.value})} className="w-full px-6 py-4.5 rounded-xl border border-dark/10 focus:border-dark outline-none bg-[#FAF9F6] text-dark font-medium transition-all" placeholder="+91 XXXXX XXXXX" />
-                         <p className="text-[9px] font-black text-secondary/40 uppercase tracking-widest ml-1">We prefer Whatsapp !</p>
+                         <input 
+                            required 
+                            type="tel" 
+                            value={formData.phone} 
+                            onChange={(e) => {
+                               const value = e.target.value.replace(/\D/g, '');
+                               if (value.length <= 10) {
+                                  setFormData({...formData, phone: value});
+                               }
+                            }} 
+                            className="w-full px-6 py-4.5 rounded-xl border border-dark/10 focus:border-dark outline-none bg-[#FAF9F6] text-dark font-medium transition-all" 
+                            placeholder="10 Digit Mobile Number" 
+                         />
+                         <p className="text-[9px] font-black text-secondary/40 uppercase tracking-widest ml-1">
+                            {formData.phone.length === 10 ? "✓ 10 Digits Entered" : "We prefer Whatsapp !"}
+                         </p>
                       </div>
                       <div className="space-y-4">
                          <label className="text-2xl font-cinzel font-bold text-dark">Time For Shoot</label>
@@ -437,55 +559,55 @@ function BookingFormContent() {
                       
                       <div className="space-y-6">
                         <section>
-                          <h4 className="font-bold text-dark uppercase tracking-widest text-[10px] mb-2">1. Services</h4>
+                          <h4 className="font-bold text-dark uppercase tracking-widest text-sm mb-2">1. Services</h4>
                           <p>SS Photo & Films provides photography and videography services including pre-wedding shoots, weddings, events, and cinematic storytelling. We commit to delivering high-quality visual content and professional conduct.</p>
                         </section>
                         <section>
-                          <h4 className="font-bold text-dark uppercase tracking-widest text-[10px] mb-2">2. Booking & Payment</h4>
+                          <h4 className="font-bold text-dark uppercase tracking-widest text-sm mb-2">2. Booking & Payment</h4>
                           <p>A non-refundable booking amount (advance) is required to confirm your slot. The remaining amount must be paid before the shoot or as per the agreed schedule. ⚠️ No full payment = No final delivery.</p>
                         </section>
                         <section>
-                          <h4 className="font-bold text-dark uppercase tracking-widest text-[10px] mb-2">3. Cancellation & Rescheduling</h4>
+                          <h4 className="font-bold text-dark uppercase tracking-widest text-sm mb-2">3. Cancellation & Rescheduling</h4>
                           <p>Cancellation by client: Advance is non-refundable. Rescheduling is allowed only if informed at least 48 hours prior and is subject to availability.</p>
                         </section>
                         <section>
-                          <h4 className="font-bold text-dark uppercase tracking-widest text-[10px] mb-2">4. Delivery & Turnaround</h4>
+                          <h4 className="font-bold text-dark uppercase tracking-widest text-sm mb-2">4. Delivery & Turnaround</h4>
                           <p>Only selected & edited photos/videos will be delivered. Raw files are not included by default and are available at extra cost if agreed.</p>
                         </section>
                         <section>
-                          <h4 className="font-bold text-dark uppercase tracking-widest text-[10px] mb-2">5. Copyright & Usage</h4>
+                          <h4 className="font-bold text-dark uppercase tracking-widest text-sm mb-2">5. Copyright & Usage</h4>
                           <p>All content is owned by SS Photo & Films. Client receives a personal usage license only. You cannot sell or modify content without permission.</p>
                         </section>
                         <section>
-                          <h4 className="font-bold text-dark uppercase tracking-widest text-[10px] mb-2">6. Promotional Usage</h4>
+                          <h4 className="font-bold text-dark uppercase tracking-widest text-sm mb-2">6. Promotional Usage</h4>
                           <p>SS Photo & Films reserves the right to use photos/videos for portfolio, website, and social media promotions. If you don’t want this, you must inform before the shoot.</p>
                         </section>
                         <section>
-                          <h4 className="font-bold text-dark uppercase tracking-widest text-[10px] mb-2">7. Liability</h4>
+                          <h4 className="font-bold text-dark uppercase tracking-widest text-sm mb-2">7. Liability</h4>
                           <p>We are not responsible for weather issues, location restrictions, or client delays. In case of technical failure, liability is limited to a refund of amount paid.</p>
                         </section>
                         <section>
-                          <h4 className="font-bold text-dark uppercase tracking-widest text-[10px] mb-2">8. Client Responsibility</h4>
+                          <h4 className="font-bold text-dark uppercase tracking-widest text-sm mb-2">8. Client Responsibility</h4>
                           <p>You are responsible for venue permissions and safety of the team at the location. Any damage caused by client/guests is the client's liability.</p>
                         </section>
                         <section>
-                          <h4 className="font-bold text-dark uppercase tracking-widest text-[10px] mb-2">9. External Payments</h4>
+                          <h4 className="font-bold text-dark uppercase tracking-widest text-sm mb-2">9. External Payments</h4>
                           <p>No direct payments to team members. All payments must go through official SS Photo & Films channels. Violation counts as a breach of agreement.</p>
                         </section>
                         <section>
-                          <h4 className="font-bold text-dark uppercase tracking-widest text-[10px] mb-2">10. Force Majeure</h4>
+                          <h4 className="font-bold text-dark uppercase tracking-widest text-sm mb-2">10. Force Majeure</h4>
                           <p>We are not liable for delays or cancellations due to natural disasters, government restrictions, or uncontrollable accidents.</p>
                         </section>
                         <section>
-                          <h4 className="font-bold text-dark uppercase tracking-widest text-[10px] mb-2">11. Communication</h4>
+                          <h4 className="font-bold text-dark uppercase tracking-widest text-sm mb-2">11. Communication</h4>
                           <p>Official communication happens via WhatsApp, Call, or Email. Clients must stay reachable.</p>
                         </section>
                         <section>
-                          <h4 className="font-bold text-dark uppercase tracking-widest text-[10px] mb-2">12. Governing Law</h4>
+                          <h4 className="font-bold text-dark uppercase tracking-widest text-sm mb-2">12. Governing Law</h4>
                           <p>These terms are governed by the laws of India (Maharashtra jurisdiction).</p>
                         </section>
                         <section>
-                          <h4 className="font-bold text-dark uppercase tracking-widest text-[10px] mb-2">13. Acceptance</h4>
+                          <h4 className="font-bold text-dark uppercase tracking-widest text-sm mb-2">13. Acceptance</h4>
                           <p>By booking our services, you confirm that you have read, understood, and agreed to all terms.</p>
                         </section>
                       </div>
@@ -515,43 +637,43 @@ function BookingFormContent() {
                       
                       <div className="space-y-6">
                         <section>
-                          <h4 className="font-bold text-dark uppercase tracking-widest text-[10px] mb-2">1. Information We Collect</h4>
+                          <h4 className="font-bold text-dark uppercase tracking-widest text-sm mb-2">1. Information We Collect</h4>
                           <p>Personal info (Name, Phone, Email, Location) and Project info (Event details, preferences). We also store the media content captured during shoots.</p>
                         </section>
                         <section>
-                          <h4 className="font-bold text-dark uppercase tracking-widest text-[10px] mb-2">2. How We Use It</h4>
+                          <h4 className="font-bold text-dark uppercase tracking-widest text-sm mb-2">2. How We Use It</h4>
                           <p>To manage bookings, communicate, deliver content, and improve our services.</p>
                         </section>
                         <section>
-                          <h4 className="font-bold text-dark uppercase tracking-widest text-[10px] mb-2">3. Communication</h4>
+                          <h4 className="font-bold text-dark uppercase tracking-widest text-sm mb-2">3. Communication</h4>
                           <p>We may contact you via WhatsApp, Phone, or Email regarding your project.</p>
                         </section>
                         <section>
-                          <h4 className="font-bold text-dark uppercase tracking-widest text-[10px] mb-2">4. Media Usage</h4>
+                          <h4 className="font-bold text-dark uppercase tracking-widest text-sm mb-2">4. Media Usage</h4>
                           <p>Photos/videos may be used for portfolio/social media. If you don't want this, inform us before the shoot.</p>
                         </section>
                         <section>
-                          <h4 className="font-bold text-dark uppercase tracking-widest text-[10px] mb-2">5. Data Protection</h4>
+                          <h4 className="font-bold text-dark uppercase tracking-widest text-sm mb-2">5. Data Protection</h4>
                           <p>We take reasonable steps to protect data, but we are not liable for external breaches beyond our control.</p>
                         </section>
                         <section>
-                          <h4 className="font-bold text-dark uppercase tracking-widest text-[10px] mb-2">6. Sharing</h4>
+                          <h4 className="font-bold text-dark uppercase tracking-widest text-sm mb-2">6. Sharing</h4>
                           <p>We do not sell your data. Shared only with necessary team members or delivery platforms for project completion.</p>
                         </section>
                         <section>
-                          <h4 className="font-bold text-dark uppercase tracking-widest text-[10px] mb-2">7. Data Storage</h4>
+                          <h4 className="font-bold text-dark uppercase tracking-widest text-sm mb-2">7. Data Storage</h4>
                           <p>We store media digitally but do not guarantee permanent storage. Client must back up delivered files.</p>
                         </section>
                         <section>
-                          <h4 className="font-bold text-dark uppercase tracking-widest text-[10px] mb-2">8. Cookies</h4>
+                          <h4 className="font-bold text-dark uppercase tracking-widest text-sm mb-2">8. Cookies</h4>
                           <p>Basic cookies may be used for website functionality.</p>
                         </section>
                         <section>
-                          <h4 className="font-bold text-dark uppercase tracking-widest text-[10px] mb-2">9. Your Rights</h4>
+                          <h4 className="font-bold text-dark uppercase tracking-widest text-sm mb-2">9. Your Rights</h4>
                           <p>You can request access, correction, or deletion (subject to project completion).</p>
                         </section>
                         <section>
-                          <h4 className="font-bold text-dark uppercase tracking-widest text-[10px] mb-2">10. Updates</h4>
+                          <h4 className="font-bold text-dark uppercase tracking-widest text-sm mb-2">10. Updates</h4>
                           <p>We may update this policy. Continued use equals acceptance.</p>
                         </section>
                       </div>

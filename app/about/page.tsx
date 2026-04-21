@@ -4,6 +4,7 @@ import React from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { motion } from 'framer-motion';
+import Image from 'next/image';
 
 export default function AboutPage() {
   return (
@@ -13,10 +14,13 @@ export default function AboutPage() {
       {/* Hero Section — Full viewport height */}
       <section className="relative w-full h-screen flex items-center justify-center">
         <div className="absolute inset-0 z-0">
-          <img
-            src="/assets/prewedding/ssp02832.jpg"
+          <Image
+            src="/assets/about-hero-bg.jpg"
             alt="About SS Photo & Films"
+            fill
+            priority
             className="w-full h-full object-cover brightness-[0.5]"
+            sizes="100vw"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-dark/60 via-dark/20 to-dark/10" />
         </div>
@@ -66,14 +70,13 @@ export default function AboutPage() {
               </h2>
             </div>
             <div className="w-full md:w-1/2 overflow-hidden rounded shadow-xl" style={{ minHeight: '280px' }}>
-              <img
+              <Image
                 src="/assets/gallery-1.jpg"
                 alt="Indian Wedding Story"
+                width={800}
+                height={600}
                 className="w-full h-full object-cover object-center"
                 style={{ minHeight: '280px' }}
-                onError={(e) => {
-                  (e.target as HTMLImageElement).src = "https://images.unsplash.com/photo-1583939411023-14783179e581?q=80&w=1200";
-                }}
               />
             </div>
           </div>
@@ -89,13 +92,12 @@ export default function AboutPage() {
             viewport={{ once: true }}
             className="aspect-[3/4] w-full bg-dark/10 rounded overflow-hidden shadow-xl"
           >
-            <img
+            <Image
               src="/assets/about-photo.jpg"
               alt="Shreyas Sawardekar"
+              width={600}
+              height={800}
               className="w-full h-full object-cover"
-              onError={(e) => {
-                (e.target as HTMLImageElement).src = "https://images.unsplash.com/photo-1600486913747-55e5470d6f40?q=80&w=1000";
-              }}
             />
           </motion.div>
         </div>
@@ -142,14 +144,13 @@ export default function AboutPage() {
           </div>
           {/* Right: image matching full height of left column */}
           <div className="w-full md:w-1/2 overflow-hidden rounded shadow-xl" style={{ minHeight: '280px' }}>
-            <img
+            <Image
               src="/assets/studio.jpg"
               alt="SS Studio"
+              width={800}
+              height={600}
               className="w-full h-full object-cover"
               style={{ minHeight: '280px' }}
-              onError={(e) => {
-                (e.target as HTMLImageElement).src = "https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?q=80&w=1200";
-              }}
             />
           </div>
         </div>
@@ -159,10 +160,12 @@ export default function AboutPage() {
       {/* Section 7 — Our Process */}
       <section className="relative w-full py-20 px-6 text-center overflow-hidden">
         {/* Full bleed background image */}
-        <img
+        <Image
           src="/assets/wedding/1ssp01096-copy.jpg"
-          alt=""
+          alt="Our Process Background"
+          fill
           className="absolute inset-0 w-full h-full object-cover object-center"
+          sizes="100vw"
         />
         {/* Brown overlay */}
         <div className="absolute inset-0 bg-[#A17A5D]/80" />

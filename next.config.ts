@@ -1,13 +1,6 @@
 import type { NextConfig } from "next";
 
-const nextConfig = {
-  // Bypasses ESLint errors during the build
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
-  typescript: {
-    ignoreBuildErrors: true,
-  },
+const nextConfig: NextConfig = {
   images: {
     remotePatterns: [
       {
@@ -18,7 +11,7 @@ const nextConfig = {
   },
   experimental: {
     serverActions: {
-      bodySizeLimit: '10gb',
+      bodySizeLimit: '50mb',
     },
   },
 };

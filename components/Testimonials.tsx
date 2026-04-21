@@ -1,66 +1,188 @@
 "use client";
 
-import React from 'react';
-import { motion } from 'framer-motion';
-import { Quote } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Quote, ChevronLeft, ChevronRight } from 'lucide-react';
 
 const testimonials = [
   { 
-    quote: "Every frame felt like a painting. Shreyas captured our wedding beautifully.", 
-    name: "Kaustubh & Sayali", 
-    type: "Wedding" 
+    quote: "An amazing experience from start to finish! SS Studio covered our pre-wedding, engagement, wedding and album, and everything turned out better than we imagined. Shreyas was very patient, calm and made us feel at ease throughout, never awkward or rushed.", 
+    name: "Mithilesh Shirke", 
+    type: "Wedding & Album" 
   },
   { 
-    quote: "The maternity shoot was magical. We will treasure these forever.", 
-    name: "Priya Mehta", 
-    type: "Maternity" 
+    quote: "We entrusted SS Photo and Films with our contract of marriage ceremony photoshoot, and we are extremely satisfied with their work. The team was professional, punctual, and very cooperative throughout the event.", 
+    name: "Pratik Katdare", 
+    type: "Wedding Ceremony" 
   },
   { 
-    quote: "Professional, creative, and punctual. Perfect for our corporate event.", 
-    name: "TechCorp HR", 
-    type: "Corporate" 
+    quote: "Excellent work with excellent studio. Shreyas was very patiently and calmly working for us, as we are having our baby's photoshoot. All the best.", 
+    name: "Divyanee Gite", 
+    type: "Baby Photoshoot" 
+  },
+  { 
+    quote: "Shreyas is very talented, and his passion truly shows in his work. We had a great experience with our baby shoot at SS Photo Studio and are very happy with the results.", 
+    name: "Kunal Baikar", 
+    type: "Baby Shoot" 
+  },
+  { 
+    quote: "Very nice photography and Videography. Captured important moment beautifully with great attention to detail and creativity.", 
+    name: "Deepali Hiwalkar", 
+    type: "Photography & Videography" 
+  },
+  { 
+    quote: "Great studio from chiplun. Best studio from chiplun. Truly appreciate their dedication and would highly recommend SS Photo and Films.", 
+    name: "Jagruti Surve", 
+    type: "Studio Review" 
   },
 ];
 
 const Testimonials = () => {
+  const [index, setIndex] = useState(0);
+  const [direction, setDirection] = useState(0);
+
+  const nextSlide = () => {
+    setDirection(1);
+    setIndex((prev) => (prev + 1) % testimonials.length);
+  };
+
+  const prevSlide = () => {
+    setDirection(-1);
+    setIndex((prev) => (prev - 1 + testimonials.length) % testimonials.length);
+  };
+
+  const goToSlide = (i: number) => {
+    setDirection(i > index ? 1 : -1);
+    setIndex(i);
+  };
+
+  // Auto-play (optional, but nice)
+  useEffect(() => {
+    const timer = setInterval(nextSlide, 8000);
+    return () => clearInterval(timer);
+  }, [index]);
+
+  const variants = {
+    enter: (direction: number) => ({
+      x: direction > 0 ? 1000 : -1000,
+      opacity: 0
+    }),
+    center: {
+      zIndex: 1,
+      x: 0,
+      opacity: 1
+    },
+    exit: (direction: number) => ({
+      zIndex: 0,
+      x: direction < 0 ? 1000 : -1000,
+      opacity: 0
+    })
+  };
+
   return (
-    <section className="bg-background py-24 px-6 md:px-12 border-t border-gold/10">
-      <div className="max-w-7xl mx-auto">
-        <div className="text-center mb-20 space-y-4">
+    <section className="bg-background py-24 px-6 md:px-12 border-t border-gold/10 overflow-hidden">
+      <div className="max-w-4xl mx-auto">
+        <div className="text-center mb-16 space-y-4">
           <h2 className="text-4xl md:text-5xl font-cinzel font-bold text-dark tracking-tight">
-            CLIENT TESTIMONIALS
+            CLIENT TALES
           </h2>
-          <div className="w-24 h-[2px] bg-gold mx-auto" />
+          <div className="w-24 h-[1px] bg-gold mx-auto" />
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
-          {testimonials.map((t, idx) => (
+        {/* Carousel Container */}
+        <div className="relative min-h-[400px] flex items-center justify-center">
+          <AnimatePresence initial={false} custom={direction}>
             <motion.div
-              key={idx}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ delay: idx * 0.2, duration: 0.6 }}
-              viewport={{ once: true }}
-              className="bg-white p-12 relative shadow-lg group hover:shadow-2xl transition-all duration-500 border-t-2 border-transparent hover:border-gold"
+              key={index}
+              custom={direction}
+              variants={variants}
+              initial="enter"
+              animate="center"
+              exit="exit"
+              transition={{
+                x: { type: "spring", stiffness: 300, damping: 30 },
+                opacity: { duration: 0.2 }
+              }}
+              className="absolute w-full"
             >
-              <Quote className="text-gold/20 group-hover:text-gold absolute top-8 right-8 transition-colors duration-500" size={48} />
-              
-              <div className="space-y-6 relative z-10">
-                <p className="text-secondary font-garamond italic text-xl leading-relaxed">
-                  "{t.quote}"
-                </p>
+              <div className="bg-white p-10 md:p-16 shadow-[0_20px_60px_rgba(0,0,0,0.05)] border border-dark/5 rounded-2xl relative">
+                <Quote className="text-gold/10 absolute top-10 right-10" size={80} strokeWidth={1} />
                 
-                <div className="pt-8 border-t border-gold/10">
-                  <h4 className="font-cinzel text-dark font-bold uppercase tracking-widest">{t.name}</h4>
-                  <p className="text-gold text-xs uppercase tracking-[0.2em] mt-1 pr-4">{t.type}</p>
+                <div className="space-y-10 relative z-10 text-center md:text-left">
+                  <p className="text-secondary font-garamond italic text-2xl md:text-3xl leading-snug">
+                    "{testimonials[index].quote}"
+                  </p>
+                  
+                  <div className="pt-10 border-t border-gold/10 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div>
+                      <h4 className="font-cinzel text-dark font-bold uppercase tracking-widest text-lg">
+                        {testimonials[index].name}
+                      </h4>
+                      <p className="text-gold text-xs uppercase tracking-[0.3em] font-bold mt-1">
+                        {testimonials[index].type}
+                      </p>
+                    </div>
+                    
+                    <div className="hidden md:flex space-x-4">
+                      <button 
+                        onClick={prevSlide}
+                        className="p-3 border border-dark/10 rounded-full hover:bg-dark hover:text-white transition-all duration-300"
+                        aria-label="Previous testimonial"
+                      >
+                        <ChevronLeft size={20} />
+                      </button>
+                      <button 
+                        onClick={nextSlide}
+                        className="p-3 border border-dark/10 rounded-full hover:bg-dark hover:text-white transition-all duration-300"
+                        aria-label="Next testimonial"
+                      >
+                        <ChevronRight size={20} />
+                      </button>
+                    </div>
+                  </div>
                 </div>
               </div>
             </motion.div>
+          </AnimatePresence>
+        </div>
+
+        {/* Navigation Dots */}
+        <div className="mt-12 flex justify-center items-center space-x-3">
+          {testimonials.map((_, i) => (
+            <button
+              key={i}
+              onClick={() => goToSlide(i)}
+              className={`transition-all duration-500 rounded-full ${
+                i === index 
+                ? "w-8 h-2 bg-gold" 
+                : "w-2 h-2 bg-dark/10 hover:bg-gold/40"
+              }`}
+              aria-label={`Go to testimonial ${i + 1}`}
+            />
           ))}
         </div>
+
+        {/* Footer Link */}
+        <motion.div 
+          initial={{ opacity: 0, y: 10 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+          className="mt-20 text-center"
+        >
+          <a 
+            href="https://maps.app.goo.gl/GTSoLLD2cZGRgLPy5" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="inline-flex items-center space-x-4 text-[10px] uppercase tracking-[0.4em] font-black text-dark/40 hover:text-gold transition-all duration-500 group"
+          >
+            <span>VERIFIED GOOGLE REVIEWS</span>
+            <div className="w-10 h-[1px] bg-dark/20 group-hover:bg-gold transition-colors" />
+          </a>
+        </motion.div>
       </div>
     </section>
   );
 };
 
 export default Testimonials;
+
