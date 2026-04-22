@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(
-  req: NextRequest,
-  { params }: { params: { eventId: string; filename: string } }
+  req: NextRequest
 ) {
   const { searchParams } = new URL(req.url);
   const eventId = searchParams.get('eventId');

@@ -30,7 +30,7 @@ const AdminBookingsDashboard = () => {
   const [isManualModalOpen, setIsManualModalOpen] = useState(false);
   const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
   const [selectedBookingId, setSelectedBookingId] = useState<string | null>(null);
-  const [paymentData, setPaymentData] = useState({ amount: 0, method: 'Cash' });
+  const [paymentData, setPaymentData] = useState({ amount: 0, method: 'Cash', upiId: '' });
   const [selectedBookingDetails, setSelectedBookingDetails] = useState<any | null>(null);
   
   // Custom UI State
@@ -69,6 +69,7 @@ const AdminBookingsDashboard = () => {
     amount: 0,
     advancePaid: 0,
     paymentMethod: 'Cash',
+    upiId: '',
     isCustomPrice: false,
     message: 'Offline/Manual Booking',
     packageCategory: 'wedding',
@@ -140,8 +141,10 @@ const AdminBookingsDashboard = () => {
     }
 
     try {
+      const finalMethod = formData.paymentMethod === 'UPI' ? `UPI (${formData.upiId})` : formData.paymentMethod;
       await addBooking({
         ...formData,
+        paymentMethod: finalMethod,
         isOffline: true,
         status: 'Confirmed'
       });
@@ -156,7 +159,7 @@ const AdminBookingsDashboard = () => {
 
   const handleAddInstallment = (bookingId: string) => {
     setSelectedBookingId(bookingId);
-    setPaymentData({ amount: 0, method: 'Cash' });
+    setPaymentData({ amount: 0, method: 'Cash', upiId: '' });
     setIsPaymentModalOpen(true);
   };
 
@@ -189,7 +192,8 @@ const AdminBookingsDashboard = () => {
     }
 
     try {
-      await addPaymentInstallment(selectedBookingId, paymentData.amount, paymentData.method);
+      const finalMethod = paymentData.method === 'UPI' ? `UPI (${paymentData.upiId})` : paymentData.method;
+      await addPaymentInstallment(selectedBookingId, paymentData.amount, finalMethod);
       setIsPaymentModalOpen(false);
       await fetchBookings();
       showNotification("Payment recorded successfully!", "success");
@@ -204,7 +208,8 @@ const AdminBookingsDashboard = () => {
       location: '', hours: 4, amount: 0, advancePaid: 0, paymentMethod: 'Cash',
       isCustomPrice: false, message: 'Offline/Manual Booking',
       packageCategory: 'wedding',
-      packageTitle: 'Basic Package'
+      packageTitle: 'Basic Package',
+      upiId: ''
     });
   };
 
@@ -459,6 +464,22 @@ const AdminBookingsDashboard = () => {
                       
                       <div className="flex flex-col space-y-1.5"><label className="text-[10px] font-black text-dark/30 uppercase tracking-widest">Total Amount (₹)</label><input required type="number" min="1" className="px-4 py-2.5 border-2 border-dark/10 rounded-md focus:border-gold text-sm font-bold" value={formData.amount} onChange={e => handleNumChange('amount', e.target.value)} /></div>
                       <div className="flex flex-col space-y-1.5"><label className="text-[10px] font-black text-dark/30 uppercase tracking-widest">Advance Paid (₹)</label><input type="number" min="0" className="px-4 py-2.5 border-2 border-emerald-100 rounded-md focus:border-emerald-500 text-sm font-bold text-emerald-600" value={formData.advancePaid} onChange={e => handleNumChange('advancePaid', e.target.value)} /></div>
+                      
+                      <div className="flex flex-col space-y-1.5">
+                        <label className="text-[10px] font-black text-dark/30 uppercase tracking-widest">Method</label>
+                        <select className="px-4 py-2.5 bg-[#FAF9F6] border border-dark/5 rounded-md text-sm" value={formData.paymentMethod} onChange={e => setFormData({...formData, paymentMethod: e.target.value})}>
+                          <option value="Cash">Cash</option>
+                          <option value="Online">Online</option>
+                          <option value="UPI">UPI</option>
+                        </select>
+                      </div>
+
+                      {formData.paymentMethod === 'UPI' && (
+                        <div className="flex flex-col space-y-1.5">
+                          <label className="text-[10px] font-black text-dark/30 uppercase tracking-widest">UPI ID / Txn ID</label>
+                          <input required className="px-4 py-2.5 bg-[#FAF9F6] border border-dark/5 rounded-md text-sm" placeholder="e.g. user@upi" value={formData.upiId} onChange={e => setFormData({...formData, upiId: e.target.value})} />
+                        </div>
+                      )}
                    </div>
                    <button type="submit" className="w-full py-4 bg-dark text-white text-[12px] font-black uppercase tracking-[0.3em] rounded-lg hover:bg-gold transition-all">Confirm Offline Booking</button>
                 </form>
@@ -561,7 +582,28 @@ const AdminBookingsDashboard = () => {
                 <div className="flex justify-between items-center mb-8 border-b border-dark/5 pb-4"><h2 className="text-xl font-cinzel font-bold text-dark uppercase tracking-widest">Add Payment</h2><button onClick={() => setIsPaymentModalOpen(false)} className="text-dark/20 hover:text-red-500"><XCircle size={20} /></button></div>
                 <form onSubmit={submitInstallment} className="space-y-8">
                    <div className="flex flex-col space-y-1.5"><label className="text-[10px] font-black text-dark/30 uppercase tracking-widest">Amount to Record (₹)</label><input required type="number" min="1" autoFocus className="px-5 py-4 bg-[#FAF9F6] border border-dark/5 rounded-xl focus:outline-none focus:border-gold text-2xl font-bold font-cinzel text-emerald-600" value={paymentData.amount === 0 ? '' : paymentData.amount} onChange={e => setPaymentData({...paymentData, amount: parseInt(e.target.value) || 0})} /></div>
-                   <div className="flex flex-col space-y-2"><label className="text-[10px] font-black text-dark/30 uppercase tracking-widest text-center">Payment Method</label><div className="grid grid-cols-2 gap-3"><button type="button" onClick={() => setPaymentData({...paymentData, method: 'Cash'})} className={`py-3 rounded-lg text-[10px] font-black uppercase tracking-widest border transition-all ${paymentData.method === 'Cash' ? 'bg-dark text-white' : 'bg-white text-dark/30 border-dark/10'}`}>Cash</button><button type="button" onClick={() => setPaymentData({...paymentData, method: 'Online'})} className={`py-3 rounded-lg text-[10px] font-black uppercase tracking-widest border transition-all ${paymentData.method === 'Online' ? 'bg-dark text-white' : 'bg-white text-dark/30 border-dark/10'}`}>Online</button></div></div>
+                   <div className="flex flex-col space-y-2">
+                     <label className="text-[10px] font-black text-dark/30 uppercase tracking-widest text-center">Payment Method</label>
+                     <div className="grid grid-cols-3 gap-2">
+                       <button type="button" onClick={() => setPaymentData({...paymentData, method: 'Cash'})} className={`py-3 rounded-lg text-[10px] font-black uppercase tracking-widest border transition-all ${paymentData.method === 'Cash' ? 'bg-dark text-white' : 'bg-white text-dark/30 border-dark/10'}`}>Cash</button>
+                       <button type="button" onClick={() => setPaymentData({...paymentData, method: 'Online'})} className={`py-3 rounded-lg text-[10px] font-black uppercase tracking-widest border transition-all ${paymentData.method === 'Online' ? 'bg-dark text-white' : 'bg-white text-dark/30 border-dark/10'}`}>Online</button>
+                       <button type="button" onClick={() => setPaymentData({...paymentData, method: 'UPI'})} className={`py-3 rounded-lg text-[10px] font-black uppercase tracking-widest border transition-all ${paymentData.method === 'UPI' ? 'bg-dark text-white' : 'bg-white text-dark/30 border-dark/10'}`}>UPI</button>
+                     </div>
+                   </div>
+                   
+                   {paymentData.method === 'UPI' && (
+                     <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} className="flex flex-col space-y-1.5 overflow-hidden">
+                       <label className="text-[10px] font-black text-dark/30 uppercase tracking-widest text-left">UPI ID / Transaction ID</label>
+                       <input 
+                         required 
+                         className="px-4 py-2.5 bg-[#FAF9F6] border border-dark/5 rounded-md focus:outline-none focus:border-gold text-sm font-bold" 
+                         placeholder="e.g. user@okaxis"
+                         value={paymentData.upiId} 
+                         onChange={e => setPaymentData({...paymentData, upiId: e.target.value})} 
+                       />
+                     </motion.div>
+                   )}
+                   
                    <button type="submit" className="w-full py-4 bg-emerald-600 text-white text-[12px] font-black uppercase tracking-[0.3em] rounded-lg hover:bg-emerald-700 shadow-xl shadow-emerald-500/20">Confirm Receipt</button>
                 </form>
              </motion.div>

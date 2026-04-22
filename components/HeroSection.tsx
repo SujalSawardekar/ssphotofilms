@@ -46,7 +46,6 @@ const HeroSection = () => {
               alt="Hero Background"
               fill
               priority
-              unoptimized
               className="object-cover"
               sizes="100vw"
             />

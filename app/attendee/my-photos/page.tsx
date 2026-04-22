@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, Suspense } from 'react';
+import Image from 'next/image';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { mockPhotos } from '@/lib/mockData';
@@ -188,7 +189,15 @@ const MyPhotosPage = () => {
                         viewport={{ once: true }}
                         className={`aspect-[4/5] relative group overflow-hidden border-2 transition-all duration-300 ${isSelected ? 'border-gold shadow-2xl scale-[0.98]' : 'border-dark/5 hover:border-gold/30'}`}
                       >
-                         <img src={photo.src} className="w-full h-full object-cover" alt="Moment" />
+                         <div className="relative w-full h-full">
+                           <Image 
+                             src={photo.src} 
+                             alt="Moment" 
+                             fill 
+                             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                             className="object-cover"
+                           />
+                         </div>
                          
                          {/* Selection Overlay */}
                          <div 

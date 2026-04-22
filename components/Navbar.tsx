@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { useAuth } from '@/lib/authContext';
 import { Menu, X, Mail, Phone, LogOut, User } from 'lucide-react';
@@ -69,12 +70,14 @@ const Navbar = ({ isLightPage = false, transparentDarkText = false }: { isLightP
 
           {/* Center Section - Logo */}
           <Link href="/" className="flex items-center justify-center">
-             <div className="h-10 md:h-14 lg:h-16 relative">
-                <img 
+             <div className="h-10 md:h-14 lg:h-16 w-[140px] md:w-[220px] lg:w-[320px] relative">
+                <Image 
                   src="/assets/logo.png" 
                   alt="SS PHOTO & FILMS" 
+                  fill
+                  priority
                   className={cn(
-                    "h-full w-auto object-contain transition-all duration-500",
+                    "object-contain transition-all duration-500",
                     !darkColors && "brightness-0 invert" 
                   )} 
                 />
@@ -160,11 +163,12 @@ const Navbar = ({ isLightPage = false, transparentDarkText = false }: { isLightP
 
       {/* Mobile Nav Header (only visible on mobile) */}
       <div className="md:hidden py-4 px-6 flex items-center justify-between">
-          <Link href="/" className="h-8">
-            <img 
+          <Link href="/" className="h-8 w-40 relative">
+            <Image 
               src="/assets/logo.png" 
               alt="Logo" 
-              className={cn("h-full w-auto", !darkColors && "brightness-0 invert")} 
+              fill
+              className={cn("object-contain", !darkColors && "brightness-0 invert")} 
             />
           </Link>
           <button

@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/authContext';
 import { addUser } from '@/lib/db';
 import { isTempEmail } from '@/lib/utils';
-import { Eye, EyeOff, User as UserIcon, Camera, ArrowLeft } from 'lucide-react';
+import { Eye, EyeOff, ArrowLeft } from 'lucide-react';
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -25,24 +25,6 @@ export default function RegisterPage() {
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [profileImage, setProfileImage] = useState<string | null>(null);
-  const fileInputRef = React.useRef<HTMLInputElement>(null);
-
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      if (file.size > 2 * 1024 * 1024) {
-        alert("File size exceeds 2MB limit.");
-        return;
-      }
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setProfileImage(reader.result as string);
-        setFormData(prev => ({ ...prev, image: reader.result as string }));
-      };
-      reader.readAsDataURL(file);
-    }
-  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -76,7 +58,7 @@ export default function RegisterPage() {
         password: formData.password,
         name: formData.name,
         phone: formData.phone,
-        image: formData.image,
+        image: formData.image, // System will use initials if this is empty
         role: 'client'
       });
 
@@ -110,32 +92,10 @@ export default function RegisterPage() {
           <ArrowLeft size={18} className="text-dark group-active:-translate-x-1 transition-transform" />
         </button>
 
-        <div className="text-center mb-6">
+        <div className="text-center mb-10">
           <h2 className="text-3xl font-cinzel font-black text-dark tracking-tight uppercase">Create Your Account</h2>
           <p className="text-sm text-dark/60 mt-2">Join us to manage your bookings and view your gallery.</p>
           <div className="h-1 w-12 bg-dark/10 mx-auto mt-4 rounded-full" />
-        </div>
-
-        {/* Compact Avatar Section */}
-        <div className="w-full flex items-center justify-center space-x-6 mb-8 px-4">
-           <div className="relative w-16 h-16 rounded-full bg-white/60 shadow-xl flex items-center justify-center overflow-hidden shrink-0 border border-white/60 group">
-              {profileImage ? (
-                <img src={profileImage} alt="Profile" className="w-full h-full object-cover" />
-              ) : (
-                <div className="text-dark/10"><UserIcon size={32} /></div>
-              )}
-           </div>
-           <div className="flex flex-col space-y-2">
-              <input type="file" ref={fileInputRef} onChange={handleImageChange} className="hidden" accept="image/*" />
-              <button 
-                type="button" 
-                onClick={() => fileInputRef.current?.click()}
-                className="text-[9px] px-8 py-2 bg-dark text-white rounded-full font-black uppercase tracking-widest hover:bg-gold hover:text-dark transition-all flex items-center space-x-2"
-              >
-                <Camera size={12} />
-                <span>Upload Profile Photo</span>
-              </button>
-           </div>
         </div>
 
         <form onSubmit={handleSubmit} className="w-full space-y-6">

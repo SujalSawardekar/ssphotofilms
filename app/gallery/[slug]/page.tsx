@@ -1,6 +1,7 @@
 "use client";
 
 import React from 'react';
+import Image from 'next/image';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { motion } from 'framer-motion';
@@ -27,10 +28,12 @@ const StoryDetailPage = ({ params }: StoryPageProps) => {
       {/* Hero Header for the Story */}
       <section className="relative h-[70vh] flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0 z-0">
-          <img 
+          <Image 
             src={story.mainImage} 
             alt={story.title} 
-            className="w-full h-full object-cover scale-105 blur-sm brightness-50"
+            fill
+            priority
+            className="object-cover scale-105 blur-sm brightness-50"
           />
         </div>
         
@@ -74,11 +77,15 @@ const StoryDetailPage = ({ params }: StoryPageProps) => {
                 viewport={{ once: true }}
                 className="relative group overflow-hidden rounded-[15px] shadow-sm transform transition-all duration-500 hover:shadow-xl"
               >
-                <img 
-                  src={image} 
-                  alt={`${story.names} Gallery - ${idx + 1}`} 
-                  className="w-full h-auto object-cover transition-transform duration-1000 group-hover:scale-105"
-                />
+                <div className="relative w-full aspect-[4/5]">
+                  <Image 
+                    src={image} 
+                    alt={`${story.names} Gallery - ${idx + 1}`} 
+                    fill
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                    className="object-cover transition-transform duration-1000 group-hover:scale-105"
+                  />
+                </div>
                 <div className="absolute inset-0 bg-dark/10 opacity-0 group-hover:opacity-100 transition-all duration-500" />
               </motion.div>
             ))}

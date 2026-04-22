@@ -103,7 +103,6 @@ const OccasionGrid = () => {
                         src={item.image} 
                         alt={item.title} 
                         fill
-                        unoptimized
                         className="object-cover transition-transform duration-700 group-hover:scale-110 group-hover:rotate-3"
                         sizes="(max-width: 768px) 100vw, 33vw"
                       />

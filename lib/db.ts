@@ -90,6 +90,7 @@ export const updateUserPassword = async (id: string, oldPassword: string, newPas
 
 // --- Bookings ---
 export const getBookings = async (): Promise<any[]> => {
+  noStore();
   return await prisma.booking.findMany({
     include: { installments: true },
     orderBy: { createdAt: 'desc' }
@@ -97,6 +98,7 @@ export const getBookings = async (): Promise<any[]> => {
 };
 
 export const getBookingWithInstallments = async (id: string): Promise<any> => {
+  noStore();
   return await prisma.booking.findUnique({
     where: { id },
     include: { installments: { orderBy: { date: 'asc' } } }
@@ -188,6 +190,7 @@ export const updateBookingPhotographer = async (id: string, name: string): Promi
 
 // --- Queries (Multi-message Conversational) ---
 export const getQueries = async (): Promise<(ClientQuery & { messages: ClientQueryMessage[] })[]> => {
+  noStore();
   return await prisma.clientQuery.findMany({
     include: { messages: { orderBy: { createdAt: 'asc' } } },
     orderBy: { createdAt: 'desc' }
@@ -253,6 +256,7 @@ export const addTeamApplication = async (data: any): Promise<void> => {
 };
 
 export const getTeamApplications = async (): Promise<TeamApplication[]> => {
+  noStore();
   return await prisma.teamApplication.findMany({
     orderBy: { createdAt: 'desc' }
   });
@@ -266,6 +270,7 @@ export const updateTeamApplicationStatus = async (id: number, status: string): P
 };
 
 export const getEvents = async (onlyPublished = false): Promise<any[]> => {
+  noStore();
   try {
     const where = onlyPublished ? { isPublished: true } : {};
     return await prisma.event.findMany({

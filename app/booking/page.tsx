@@ -3,6 +3,7 @@
 import React, { useState, Suspense, useEffect, useRef } from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
+import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { pricingCategories } from '@/lib/mockData';
 import { addBooking } from '@/lib/db';
@@ -495,7 +496,7 @@ function BookingFormContent() {
                       <div className="space-y-4 opacity-80 text-[9px] font-bold uppercase tracking-[0.2em] leading-relaxed max-w-sm">
                          <p>• Booking depends on availability.</p>
                          <p>
-                           * By proceeding, you agree to <button type="button" onClick={() => setShowTerms(true)} className="text-gold border-b border-gold/30 hover:border-gold transition-colors">Terms and Conditions</button> of this booking.
+                           * By proceeding, you agree to <Link href="/terms" target="_blank" className="text-gold border-b border-gold/30 hover:border-gold transition-colors">Terms and Conditions</Link> of this booking.
                          </p>
                          <p>
                            * You also agree to SS Photo & Films <button type="button" onClick={() => setShowPrivacy(true)} className="text-gold border-b border-gold/30 hover:border-gold transition-colors">Privacy Policy</button> and provide consent to recieve Whatsapp communications.
@@ -539,85 +540,6 @@ function BookingFormContent() {
                   <button onClick={() => router.push('/')} className="w-full md:w-auto px-12 py-5 border-2 border-dark text-dark rounded-xl text-[10px] font-black uppercase tracking-[0.3em] hover:bg-dark hover:text-white transition-all duration-500 relative overflow-hidden group"><span className="relative z-10">Home</span><div className="absolute top-0 -left-full w-full h-full bg-dark/5 skew-x-[45deg] group-hover:left-[200%] transition-all duration-1000 z-0" /></button>
                </div>
             </motion.div>
-          )}
-        </AnimatePresence>
-
-        {/* Terms Modal */}
-        <AnimatePresence>
-          {showTerms && (
-            <div className="fixed inset-0 z-[100] flex items-center justify-center px-6">
-              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setShowTerms(false)} className="absolute inset-0 bg-dark/60 backdrop-blur-sm" />
-              <motion.div initial={{ opacity: 0, scale: 0.9, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.9, y: 20 }} className="relative w-full max-w-3xl bg-white rounded-[32px] shadow-2xl overflow-hidden max-h-[85vh] flex flex-col">
-                <div className="p-8 md:p-12 overflow-y-auto">
-                   <div className="flex items-center justify-between mb-8">
-                      <h2 className="text-3xl font-cinzel font-bold text-dark uppercase tracking-tight">Terms & Conditions</h2>
-                      <button onClick={() => setShowTerms(false)} className="text-dark/20 hover:text-dark transition-colors text-3xl font-light">×</button>
-                   </div>
-                   <div className="space-y-8 text-sm text-secondary/80 leading-relaxed font-manrope">
-                      <p className="font-bold text-dark">Effective Date: April 01, 2026</p>
-                      <p>Welcome to SS Photo & Films. By booking our services or using our website/platform, you agree to the following terms and conditions. If you do not agree, do not proceed with our services.</p>
-                      
-                      <div className="space-y-6">
-                        <section>
-                          <h4 className="font-bold text-dark uppercase tracking-widest text-sm mb-2">1. Services</h4>
-                          <p>SS Photo & Films provides photography and videography services including pre-wedding shoots, weddings, events, and cinematic storytelling. We commit to delivering high-quality visual content and professional conduct.</p>
-                        </section>
-                        <section>
-                          <h4 className="font-bold text-dark uppercase tracking-widest text-sm mb-2">2. Booking & Payment</h4>
-                          <p>A non-refundable booking amount (advance) is required to confirm your slot. The remaining amount must be paid before the shoot or as per the agreed schedule. ⚠️ No full payment = No final delivery.</p>
-                        </section>
-                        <section>
-                          <h4 className="font-bold text-dark uppercase tracking-widest text-sm mb-2">3. Cancellation & Rescheduling</h4>
-                          <p>Cancellation by client: Advance is non-refundable. Rescheduling is allowed only if informed at least 48 hours prior and is subject to availability.</p>
-                        </section>
-                        <section>
-                          <h4 className="font-bold text-dark uppercase tracking-widest text-sm mb-2">4. Delivery & Turnaround</h4>
-                          <p>Only selected & edited photos/videos will be delivered. Raw files are not included by default and are available at extra cost if agreed.</p>
-                        </section>
-                        <section>
-                          <h4 className="font-bold text-dark uppercase tracking-widest text-sm mb-2">5. Copyright & Usage</h4>
-                          <p>All content is owned by SS Photo & Films. Client receives a personal usage license only. You cannot sell or modify content without permission.</p>
-                        </section>
-                        <section>
-                          <h4 className="font-bold text-dark uppercase tracking-widest text-sm mb-2">6. Promotional Usage</h4>
-                          <p>SS Photo & Films reserves the right to use photos/videos for portfolio, website, and social media promotions. If you don’t want this, you must inform before the shoot.</p>
-                        </section>
-                        <section>
-                          <h4 className="font-bold text-dark uppercase tracking-widest text-sm mb-2">7. Liability</h4>
-                          <p>We are not responsible for weather issues, location restrictions, or client delays. In case of technical failure, liability is limited to a refund of amount paid.</p>
-                        </section>
-                        <section>
-                          <h4 className="font-bold text-dark uppercase tracking-widest text-sm mb-2">8. Client Responsibility</h4>
-                          <p>You are responsible for venue permissions and safety of the team at the location. Any damage caused by client/guests is the client's liability.</p>
-                        </section>
-                        <section>
-                          <h4 className="font-bold text-dark uppercase tracking-widest text-sm mb-2">9. External Payments</h4>
-                          <p>No direct payments to team members. All payments must go through official SS Photo & Films channels. Violation counts as a breach of agreement.</p>
-                        </section>
-                        <section>
-                          <h4 className="font-bold text-dark uppercase tracking-widest text-sm mb-2">10. Force Majeure</h4>
-                          <p>We are not liable for delays or cancellations due to natural disasters, government restrictions, or uncontrollable accidents.</p>
-                        </section>
-                        <section>
-                          <h4 className="font-bold text-dark uppercase tracking-widest text-sm mb-2">11. Communication</h4>
-                          <p>Official communication happens via WhatsApp, Call, or Email. Clients must stay reachable.</p>
-                        </section>
-                        <section>
-                          <h4 className="font-bold text-dark uppercase tracking-widest text-sm mb-2">12. Governing Law</h4>
-                          <p>These terms are governed by the laws of India (Maharashtra jurisdiction).</p>
-                        </section>
-                        <section>
-                          <h4 className="font-bold text-dark uppercase tracking-widest text-sm mb-2">13. Acceptance</h4>
-                          <p>By booking our services, you confirm that you have read, understood, and agreed to all terms.</p>
-                        </section>
-                      </div>
-                   </div>
-                   <div className="mt-12 pt-8 border-t border-dark/5 flex justify-center">
-                      <button onClick={() => setShowTerms(false)} className="px-10 py-4 bg-dark text-white rounded-xl text-[10px] font-black uppercase tracking-[0.2em] hover:bg-gold hover:text-dark transition-all duration-500">I UNDERSTAND</button>
-                   </div>
-                </div>
-              </motion.div>
-            </div>
           )}
         </AnimatePresence>
 

@@ -2,6 +2,8 @@
 
 import React from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
+import { FaInstagram, FaYoutube, FaFacebookF } from 'react-icons/fa6';
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
@@ -13,8 +15,13 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-[1.5fr_1fr_1fr_1fr] gap-12 lg:gap-16 mb-20">
           
           <div className="space-y-6">
-            <Link href="/" className="inline-block">
-              <img src="/assets/logo.png" alt="S S PHOTO & FILMS" className="h-12 w-auto object-contain" />
+            <Link href="/" className="inline-block relative h-12 w-56">
+              <Image 
+                src="/assets/logo.png" 
+                alt="S S PHOTO & FILMS" 
+                fill
+                className="object-contain" 
+              />
             </Link>
             <p className="text-xs uppercase tracking-[0.3em] text-dark/40 font-bold leading-loose">
               <span className="block whitespace-nowrap">Capturing Love Stories,</span>
@@ -50,10 +57,35 @@ const Footer = () => {
             <h4 className="text-xs uppercase tracking-[0.3em] font-bold text-dark">Contact</h4>
             <div className="space-y-4 text-xs uppercase tracking-[0.2em] font-bold text-dark/60">
               <p>+91 7741083155</p>
-              <p className="lowercase">ssphotographyofficial08@gmail.com</p>
+              <p className="lowercase">ssphotographyofficial13@gmail.com</p>
               <div className="pt-4 flex space-x-6">
-                <a href="#" className="hover:text-dark transition-colors">Instagram</a>
-                <a href="#" className="hover:text-dark transition-colors">YouTube</a>
+                <a 
+                  href="https://www.instagram.com/ss_photography_official13" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="hover:text-gold transition-colors"
+                  title="Instagram"
+                >
+                  <FaInstagram size={18} />
+                </a>
+                <a 
+                  href="https://www.youtube.com/@ss_photography_official13" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="hover:text-gold transition-colors"
+                  title="YouTube"
+                >
+                  <FaYoutube size={18} />
+                </a>
+                <a 
+                  href="https://www.facebook.com/ssphotographyofficial13/" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="hover:text-gold transition-colors"
+                  title="Facebook"
+                >
+                  <FaFacebookF size={18} />
+                </a>
               </div>
             </div>
           </div>

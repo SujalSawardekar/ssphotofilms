@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
+import Image from 'next/image';
 
 const SoulCinema = () => {
   return (
@@ -14,10 +15,11 @@ const SoulCinema = () => {
         }}
       >
         <div className="absolute inset-0 grayscale opacity-60 mix-blend-luminosity">
-          <img 
+          <Image 
             src="/assets/hero-bg2.jpg" 
             alt="Soul Cinema Background" 
-            className="w-full h-full object-cover"
+            fill
+            className="object-cover"
           />
         </div>
         <div className="absolute inset-0 bg-black/30" />
