@@ -7,10 +7,11 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { pricingCategories, Booking, PricingPackage } from '@/lib/mockData';
+import { galleryStories } from '@/lib/galleryData';
 import { addBooking } from '@/lib/db';
 import { useAuth } from '@/lib/authContext';
 import { motion, AnimatePresence } from 'framer-motion';
-import { CheckCircle2 } from 'lucide-react';
+import { CheckCircle2, ArrowRight } from 'lucide-react';
 
 // Custom Diagonal Arrow Icon matched to the gallery stories design
 const GalleryArrow = ({ className }: { className?: string }) => (
@@ -38,6 +39,38 @@ export default function ServicesPage() {
   const [galleryIdx, setGalleryIdx] = useState(0);
   const [bothSideSelections, setBothSideSelections] = useState<Record<number, boolean>>({});
   const [reelSelections, setReelSelections] = useState<Record<number, boolean>>({});
+
+  // Map service category to gallery category
+  const categoryMap: Record<string, string> = {
+    'wedding': 'WEDDINGS',
+    'pre-wedding': 'PRE-WEDDING',
+    'baby-shoot': 'BABY & KIDS',
+    'maternity': 'MATERNITY',
+    'engagement': 'ENGAGEMENT',
+    'portrait': 'PORTRAIT'
+  };
+
+  const activeGalleryCategory = categoryMap[activeCategoryId];
+  const relevantStories = galleryStories.filter(s => s.category === activeGalleryCategory);
+  
+  // Flatten all images from relevant stories for the gallery cycle
+  const pooledPhotos = relevantStories.length > 0 
+    ? relevantStories.flatMap(story => 
+        story.images.map(img => ({
+          src: img,
+          title: story.title,
+          names: story.names,
+          date: story.date,
+          slug: story.slug
+        }))
+      )
+    : pricingCategories.find(c => c.id === activeCategoryId)?.packages.map(pkg => ({
+        src: pkg.imageSrc,
+        title: pkg.captionTitle,
+        names: pkg.captionSubtitle,
+        date: "JUNE 23, 2025",
+        slug: ""
+      })) || [];
 
   const activeCategory = pricingCategories.find(c => c.id === activeCategoryId) || pricingCategories[0];
   
@@ -75,11 +108,11 @@ export default function ServicesPage() {
   };
 
   const nextGallery = () => {
-    setGalleryIdx((prev) => (prev + 1) % activeCategory.packages.length);
+    setGalleryIdx((prev) => (prev + 1) % pooledPhotos.length);
   };
 
   const prevGallery = () => {
-    setGalleryIdx((prev) => (prev - 1 + activeCategory.packages.length) % activeCategory.packages.length);
+    setGalleryIdx((prev) => (prev - 1 + pooledPhotos.length) % pooledPhotos.length);
   };
 
   // Auto-play effect for the gallery
@@ -338,28 +371,40 @@ export default function ServicesPage() {
                 transition={{ duration: 0.8, ease: "easeInOut" }}
                 className="relative w-full aspect-[4/5] bg-dark rounded-[15px] overflow-hidden shadow-2xl group cursor-pointer"
               >
-                <Image 
-                  src={activeGalleryPackage.imageSrc} 
-                  alt={activeGalleryPackage.captionTitle} 
-                  fill
-                  className="w-full h-full object-cover transition-all duration-1000"
-                  sizes="(max-width: 1024px) 100vw, 50vw"
-                  priority
-                />
-                
-                {/* Story-style Overlay Info */}
-                <div className="absolute bottom-12 left-12 z-10 text-white pointer-events-none pr-12">
-                   <p className="text-[10px] md:text-xs font-manrope font-bold uppercase tracking-[0.5em] mb-4 opacity-80">
-                     JUNE 23, 2025
-                   </p>
-                   <h3 className="text-2xl md:text-4xl lg:text-5xl font-cinzel font-bold leading-tight tracking-wide mb-2 uppercase">
-                     {activeGalleryPackage.captionTitle}
-                   </h3>
-                   <p className="text-lg md:text-2xl font-cinzel italic opacity-90">
-                     - {activeGalleryPackage.captionSubtitle}
-                   </p>
-                </div>
+                {pooledPhotos.length > 0 && (
+                  <>
+                    <Image 
+                      src={pooledPhotos[galleryIdx].src} 
+                      alt={pooledPhotos[galleryIdx].title} 
+                      fill
+                      className="w-full h-full object-cover transition-all duration-1000"
+                      sizes="(max-width: 1024px) 100vw, 50vw"
+                      priority
+                    />
+                    
+                    {/* Story-style Overlay Info */}
+                    <div className="absolute bottom-12 left-12 z-10 text-white pointer-events-none pr-12">
+                       <p className="text-[10px] md:text-xs font-manrope font-bold uppercase tracking-[0.5em] mb-4 opacity-80">
+                         {pooledPhotos[galleryIdx].date}
+                       </p>
+                       <h3 className="text-2xl md:text-4xl lg:text-5xl font-cinzel font-bold leading-tight tracking-wide mb-2 uppercase">
+                         {pooledPhotos[galleryIdx].names}
+                       </h3>
+                       <p className="text-lg md:text-2xl font-cinzel italic opacity-90">
+                         - {pooledPhotos[galleryIdx].title}
+                       </p>
+                    </div>
 
+                    {/* View Full Gallery Button Overlay */}
+                    <Link 
+                      href={`/gallery?category=${activeCategoryId}`}
+                      className="absolute top-8 right-8 z-30 bg-white/20 backdrop-blur-md border border-white/30 text-white px-6 py-3 rounded-full text-[10px] font-black tracking-widest uppercase hover:bg-white hover:text-dark transition-all duration-500 flex items-center gap-2"
+                    >
+                      View Full Gallery <ArrowRight size={14} />
+                    </Link>
+                  </>
+                )}
+                
                 {/* Dark Gradient Overlay */}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-100" />
 

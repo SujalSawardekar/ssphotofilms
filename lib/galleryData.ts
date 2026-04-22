@@ -34,7 +34,10 @@ export const galleryStories: Story[] = [
       "/assets/wedding/Wedding%201/1ssp02954-copy.jpg",
       "/assets/wedding/Wedding%201/1ssp02959-copy.jpg",
       "/assets/wedding/Wedding%201/1ssp02966-copy.jpg",
-      "/assets/wedding/Wedding%201/1ssp02985-copy.jpg"
+      "/assets/wedding/Wedding%201/1ssp02985-copy.jpg",
+      "/assets/wedding/Wedding%201/1ssp02988-copy.jpg",
+      "/assets/wedding/Wedding%201/1ssp03005-copy.jpg",
+      "/assets/wedding/Wedding%201/1ssp03026-copy.jpg"
     ]
   },
   {
@@ -50,7 +53,8 @@ export const galleryStories: Story[] = [
       "/assets/wedding/Wedding%202/1ssp02751-copy.jpg",
       "/assets/wedding/Wedding%202/1ssp02707-copy.jpg",
       "/assets/wedding/Wedding%202/1ssp-(547)-copy.jpg",
-      "/assets/wedding/Wedding%202/1ssp-(676)-copy.jpg"
+      "/assets/wedding/Wedding%202/1ssp-(676)-copy.jpg",
+      "/assets/wedding/Wedding%202/1ssp-(708)-copy.jpg"
     ]
   },
   {
@@ -65,6 +69,7 @@ export const galleryStories: Story[] = [
       "/assets/wedding/Wedding%203/1ssp08616-copy.jpg",
       "/assets/wedding/Wedding%203/1DSC04230%20copy.jpg",
       "/assets/wedding/Wedding%203/1SSP08969%20copy.jpg",
+      "/assets/wedding/Wedding%203/1ssp08969-copy.jpg",
       "/assets/wedding/Wedding%203/occasion-wedding.jpg"
     ]
   },
@@ -79,7 +84,8 @@ export const galleryStories: Story[] = [
     images: [
       "/assets/wedding/Wedding%204/1ssp01096-copy.jpg",
       "/assets/wedding/Wedding%204/1SSP07967%20copy.jpg",
-      "/assets/wedding/Wedding%204/1SSP07978%20copy.jpg"
+      "/assets/wedding/Wedding%204/1SSP07978%20copy.jpg",
+      "/assets/wedding/Wedding%204/1ssp07967-copy.jpg"
     ]
   },
   {
@@ -93,7 +99,9 @@ export const galleryStories: Story[] = [
     images: [
       "/assets/wedding/Wedding%205/1SSP09220%20copy.jpg", 
       "/assets/wedding/Wedding%205/1SSP09253%20copy.jpg", 
-      "/assets/wedding/Wedding%205/1SSP09080%20copy.jpg"
+      "/assets/wedding/Wedding%205/1SSP09080%20copy.jpg",
+      "/assets/wedding/Wedding%205/1ssp09220-copy.jpg",
+      "/assets/wedding/Wedding%205/1ssp09253-copy.jpg"
     ]
   },
   {
@@ -107,7 +115,13 @@ export const galleryStories: Story[] = [
     images: [
       "/assets/wedding/Wedding%206/1SSP01206%20copy.jpg", 
       "/assets/wedding/Wedding%206/1SSP01215%20copy.jpg",
-      "/assets/wedding/Wedding%206/1SSP01217%20copy.jpg"
+      "/assets/wedding/Wedding%206/1SSP01217%20copy.jpg",
+      "/assets/wedding/Wedding%206/1SSP01219%20copy.jpg",
+      "/assets/wedding/Wedding%206/1SSP01225%20copy.jpg",
+      "/assets/wedding/Wedding%206/1SSP01486%20copy.jpg",
+      "/assets/wedding/Wedding%206/1SSP01616%20copy.jpg",
+      "/assets/wedding/Wedding%206/1SSP01775%20copy.jpg",
+      "/assets/wedding/Wedding%206/1SSP01803%20copy.jpg"
     ]
   },
   {
@@ -121,7 +135,17 @@ export const galleryStories: Story[] = [
     images: [
       "/assets/wedding/Wedding%207/1SSP01747%20copy.jpg", 
       "/assets/wedding/Wedding%207/1SSP01701%20copy.jpg", 
-      "/assets/wedding/Wedding%207/1SSP01640%20copy.jpg"
+      "/assets/wedding/Wedding%207/1SSP01640%20copy.jpg",
+      "/assets/wedding/Wedding%207/1SSP01126%20copy.jpg",
+      "/assets/wedding/Wedding%207/1SSP01462%20copy.jpg",
+      "/assets/wedding/Wedding%207/1SSP01548%20copy.jpg",
+      "/assets/wedding/Wedding%207/1SSP01574%20copy.jpg",
+      "/assets/wedding/Wedding%207/1SSP01603%20copy.jpg",
+      "/assets/wedding/Wedding%207/1SSP01691%20copy.jpg",
+      "/assets/wedding/Wedding%207/1SSP01692%20copy.jpg",
+      "/assets/wedding/Wedding%207/1SSP01807%20copy.jpg",
+      "/assets/wedding/Wedding%207/1SSP01811%20copy.jpg",
+      "/assets/wedding/Wedding%207/1SSP01820%20copy.jpg"
     ]
   },
   {
@@ -134,7 +158,9 @@ export const galleryStories: Story[] = [
     mainImage: "/assets/wedding/Wedding%208/1dsc00787-copy.jpg",
     images: [
       "/assets/wedding/Wedding%208/1dsc00787-copy.jpg", 
-      "/assets/wedding/Wedding%208/1SSP08277%20copy.jpg"
+      "/assets/wedding/Wedding%208/1SSP08277%20copy.jpg",
+      "/assets/wedding/Wedding%208/1DSC00787%20copy.jpg",
+      "/assets/wedding/Wedding%208/1DSC00808%20copy.jpg"
     ]
   },
   {
@@ -148,7 +174,13 @@ export const galleryStories: Story[] = [
     images: [
       "/assets/wedding/Wedding%2010/1SSP06294%20copy.jpg", 
       "/assets/wedding/Wedding%2010/1SSP05827%20copy.jpg",
-      "/assets/wedding/Wedding%2010/1SSP05830%20copy.jpg"
+      "/assets/wedding/Wedding%2010/1SSP05830%20copy.jpg",
+      "/assets/wedding/Wedding%2010/1SSP06137%20copy.jpg",
+      "/assets/wedding/Wedding%2010/1SSP06298%20copy.jpg",
+      "/assets/wedding/Wedding%2010/1SSP06309%20copy.jpg",
+      "/assets/wedding/Wedding%2010/1SSP06310%20copy.jpg",
+      "/assets/wedding/Wedding%2010/1SSP06311%20copy.jpg",
+      "/assets/wedding/Wedding%2010/1SSP06319%20copy.jpg"
     ]
   },
 
@@ -165,7 +197,9 @@ export const galleryStories: Story[] = [
       "/assets/prewedding/Pre%20wedding%201/ssp02832.jpg",
       "/assets/prewedding/Pre%20wedding%201/ssp02927.jpg",
       "/assets/prewedding/Pre%20wedding%201/dsc03154.jpg",
-      "/assets/prewedding/Pre%20wedding%201/dsc03159.jpg"
+      "/assets/prewedding/Pre%20wedding%201/dsc03159.jpg",
+      "/assets/prewedding/Pre%20wedding%201/ssp02930.jpg",
+      "/assets/prewedding/Pre%20wedding%201/ssp02932.jpg"
     ]
   },
   {
@@ -180,7 +214,8 @@ export const galleryStories: Story[] = [
       "/assets/prewedding/Prewedding%202/dsc00896.jpg",
       "/assets/prewedding/Prewedding%202/dsc00909.jpg",
       "/assets/prewedding/Prewedding%202/dsc01036.jpg",
-      "/assets/prewedding/Prewedding%202/dsc01079.jpg"
+      "/assets/prewedding/Prewedding%202/dsc01079.jpg",
+      "/assets/prewedding/Prewedding%202/dsc00928.jpg"
     ]
   },
   {
@@ -206,7 +241,9 @@ export const galleryStories: Story[] = [
     mainImage: "/assets/prewedding/Pre%20wedding%204/1ssp08804-copy.jpg",
     images: [
       "/assets/prewedding/Pre%20wedding%204/1ssp08804-copy.jpg", 
-      "/assets/prewedding/Pre%20wedding%204/1dsc01960-copy.jpg"
+      "/assets/prewedding/Pre%20wedding%204/1dsc01960-copy.jpg",
+      "/assets/prewedding/Pre%20wedding%204/11ssp08875-copy.jpg",
+      "/assets/prewedding/Pre%20wedding%204/1dsc02006-copy.jpg"
     ]
   },
 
@@ -224,7 +261,9 @@ export const galleryStories: Story[] = [
       "/assets/Engagement/1SSP04205%20copy.jpg",
       "/assets/Engagement/1SSP04709%20copy.jpg",
       "/assets/Engagement/1SSP04721%20copy.jpg",
-      "/assets/Engagement/1SSP04730%20copy.jpg"
+      "/assets/Engagement/1SSP04730%20copy.jpg",
+      "/assets/Engagement/1SSP04747%20copy.jpg",
+      "/assets/Engagement/1SSP04752%20copy.jpg"
     ]
   },
   {
@@ -239,7 +278,8 @@ export const galleryStories: Story[] = [
       "/assets/Engagement/1SSP01019%20copy.jpg",
       "/assets/Engagement/1SSP01096%20copy.jpg",
       "/assets/Engagement/1SSP01943%20copy.jpg",
-      "/assets/Engagement/1SSP01969%20copy.jpg"
+      "/assets/Engagement/1SSP01969%20copy.jpg",
+      "/assets/Engagement/1SSP01998%20copy.jpg"
     ]
   },
   {
@@ -254,7 +294,9 @@ export const galleryStories: Story[] = [
       "/assets/Engagement/1SSP03215%20copy.jpg",
       "/assets/Engagement/1SSP03334%20copy.jpg",
       "/assets/Engagement/1SSP03356%20copy.jpg",
-      "/assets/Engagement/1SSP03932%20copy.jpg"
+      "/assets/Engagement/1SSP03932%20copy.jpg",
+      "/assets/Engagement/1SSP03398%20copy.jpg",
+      "/assets/Engagement/1SSP03933%20copy.jpg"
     ]
   },
   {
@@ -270,7 +312,8 @@ export const galleryStories: Story[] = [
       "/assets/Engagement/1SSP09257%20copy.jpg",
       "/assets/Engagement/1SSP09266%20copy.jpg",
       "/assets/Engagement/1SSP09269%20copy.jpg",
-      "/assets/Engagement/1SSP09299%20copy.jpg"
+      "/assets/Engagement/1SSP09299%20copy.jpg",
+      "/assets/Engagement/1SSP09276%20copy.jpg"
     ]
   },
   {
@@ -286,7 +329,12 @@ export const galleryStories: Story[] = [
       "/assets/Engagement/1SSP09719%20copy.jpg",
       "/assets/Engagement/1SSP09726%20copy.jpg",
       "/assets/Engagement/1SSP09751%20copy.jpg",
-      "/assets/Engagement/1SSP09778%20copy.jpg"
+      "/assets/Engagement/1SSP09778%20copy.jpg",
+      "/assets/Engagement/1SSP09733%20copy.jpg",
+      "/assets/Engagement/1SSP09737%20copy.jpg",
+      "/assets/Engagement/1SSP09748%20copy.jpg",
+      "/assets/Engagement/1SSP09767%20copy.jpg",
+      "/assets/Engagement/1SSP09791%20copy.jpg"
     ]
   },
 
@@ -303,7 +351,13 @@ export const galleryStories: Story[] = [
       "/assets/Maternity/Maternity%201/1SSP06919%20copy.jpg",
       "/assets/Maternity/Maternity%201/1SSP06947%20copy.jpg",
       "/assets/Maternity/Maternity%201/1SSP06964%20copy.jpg",
-      "/assets/Maternity/Maternity%201/1SSP07015%20copy.jpg"
+      "/assets/Maternity/Maternity%201/1SSP07015%20copy.jpg",
+      "/assets/Maternity/Maternity%201/1SSP06897%20copy.jpg",
+      "/assets/Maternity/Maternity%201/1SSP06952%20copy.jpg",
+      "/assets/Maternity/Maternity%201/1SSP06969%20copy.jpg",
+      "/assets/Maternity/Maternity%201/1SSP06988%20copy.jpg",
+      "/assets/Maternity/Maternity%201/1SSP07027%20copy.jpg",
+      "/assets/Maternity/Maternity%201/1SSP07033%20copy.jpg"
     ]
   },
   {
@@ -317,7 +371,10 @@ export const galleryStories: Story[] = [
     images: [
       "/assets/Maternity/Maternity%202/1SSP01383%20copy.jpg",
       "/assets/Maternity/Maternity%202/1SSP01374%20copy.jpg",
-      "/assets/Maternity/Maternity%202/1SSP01497%20copy.jpg"
+      "/assets/Maternity/Maternity%202/1SSP01497%20copy.jpg",
+      "/assets/Maternity/Maternity%202/1SSP01262%20copy.jpg",
+      "/assets/Maternity/Maternity%202/1SSP01284%20copy.jpg",
+      "/assets/Maternity/Maternity%202/1SSP01327%20copy.jpg"
     ]
   },
   {
