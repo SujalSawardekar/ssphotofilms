@@ -90,7 +90,7 @@ const Testimonials = () => {
         </div>
 
         {/* Carousel Container */}
-        <div className="relative min-h-[450px] md:min-h-[400px] flex items-center justify-center">
+        <div className="relative min-h-[550px] md:min-h-[400px] flex items-center justify-center">
           <AnimatePresence initial={false} custom={direction}>
             <motion.div
               key={index}
@@ -107,9 +107,9 @@ const Testimonials = () => {
               dragConstraints={{ left: 0, right: 0 }}
               onDragEnd={(e, { offset, velocity }) => {
                 const swipe = 10000;
-                if (offset.x < -swipe || offset.x < -50) {
+                if (offset.x < -swipe || offset.x < -20) {
                   nextSlide();
-                } else if (offset.x > swipe || offset.x > 50) {
+                } else if (offset.x > swipe || offset.x > 20) {
                   prevSlide();
                 }
               }}
@@ -157,7 +157,7 @@ const Testimonials = () => {
         </div>
 
         {/* Navigation Dots */}
-        <div className="mt-8 md:mt-12 flex justify-center items-center space-x-3">
+        <div className="mt-16 md:mt-12 flex justify-center items-center space-x-3">
           {testimonials.map((_, i) => (
             <button
               key={i}

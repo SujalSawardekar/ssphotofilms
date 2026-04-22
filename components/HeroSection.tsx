@@ -78,7 +78,7 @@ const HeroSection = () => {
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
-              className="text-white font-cinzel text-2xl md:text-4xl lg:text-5xl font-bold text-center leading-tight tracking-[0.1em] md:tracking-[0.2em] break-words md:whitespace-nowrap max-w-[300px] md:max-w-none"
+              className="text-white font-cinzel text-xl md:text-4xl lg:text-5xl font-bold text-center leading-tight tracking-[0.1em] md:tracking-[0.2em] break-words md:whitespace-nowrap max-w-[260px] md:max-w-none"
             >
               CAPTURING LOVE STORIES
             </motion.h1>

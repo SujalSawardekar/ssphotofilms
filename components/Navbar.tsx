@@ -48,9 +48,9 @@ const Navbar = ({ isLightPage = false, transparentDarkText = false }: { isLightP
       solidBg ? "bg-background shadow-sm border-b border-dark/5" : "bg-transparent border-none",
       isScrolled ? "py-2" : "py-4"
     )}>
-      {/* Top Utility Bar */}
+      {/* Top Utility Bar - Hidden on mobile to prevent clutter */}
       <div className={cn(
-        "transition-all duration-500 border-b",
+        "hidden md:block transition-all duration-500 border-b",
         isScrolled ? "pb-2" : "pb-4",
         darkColors ? "border-dark/10" : "border-white/10"
       )}>
