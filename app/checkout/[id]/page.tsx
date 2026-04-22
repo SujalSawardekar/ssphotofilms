@@ -61,7 +61,7 @@ export default function CheckoutPage() {
       if (!order.id) throw new Error(order.error || "Order creation failed");
 
       const options = {
-        key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || 'rzp_test_SYEI1vEJHBLf2D',
+        key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || 'rzp_test_SgdSeSAzNIDzJc',
         amount: order.amount,
         currency: order.currency,
         name: "SS PHOTO & FILMS",
@@ -77,7 +77,7 @@ export default function CheckoutPage() {
             });
 
             if (verifyResp.ok) {
-              router.push('/client'); // Or a success page
+              router.push('/client');
             } else {
               throw new Error("Payment verification failed");
             }
@@ -90,7 +90,33 @@ export default function CheckoutPage() {
         prefill: {
           name: booking.clientName,
           email: booking.email,
-          contact: booking.phone
+          contact: booking.phone,
+          method: 'upi'
+        },
+        modal: {
+          ondismiss: function() {
+            setPaying(false);
+          }
+        },
+        // FINAL ATTEMPT: Aggressive config to force UPI ID input
+        config: {
+          display: {
+            blocks: {
+              upi_id: {
+                name: "Pay using UPI ID",
+                instruments: [
+                  {
+                    method: "upi",
+                    vpa: true 
+                  },
+                ],
+              },
+            },
+            sequence: ["block.upi_id"],
+            preferences: {
+              show_default_blocks: true,
+            },
+          },
         },
         theme: { color: "#FF2D55" }
       };
@@ -230,8 +256,8 @@ export default function CheckoutPage() {
                   </div>
                </div>
 
-               {/* Pay Now Button (Premium Shimmer) */}
-               <div className="mt-8">
+                {/* Pay Now Button (Premium Shimmer) */}
+                <div className="mt-8">
                   <button 
                     onClick={handlePayment}
                     disabled={paying}
@@ -257,7 +283,7 @@ export default function CheckoutPage() {
                       <span className="text-[8px] font-black text-secondary/40 uppercase tracking-widest">Safe & Secure Payment</span>
                     </div>
                   </div>
-               </div>
+                </div>
             </div>
           </div>
         </motion.div>
