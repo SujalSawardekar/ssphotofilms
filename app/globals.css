@@ -1,5 +1,17 @@
 @import "tailwindcss";
 
+/* Hide Next.js and Vercel Dev Indicators/Toolbars */
+[data-nextjs-indicator],
+[data-vercel-toolbar],
+#nextjs-dev-indicator,
+#vercel-toolbar,
+.nextjs-toast-errors-parent {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
 :root {
   --background: #F3EFE9;
   --foreground: #000000;

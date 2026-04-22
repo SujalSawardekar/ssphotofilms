@@ -29,6 +29,17 @@ const ContactPage = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    if (formData.date) {
+      const selectedDate = new Date(formData.date);
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      
+      if (selectedDate < today) {
+        alert("add future date");
+        return;
+      }
+    }
+
     try {
       await addQuery({
         name: `${formData.firstName} ${formData.lastName}`.trim(),
@@ -44,6 +55,9 @@ const ContactPage = () => {
       alert("There was an error sending your message. Please try again.");
     }
   };
+
+  const now = new Date();
+  const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
 
   return (
     <main className="min-h-screen bg-[#F6F4F0] font-manrope text-dark">
@@ -163,6 +177,7 @@ const ContactPage = () => {
                     <label className="block text-base md:text-lg font-bold text-dark mb-4">Date</label>
                     <input
                       type="date"
+                      min={todayStr}
                       value={formData.date}
                       onChange={(e) => setFormData({...formData, date: e.target.value})}
                       className="w-full border border-dark/20 bg-white px-4 py-3 text-base rounded outline-none focus:border-dark transition-colors"

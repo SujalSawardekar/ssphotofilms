@@ -90,7 +90,7 @@ const Testimonials = () => {
         </div>
 
         {/* Carousel Container */}
-        <div className="relative min-h-[550px] md:min-h-[400px] flex items-center justify-center">
+        <div className="relative min-h-[480px] md:min-h-[400px] flex items-center justify-center">
           <AnimatePresence initial={false} custom={direction}>
             <motion.div
               key={index}
@@ -115,7 +115,7 @@ const Testimonials = () => {
               }}
               className="absolute w-full touch-pan-y"
             >
-              <div className="bg-white p-8 md:p-16 shadow-[0_20px_60px_rgba(0,0,0,0.05)] border border-dark/5 rounded-2xl relative">
+              <div className="bg-white p-6 md:p-16 shadow-[0_20px_60px_rgba(0,0,0,0.05)] border border-dark/5 rounded-2xl relative">
                 <Quote className="text-gold/10 absolute top-6 right-6 md:top-10 md:right-10 w-12 h-12 md:w-20 md:h-20" strokeWidth={1} />
                 
                 <div className="space-y-6 md:space-y-10 relative z-10 text-center md:text-left">
@@ -157,7 +157,7 @@ const Testimonials = () => {
         </div>
 
         {/* Navigation Dots */}
-        <div className="mt-16 md:mt-12 flex justify-center items-center space-x-3">
+        <div className="mt-10 md:mt-12 flex justify-center items-center space-x-3">
           {testimonials.map((_, i) => (
             <button
               key={i}

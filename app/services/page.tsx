@@ -191,11 +191,11 @@ export default function ServicesPage() {
                   <div key={idx} className="flex flex-col">
                     <button 
                       onClick={() => setExpandedPackageIdx(prev => prev === idx ? null : idx)}
-                      className={`flex items-center justify-between w-full py-4 px-6 transition-colors ${
+                      className={`flex flex-col sm:flex-row sm:items-center justify-between w-full py-4 px-6 transition-colors gap-2 ${
                         isExpanded ? 'bg-transparent' : 'bg-[#F2EFEB] hover:bg-[#EAE5DF]'
                       }`}
                     >
-                      <span className="text-xl font-cinzel font-bold tracking-wide text-dark uppercase block">
+                      <span className="text-lg md:text-xl font-cinzel font-bold tracking-wide text-dark uppercase block">
                         {pkg.title}
                       </span>
                       
@@ -259,7 +259,7 @@ export default function ServicesPage() {
                                          : <div className="w-1.5 h-1.5 rounded-full bg-current" />}
                                     </div>
                                     <div className="flex flex-col">
-                                       <span className={`text-base font-medium leading-relaxed tracking-tight ${(isBothSideFeature || isReelFeature) ? 'font-bold' : ''}`}>
+                                       <span className={`text-sm md:text-base font-medium leading-relaxed tracking-tight ${(isBothSideFeature || isReelFeature) ? 'font-bold' : ''}`}>
                                           {feature}
                                        </span>
                                        {(isBothSideFeature || isReelFeature) && (

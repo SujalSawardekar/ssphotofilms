@@ -58,7 +58,7 @@ const HeroSection = () => {
       {/* Main Content Area */}
       <div className="relative z-20 w-full h-full flex flex-col justify-center items-center pointer-events-none">
 
-        <div className="w-full max-w-[1400px] px-6 md:px-12 flex items-center justify-between mt-auto mb-20 lg:mb-32">
+        <div className="w-full max-w-[1400px] px-6 md:px-12 flex items-center justify-between mt-auto mb-64 md:mb-20 lg:mb-32">
           {/* Left Arrow */}
           <motion.button
             onClick={prevSlide}
@@ -73,12 +73,12 @@ const HeroSection = () => {
             </div>
           </motion.button>
 
-          <div className="flex flex-col items-center flex-1 px-4">
+          <div className="flex flex-col items-start md:items-center flex-1 px-4">
             <motion.h1
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
-              className="text-white font-cinzel text-xl md:text-4xl lg:text-5xl font-bold text-center leading-tight tracking-[0.1em] md:tracking-[0.2em] break-words md:whitespace-nowrap max-w-[260px] md:max-w-none"
+              className="text-white font-cinzel text-xl md:text-4xl lg:text-5xl font-bold text-left md:text-center leading-tight tracking-[0.1em] md:tracking-[0.2em] break-words md:whitespace-nowrap max-w-[260px] md:max-w-none"
             >
               CAPTURING LOVE STORIES
             </motion.h1>
@@ -86,7 +86,7 @@ const HeroSection = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.5, duration: 1 }}
-              className="text-white font-manrope text-[9px] md:text-xs uppercase tracking-[0.3em] md:tracking-[0.5em] font-medium mt-6 opacity-100 text-center"
+              className="text-white font-manrope text-[9px] md:text-xs uppercase tracking-[0.3em] md:tracking-[0.5em] font-medium mt-6 opacity-100 text-left md:text-center"
             >
               UNSCRIPTED. RAW. AUTHENTIC
             </motion.p>
@@ -121,7 +121,7 @@ const HeroSection = () => {
         </div>
 
         {/* Circular Badge Accent (Bottom Right) */}
-        <div className="absolute bottom-10 right-6 md:bottom-16 md:right-16 z-30 pointer-events-auto">
+        <div className="absolute bottom-32 right-6 md:bottom-16 md:right-16 z-30 pointer-events-auto">
           <a href="/find-photos" className="block cursor-pointer">
             <motion.div
               animate={{ rotate: 360 }}

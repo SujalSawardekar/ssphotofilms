@@ -33,6 +33,7 @@ const StoryDetailPage = ({ params }: StoryPageProps) => {
             alt={story.title} 
             fill
             priority
+            quality={80}
             className="object-cover scale-105 blur-sm brightness-50"
           />
         </div>
@@ -83,6 +84,7 @@ const StoryDetailPage = ({ params }: StoryPageProps) => {
                     alt={`${story.names} Gallery - ${idx + 1}`} 
                     fill
                     sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                    quality={70}
                     className="object-cover transition-transform duration-1000 group-hover:scale-105"
                   />
                 </div>

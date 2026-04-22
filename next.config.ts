@@ -14,6 +14,10 @@ const nextConfig: NextConfig = {
       bodySizeLimit: '50mb',
     },
   },
+  devIndicators: {
+    buildActivity: false,
+    appIsrStatus: false,
+  },
 };
 
 export default nextConfig;
