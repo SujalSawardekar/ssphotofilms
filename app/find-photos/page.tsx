@@ -93,7 +93,7 @@ const FindPhotosPage = () => {
       formData.append('album_id', selectedEventId);
       formData.append('face_image', imageFile);
 
-      const res = await fetch(`${apiBaseUrl}/api/v1/shortlist`, {
+      const res = await fetch('/api/guest/shortlist', {
         method: 'POST',
         body: formData
       });
@@ -420,7 +420,7 @@ const FindPhotosPage = () => {
                            className="group relative aspect-[4/5] bg-dark/5 overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-700"
                          >
                             <img 
-                              src={`${apiBaseUrl}/serve_image/${selectedEventId}/${encodeURIComponent(filename)}`} 
+                              src={`/api/guest/serve-image?eventId=${selectedEventId}&filename=${encodeURIComponent(filename)}`} 
                               alt="Result" 
                               className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
                             />
@@ -510,7 +510,7 @@ const FindPhotosPage = () => {
               {/* Preview Image */}
               <div className="relative w-full h-full rounded-none overflow-hidden shadow-2xl ring-1 ring-white/10 bg-dark/50">
                 <img 
-                  src={`${apiBaseUrl}/serve_image/${selectedEventId}/${encodeURIComponent(selectedPreviewImage)}`} 
+                  src={`/api/guest/serve-image?eventId=${selectedEventId}&filename=${encodeURIComponent(selectedPreviewImage)}`} 
                   alt="Full Preview" 
                   className="w-full h-full object-contain"
                 />

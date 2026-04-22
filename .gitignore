@@ -62,6 +62,6 @@ face_recognition_engine/databases/*.zip
 *.zip
 
 # Large assets in public/ (Optional but recommended for push success)
-public/assets/wedding/
-public/assets/Maternity/
-public/assets/Engagement/
+# public/assets/wedding/
+# public/assets/Maternity/
+# public/assets/Engagement/

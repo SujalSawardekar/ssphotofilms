@@ -14,6 +14,9 @@ export async function POST(req: NextRequest) {
     const response = await fetch(`${AI_ENGINE_URL}/api/v1/shortlist`, {
       method: 'POST',
       body: pythonFormData,
+      headers: {
+        'ngrok-skip-browser-warning': 'true'
+      }
     });
 
     if (!response.ok) {

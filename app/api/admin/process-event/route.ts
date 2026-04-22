@@ -30,6 +30,9 @@ export async function POST(req: NextRequest) {
     const response = await fetch(`${AI_ENGINE_URL}/api/owner/process_album`, {
       method: 'POST',
       body: pythonFormData,
+      headers: {
+        'ngrok-skip-browser-warning': 'true'
+      },
       // Increase timeout for large transfers to 2 minutes
       signal: AbortSignal.timeout(120000) 
     });
