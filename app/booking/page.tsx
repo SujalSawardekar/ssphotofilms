@@ -232,87 +232,76 @@ function BookingFormContent() {
               </div>
 
               {/* Two Column Layout: Card & Form */}
-              <div className="grid grid-cols-1 lg:grid-cols-[1.2fr_2fr] gap-16 items-start">
+              <div className="flex flex-col lg:grid lg:grid-cols-[1.2fr_2fr] gap-12 md:gap-16 items-start">
                 
                 {/* Left Card: Package Summary */}
-                <div className="lg:sticky lg:top-40 space-y-6">
+                <div className="w-full lg:sticky lg:top-40 space-y-6">
                   <motion.div 
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
-                    className="bg-white rounded-3xl shadow-[0_32px_64px_-12px_rgba(0,0,0,0.1)] border border-dark/5 p-10 md:p-12 space-y-8"
+                    className="bg-white rounded-3xl shadow-[0_20px_50px_rgba(0,0,0,0.08)] border border-dark/5 p-8 md:p-12 space-y-8"
                   >
                     <div className="space-y-2">
-                       <h3 className="text-lg font-bold text-dark uppercase tracking-tight">{categoryData.label} PLAN:</h3>
-                       <h2 className="text-4xl font-cinzel font-bold text-dark">{packageData.title}<span className="text-gold">.</span></h2>
+                       <h3 className="text-xs font-bold text-gold uppercase tracking-[0.2em]">{categoryData.label} PLAN</h3>
+                       <h2 className="text-3xl md:text-4xl font-cinzel font-bold text-dark">{packageData.title}<span className="text-gold">.</span></h2>
                     </div>
 
                      <div className="space-y-4">
-                        <div className="flex items-center justify-between">
-                          <p className="text-xs font-bold text-secondary uppercase tracking-widest italic decoration-gold underline-offset-4 underline">
-                            {isBothSide ? "Full Both Side Coverage" : "Photography Only"}
-                          </p>
-                        </div>
-                        <ul className="space-y-3">
+                        <ul className="space-y-4">
                            {packageData.features
                              .filter(f => !f.toLowerCase().includes("both side") && !f.toLowerCase().includes("reel"))
                              .map((f, i) => (
                                <li key={i} className="flex items-start gap-4 transition-all duration-300">
-                                  <div className="mt-2 shrink-0 text-dark/40">
-                                     <div className="w-1 h-1 bg-current rounded-full" />
+                                  <div className="mt-2 shrink-0 text-gold">
+                                     <div className="w-1.5 h-1.5 bg-current rounded-full" />
                                   </div>
-                                  <div className="flex flex-col">
-                                    <span className="text-sm leading-relaxed font-medium text-dark/70">
-                                      {f}
-                                    </span>
-                                  </div>
+                                  <span className="text-sm leading-relaxed font-medium text-dark/70">
+                                    {f}
+                                  </span>
                                </li>
                             ))}
                         </ul>
 
-                        {/* Dedicated Add-ons Section - Show ONLY if keywords exist in original features */}
+                        {/* Dedicated Add-ons Section */}
                         {(packageData.features.some(f => f.toLowerCase().includes("both side")) || 
                           packageData.features.some(f => f.toLowerCase().includes("reel"))) && (
-                          <div className="mt-10 pt-10 border-t border-dark/5 space-y-6">
-                             <p className="text-[10px] font-black text-secondary uppercase tracking-[0.3em]">Premium Upgrades</p>
-                             <div className="grid grid-cols-1 gap-4">
-                                {/* Both Side Toggle */}
+                          <div className="mt-8 pt-8 border-t border-dark/5 space-y-6">
+                             <p className="text-[10px] font-black text-secondary/40 uppercase tracking-[0.3em]">Premium Add-ons</p>
+                             <div className="grid grid-cols-1 gap-3">
                                 {packageData.features.some(f => f.toLowerCase().includes("both side")) && (
                                   <div 
                                     onClick={() => setIsBothSide(!isBothSide)}
-                                    className={`p-4 rounded-2xl border transition-all cursor-pointer flex items-center justify-between ${isBothSide ? 'border-gold bg-gold/5 shadow-lg shadow-gold/10' : 'border-dark/5 bg-white hover:border-gold/30'}`}
+                                    className={`p-4 rounded-2xl border transition-all cursor-pointer flex items-center justify-between ${isBothSide ? 'border-gold bg-gold/5' : 'border-dark/5 bg-white hover:border-gold/30'}`}
                                   >
-                                     <div className="flex items-center gap-4">
+                                     <div className="flex items-center gap-3">
                                         <div className={`p-2 rounded-lg ${isBothSide ? 'bg-gold text-white' : 'bg-[#F9F9F9] text-dark/30'}`}>
-                                           <Box size={18} />
+                                           <Box size={16} />
                                         </div>
                                         <div>
-                                           <p className="text-sm font-bold text-dark">Both Side Coverage</p>
-                                           <p className="text-[9px] font-bold text-secondary uppercase tracking-widest mt-0.5">Recommended for Weddings</p>
+                                           <p className="text-[13px] font-bold text-dark">Both Side Coverage</p>
                                         </div>
                                      </div>
-                                     <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all ${isBothSide ? 'bg-gold border-gold text-white' : 'border-dark/10'}`}>
-                                        {isBothSide && <CheckCircle2 size={12} />}
+                                     <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all ${isBothSide ? 'bg-gold border-gold text-white' : 'border-dark/10'}`}>
+                                        {isBothSide && <CheckCircle2 size={10} />}
                                      </div>
                                   </div>
                                 )}
 
-                                {/* Reel Toggle */}
                                 {packageData.features.some(f => f.toLowerCase().includes("reel")) && (
                                   <div 
                                     onClick={() => setIsReel(!isReel)}
-                                    className={`p-4 rounded-2xl border transition-all cursor-pointer flex items-center justify-between ${isReel ? 'border-[#FF2D55] bg-[#FF2D55]/5 shadow-lg shadow-red-500/10' : 'border-dark/5 bg-white hover:border-red-500/30'}`}
+                                    className={`p-4 rounded-2xl border transition-all cursor-pointer flex items-center justify-between ${isReel ? 'border-[#FF2D55] bg-[#FF2D55]/5' : 'border-dark/5 bg-white hover:border-red-500/30'}`}
                                   >
-                                     <div className="flex items-center gap-4">
+                                     <div className="flex items-center gap-3">
                                         <div className={`p-2 rounded-lg ${isReel ? 'bg-[#FF2D55] text-white' : 'bg-[#F9F9F9] text-dark/30'}`}>
-                                           <ShieldCheck size={18} />
+                                           <ShieldCheck size={16} />
                                         </div>
                                         <div>
-                                           <p className="text-sm font-bold text-dark">Cinematic Reel (Add-on)</p>
-                                           <p className="text-[9px] font-bold text-secondary uppercase tracking-widest mt-0.5">₹1,500 | High Impact Edit</p>
+                                           <p className="text-[13px] font-bold text-dark">Cinematic Reel</p>
                                         </div>
                                      </div>
-                                     <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all ${isReel ? 'bg-[#FF2D55] border-[#FF2D55] text-white' : 'border-dark/10'}`}>
-                                        {isReel && <CheckCircle2 size={12} />}
+                                     <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all ${isReel ? 'bg-[#FF2D55] border-[#FF2D55] text-white' : 'border-dark/10'}`}>
+                                        {isReel && <CheckCircle2 size={10} />}
                                      </div>
                                   </div>
                                 )}
@@ -321,24 +310,14 @@ function BookingFormContent() {
                         )}
                      </div>
 
-                    <div className="pt-6 border-t border-dark/5 space-y-1">
-                       <p className="text-xs font-bold text-[#FF2D55] uppercase tracking-widest">Starts at:</p>
-                       <div className="flex items-baseline space-x-3">
-                          <span className="text-2xl font-cinzel font-bold text-dark/20 line-through decoration-dark/10">
-                            ₹{(() => {
-                              const baseOrig = parsePrice(packageData.originalPrice);
-                              const upgrade = (isBothSide && packageData.bothSidePrice) ? (parsePrice(packageData.bothSidePrice) - parsePrice(packageData.discountPrice)) : 0;
-                              const reelCharge = (isReel && packageData.reelPrice) ? parsePrice(packageData.reelPrice) : 0;
-                              return (baseOrig + upgrade + reelCharge).toLocaleString('en-IN');
-                            })()}/-
-                          </span>
-                          <span className="text-4xl font-cinzel font-bold text-dark">₹{currentTotal.toLocaleString('en-IN')}/-</span>
+                    <div className="pt-6 border-t border-dark/5 flex items-center justify-between">
+                       <div>
+                          <p className="text-[10px] font-bold text-[#FF2D55] uppercase tracking-widest mb-1">Total Investment</p>
+                          <span className="text-3xl font-cinzel font-bold text-dark">₹{currentTotal.toLocaleString('en-IN')}</span>
                        </div>
                     </div>
-
-
                     {/* Check Price Element (Dashed Box) - NOW SUPPORTS DIRECT SELECTION */}
-                    <div className="relative">
+                    <div className="relative mt-6">
                       {!isSidebarSearching ? (
                         <button 
                           type="button"

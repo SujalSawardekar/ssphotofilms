@@ -90,7 +90,7 @@ const Testimonials = () => {
         </div>
 
         {/* Carousel Container */}
-        <div className="relative min-h-[400px] flex items-center justify-center">
+        <div className="relative min-h-[450px] md:min-h-[400px] flex items-center justify-center">
           <AnimatePresence initial={false} custom={direction}>
             <motion.div
               key={index}
@@ -103,22 +103,32 @@ const Testimonials = () => {
                 x: { type: "spring", stiffness: 300, damping: 30 },
                 opacity: { duration: 0.2 }
               }}
-              className="absolute w-full"
+              drag="x"
+              dragConstraints={{ left: 0, right: 0 }}
+              onDragEnd={(e, { offset, velocity }) => {
+                const swipe = 10000;
+                if (offset.x < -swipe || offset.x < -50) {
+                  nextSlide();
+                } else if (offset.x > swipe || offset.x > 50) {
+                  prevSlide();
+                }
+              }}
+              className="absolute w-full touch-pan-y"
             >
-              <div className="bg-white p-10 md:p-16 shadow-[0_20px_60px_rgba(0,0,0,0.05)] border border-dark/5 rounded-2xl relative">
-                <Quote className="text-gold/10 absolute top-10 right-10" size={80} strokeWidth={1} />
+              <div className="bg-white p-8 md:p-16 shadow-[0_20px_60px_rgba(0,0,0,0.05)] border border-dark/5 rounded-2xl relative">
+                <Quote className="text-gold/10 absolute top-6 right-6 md:top-10 md:right-10 w-12 h-12 md:w-20 md:h-20" strokeWidth={1} />
                 
-                <div className="space-y-10 relative z-10 text-center md:text-left">
-                  <p className="text-secondary font-garamond italic text-2xl md:text-3xl leading-snug">
+                <div className="space-y-6 md:space-y-10 relative z-10 text-center md:text-left">
+                  <p className="text-secondary font-garamond italic text-xl md:text-3xl leading-snug">
                     "{testimonials[index].quote}"
                   </p>
                   
-                  <div className="pt-10 border-t border-gold/10 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                  <div className="pt-6 md:pt-10 border-t border-gold/10 flex flex-col md:flex-row md:items-center justify-between gap-4">
                     <div>
-                      <h4 className="font-cinzel text-dark font-bold uppercase tracking-widest text-lg">
+                      <h4 className="font-cinzel text-dark font-bold uppercase tracking-widest text-base md:text-lg">
                         {testimonials[index].name}
                       </h4>
-                      <p className="text-gold text-xs uppercase tracking-[0.3em] font-bold mt-1">
+                      <p className="text-gold text-[10px] md:text-xs uppercase tracking-[0.2em] md:tracking-[0.3em] font-bold mt-1">
                         {testimonials[index].type}
                       </p>
                     </div>
@@ -147,7 +157,7 @@ const Testimonials = () => {
         </div>
 
         {/* Navigation Dots */}
-        <div className="mt-12 flex justify-center items-center space-x-3">
+        <div className="mt-8 md:mt-12 flex justify-center items-center space-x-3">
           {testimonials.map((_, i) => (
             <button
               key={i}

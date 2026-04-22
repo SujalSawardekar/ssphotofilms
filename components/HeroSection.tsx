@@ -73,13 +73,12 @@ const HeroSection = () => {
             </div>
           </motion.button>
 
-          {/* Typography */}
-          <div className="flex flex-col items-center flex-1">
+          <div className="flex flex-col items-center flex-1 px-4">
             <motion.h1
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
-              className="text-white font-cinzel text-xl md:text-4xl lg:text-5xl font-bold text-center leading-tight tracking-[0.2em] whitespace-nowrap"
+              className="text-white font-cinzel text-2xl md:text-4xl lg:text-5xl font-bold text-center leading-tight tracking-[0.1em] md:tracking-[0.2em] break-words md:whitespace-nowrap max-w-[300px] md:max-w-none"
             >
               CAPTURING LOVE STORIES
             </motion.h1>
@@ -87,7 +86,7 @@ const HeroSection = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.5, duration: 1 }}
-              className="text-white font-manrope text-[10px] md:text-xs uppercase tracking-[0.5em] font-medium mt-6 opacity-100 text-center"
+              className="text-white font-manrope text-[9px] md:text-xs uppercase tracking-[0.3em] md:tracking-[0.5em] font-medium mt-6 opacity-100 text-center"
             >
               UNSCRIPTED. RAW. AUTHENTIC
             </motion.p>
@@ -106,7 +105,7 @@ const HeroSection = () => {
               initial={{ x: 20, opacity: 0 }}
               animate={{ x: 0, opacity: 1 }}
               transition={{ duration: 0.8, delay: 0.6 }}
-              className="flex items-center justify-center w-32 pointer-events-auto cursor-pointer group border-none bg-transparent outline-none"
+              className="hidden lg:flex items-center justify-center w-32 pointer-events-auto cursor-pointer group border-none bg-transparent outline-none"
             >
               <div className="relative flex items-center w-full justify-center">
                 <div className="w-full h-[1px] bg-white group-hover:w-[120%] transition-all duration-300" />

@@ -62,7 +62,7 @@ const Navbar = ({ isLightPage = false, transparentDarkText = false }: { isLightP
               darkColors ? "text-dark/70" : "text-white/80"
             )}>
               <Mail size={14} className="opacity-60" />
-              <a href="mailto:ssphotographyofficial08@gmail.com" className="text-xs tracking-widest font-medium hover:text-gold transition-colors">
+              <a href="mailto:ssphotographyofficial08@gmail.com" className="hidden md:inline-block text-xs tracking-widest font-medium hover:text-gold transition-colors">
                 ssphotographyofficial08@gmail.com
               </a>
             </div>

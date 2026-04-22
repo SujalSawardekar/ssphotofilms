@@ -25,7 +25,7 @@ const AboutTeaser = () => {
             whileInView={{ opacity: 1 }}
             transition={{ delay: 0.3, duration: 0.8 }}
             viewport={{ once: true }}
-            className="space-y-6 text-secondary font-manrope text-sm leading-relaxed max-w-lg"
+            className="space-y-6 text-white/80 font-manrope text-sm md:text-base leading-relaxed max-w-lg"
           >
             <p>
               SS Photo & Films is a passion project born out of Shreyas Sawardekar's obsession with freezing time. What started as a hobby in 2017 has evolved into a full-scale premium studio that has documented hundreds of unique stories across India.
@@ -33,7 +33,7 @@ const AboutTeaser = () => {
             <p>
               We believe every frame should tell a story, every click should evoke a memory, and every client should feel the raw emotion of their special moments even decades later.
             </p>
-            <p className="font-cinzel text-gold text-lg pt-4">
+            <p className="font-cinzel text-gold text-xl pt-4">
               "We Capture Your Memories Forever"
             </p>
           </motion.div>

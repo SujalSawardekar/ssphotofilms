@@ -34,7 +34,7 @@ const SoulCinema = () => {
            viewport={{ once: true }}
            className="flex flex-col items-center"
         >
-          <h2 className="text-white font-cinzel text-3xl md:text-5xl lg:text-6xl font-bold tracking-[0.2em] mb-6 uppercase">
+          <h2 className="text-white font-cinzel text-2xl sm:text-3xl md:text-5xl lg:text-6xl font-bold tracking-[0.1em] md:tracking-[0.2em] mb-6 uppercase whitespace-nowrap">
             SOUL <span className="text-white/40">+</span> CINEMA
           </h2>
           

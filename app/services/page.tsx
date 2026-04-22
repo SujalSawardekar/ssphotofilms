@@ -128,7 +128,7 @@ export default function ServicesPage() {
       <Navbar transparentDarkText={true} />
 
       {/* Header Section */}
-      <section className="bg-[#F5F2ED] pt-[160px] pb-24 px-6 md:px-12 text-center flex flex-col items-center justify-center min-h-[400px]">
+      <section className="bg-[#F5F2ED] pt-[160px] pb-12 px-6 md:px-12 text-center flex flex-col items-center justify-center min-h-[300px]">
         <h1 className="text-5xl md:text-7xl lg:text-8xl font-cinzel font-bold text-[#4A4A4A] tracking-wider mb-6 uppercase">
           SERVICES
         </h1>
@@ -138,7 +138,7 @@ export default function ServicesPage() {
       </section>
 
       {/* Main Content */}
-      <section className="max-w-7xl mx-auto px-6 md:px-12 py-16">
+      <section className="max-w-7xl mx-auto px-6 md:px-12 pt-8 pb-16">
         
         {/* Tabs */}
         <div className="flex flex-nowrap overflow-x-auto scrollbar-hide justify-start md:justify-between items-center border-b border-dark/10 mb-16 px-4 gap-8 pb-2">

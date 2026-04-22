@@ -54,7 +54,7 @@ const JoinTeamPage = () => {
     <main className="min-h-screen bg-background flex flex-col font-manrope">
       <Navbar transparentDarkText={true} />
 
-      <section className="flex-1 flex flex-col lg:flex-row pt-32 lg:pt-40">
+      <section className="flex-1 flex flex-col-reverse lg:flex-row pt-32 lg:pt-40">
         {/* Left Pane: Why Join Us */}
         <div className="w-full lg:w-[40%] bg-[#FAF9F6] p-12 md:p-20 flex flex-col justify-center space-y-16 lg:sticky lg:top-0 lg:h-screen overflow-y-auto">
           <div className="space-y-6">

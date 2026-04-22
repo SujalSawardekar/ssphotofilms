@@ -86,10 +86,6 @@ export default function LoginPage() {
           <ArrowLeft size={16} className="text-dark group-active:-translate-x-1 transition-transform" />
         </button>
 
-        {/* Avatar Placeholder */}
-        <div className="w-16 h-16 rounded-full overflow-hidden mb-6 border-4 border-white shadow-xl bg-white/60 flex items-center justify-center -mt-20">
-           <div className="text-dark/10"><UserIcon size={32} /></div>
-        </div>
 
         <div className="text-center mb-8 w-full">
           <h2 className="text-3xl font-cinzel font-black text-dark tracking-tight uppercase">Sign In</h2>

@@ -44,7 +44,7 @@ const occasions = [
   { 
     title: 'Engagement', 
     description: 'Capturing the first promise of a lifelong journey together.', 
-    image: '/assets/hero-bg3.jpg',
+    image: '/assets/Engagement/main.jpg',
     href: '/gallery?category=engagement'
   },
   { 
@@ -56,21 +56,40 @@ const occasions = [
   { 
     title: 'Haldi', 
     description: 'Vibrant colors and soulful traditions of your celebration.', 
-    image: '/assets/gallery-1.jpg',
+    image: '/assets/haldi/main.jpg',
     href: '/gallery?category=haldi'
   }
 ];
 
 const OccasionGrid = () => {
   const [startIndex, setStartIndex] = useState(0);
+  const [isMobile, setIsMobile] = useState(false);
 
-  // Auto-scroll logic
   useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  // Auto-scroll logic (disabled for mobile to allow manual dragging)
+  useEffect(() => {
+    if (isMobile) return;
     const timer = setInterval(() => {
-      setStartIndex((prev) => (prev === 3 ? 0 : prev + 1));
+      setStartIndex((prev) => (prev >= occasions.length - 3 ? 0 : prev + 1));
     }, 5000);
     return () => clearInterval(timer);
-  }, [startIndex]);
+  }, [startIndex, isMobile]);
+
+  const handleDragEnd = (event: any, info: any) => {
+    if (info.offset.x < -50) {
+      // Dragged left -> Next
+      setStartIndex((prev) => (prev >= occasions.length - 1 ? 0 : prev + 1));
+    } else if (info.offset.x > 50) {
+      // Dragged right -> Prev
+      setStartIndex((prev) => (prev <= 0 ? occasions.length - 1 : prev - 1));
+    }
+  };
 
   return (
     <section className="bg-background pt-24 pb-16 px-6 md:px-12 w-full">
@@ -84,37 +103,36 @@ const OccasionGrid = () => {
         </div>
 
         {/* Carousel Container */}
-        <div className="relative">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <AnimatePresence mode="popLayout">
-              {occasions.slice(startIndex, startIndex + 3).map((item, idx) => (
+        <div className="relative overflow-hidden">
+          <div className={`grid ${isMobile ? 'grid-cols-1' : 'grid-cols-3'} gap-6`}>
+            <AnimatePresence mode="popLayout" initial={false}>
+              {occasions.slice(startIndex, isMobile ? startIndex + 1 : startIndex + 3).map((item, idx) => (
                 <motion.div
-                  key={item.title}
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.95 }}
-                  transition={{ duration: 0.5, delay: idx * 0.1 }}
-                  className="group relative flex flex-col h-full bg-white rounded-[32px] overflow-hidden shadow-sm"
+                  key={`${item.title}-${startIndex}`}
+                  initial={{ opacity: 0, x: 50 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -50 }}
+                  transition={{ duration: 0.4, ease: "easeOut" }}
+                  drag={isMobile ? "x" : false}
+                  dragConstraints={{ left: 0, right: 0 }}
+                  onDragEnd={handleDragEnd}
+                  className="group relative flex flex-col h-full bg-white rounded-[32px] overflow-hidden shadow-sm touch-pan-y"
                 >
                   <Link href={item.href} className="flex-1 flex flex-col">
-                    {/* Image Container - Reduced Aspect Ratio */}
                     <div className="relative aspect-[4/3] overflow-hidden">
                       <Image 
                         src={item.image} 
                         alt={item.title} 
                         fill
-                        className="object-cover transition-transform duration-700 group-hover:scale-110 group-hover:rotate-3"
+                        className="object-cover transition-transform duration-700 group-hover:scale-110"
                         sizes="(max-width: 768px) 100vw, 33vw"
                       />
                       
-                      {/* Top Right Circle Button with Scrolling Arrow - Increased size */}
                       <div className="absolute top-5 right-5 w-14 h-14 rounded-full bg-white flex items-center justify-center shadow-md overflow-hidden">
                         <div className="relative h-6 w-6 overflow-hidden text-dark">
-                           {/* Primary Arrow */}
                            <div className="absolute top-0 left-0 w-full h-full transition-all duration-500 group-hover:-translate-y-10 group-hover:translate-x-10">
                              <ArrowIcon className="w-full h-full" />
                            </div>
-                           {/* Secondary Arrow */}
                            <div className="absolute top-0 left-0 w-full h-full transition-all duration-500 translate-y-10 -translate-x-10 group-hover:translate-y-0 group-hover:translate-x-0">
                              <ArrowIcon className="w-full h-full" />
                            </div>
@@ -122,7 +140,6 @@ const OccasionGrid = () => {
                       </div>
                     </div>
 
-                    {/* Bottom Content Box - Reduced Padding */}
                     <div className="bg-[#f0f0f0]/60 p-6 text-center">
                        <h3 className="text-2xl font-cinzel font-bold text-dark/80 mb-2 tracking-tight">
                          {item.title}
@@ -137,9 +154,9 @@ const OccasionGrid = () => {
             </AnimatePresence>
           </div>
 
-          {/* Pagination Dots - Minimized spacing */}
+          {/* Pagination Dots */}
           <div className="flex justify-center items-center space-x-1 mt-8 pb-4">
-            {[0, 1, 2, 3].map((dot) => (
+            {occasions.slice(0, isMobile ? occasions.length : occasions.length - 2).map((_, dot) => (
               <button
                 key={dot}
                 onClick={() => setStartIndex(dot)}
