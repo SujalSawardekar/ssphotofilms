@@ -43,13 +43,12 @@ const FindPhotosPage = () => {
   const [currentScanIndex, setCurrentScanIndex] = useState(0);
   const [isFinishingScan, setIsFinishingScan] = useState(false);
   const [selectedPreviewImage, setSelectedPreviewImage] = useState<string | null>(null);
-  const [apiBaseUrl, setApiBaseUrl] = useState('http://127.0.0.1:5001');
+  const [apiBaseUrl, setApiBaseUrl] = useState(process.env.NEXT_PUBLIC_AI_ENGINE_URL || 'http://127.0.0.1:5001');
 
   useEffect(() => {
-    // Dynamically set API base URL based on the current hostname
-    if (typeof window !== 'undefined') {
-      const hostname = window.location.hostname;
-      setApiBaseUrl(`http://${hostname}:5001`);
+    // If defined in env, use it. Otherwise fallback to local.
+    if (process.env.NEXT_PUBLIC_AI_ENGINE_URL) {
+      setApiBaseUrl(process.env.NEXT_PUBLIC_AI_ENGINE_URL);
     }
   }, []);
 

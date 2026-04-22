@@ -26,7 +26,8 @@ export async function POST(req: NextRequest) {
       console.log(`[PROXY_DEBUG] Forwarding "upload.zip" of size: ${(album_zip as Blob).size / (1024 * 1024)} MB`);
     }
 
-    const response = await fetch('http://127.0.0.1:5001/api/owner/process_album', {
+    const AI_ENGINE_URL = process.env.NEXT_PUBLIC_AI_ENGINE_URL || 'http://127.0.0.1:5001';
+    const response = await fetch(`${AI_ENGINE_URL}/api/owner/process_album`, {
       method: 'POST',
       body: pythonFormData,
       // Increase timeout for large transfers to 2 minutes

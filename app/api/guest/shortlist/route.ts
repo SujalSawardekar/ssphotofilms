@@ -10,7 +10,8 @@ export async function POST(req: NextRequest) {
     if (album_id) pythonFormData.append('album_id', album_id);
     if (face_image) pythonFormData.append('face_image', face_image);
 
-    const response = await fetch('http://127.0.0.1:5001/api/v1/shortlist', {
+    const AI_ENGINE_URL = process.env.NEXT_PUBLIC_AI_ENGINE_URL || 'http://127.0.0.1:5001';
+    const response = await fetch(`${AI_ENGINE_URL}/api/v1/shortlist`, {
       method: 'POST',
       body: pythonFormData,
     });

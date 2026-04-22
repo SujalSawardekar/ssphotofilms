@@ -164,7 +164,7 @@ export default function EventsPage() {
         });
 
         // Step B: Direct upload to Flask (Bypasses Next.js Proxy/Limits)
-        const AI_ENGINE_URL = 'http://127.0.0.1:5001/api/owner/process_album';
+        const AI_ENGINE_URL = `${process.env.NEXT_PUBLIC_AI_ENGINE_URL || 'http://127.0.0.1:5001'}/api/owner/process_album`;
         try {
           console.log(`Attempting direct upload to AI Engine: ${AI_ENGINE_URL}`);
 
@@ -231,7 +231,7 @@ export default function EventsPage() {
         pythonForm.append('drive_link', event.driveLink);
       }
 
-      const AI_ENGINE_URL = 'http://127.0.0.1:5001/api/owner/process_album';
+      const AI_ENGINE_URL = `${process.env.NEXT_PUBLIC_AI_ENGINE_URL || 'http://127.0.0.1:5001'}/api/owner/process_album`;
       console.log(`Restarting scan for ${event.albumId}...`);
 
       const res = await fetch(AI_ENGINE_URL, {
