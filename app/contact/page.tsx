@@ -177,7 +177,6 @@ const ContactPage = () => {
                     <label className="block text-base md:text-lg font-bold text-dark mb-4">Date</label>
                     <input
                       type="date"
-                      min={todayStr}
                       value={formData.date}
                       onChange={(e) => setFormData({...formData, date: e.target.value})}
                       className="w-full border border-dark/20 bg-white px-4 py-3 text-base rounded outline-none focus:border-dark transition-colors"
