@@ -15,8 +15,7 @@ const nextConfig: NextConfig = {
     },
   },
   devIndicators: {
-    buildActivity: false,
-    appIsrStatus: false,
+    // buildActivity and appIsrStatus are deprecated in Next.js 15
   },
 };
 
