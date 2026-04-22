@@ -429,7 +429,17 @@ function BookingFormContent() {
                       </div>
                       <div className="space-y-4">
                          <label className="text-2xl font-cinzel font-bold text-dark">Time For Shoot</label>
-                         <input required type="datetime-local" value={formData.datetime} onChange={(e) => setFormData({...formData, datetime: e.target.value})} className="w-full px-6 py-4.5 rounded-xl border border-dark/10 focus:border-dark outline-none bg-[#FAF9F6] text-dark font-medium transition-all" />
+                         <input 
+                           required 
+                           type="datetime-local" 
+                           min={(() => {
+                             const now = new Date();
+                             return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}T00:00`;
+                           })()}
+                           value={formData.datetime} 
+                           onChange={(e) => setFormData({...formData, datetime: e.target.value})} 
+                           className="w-full px-6 py-4.5 rounded-xl border border-dark/10 focus:border-dark outline-none bg-[#FAF9F6] text-dark font-medium transition-all" 
+                         />
                          <p className="text-[9px] font-black text-secondary/40 uppercase tracking-widest ml-1">Pick your exact date and time</p>
                       </div>
 

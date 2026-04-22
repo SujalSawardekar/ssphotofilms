@@ -25,6 +25,7 @@ const ContactPage = () => {
     date: '',
     message: ''
   });
+  const [dateError, setDateError] = useState('');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -35,8 +36,10 @@ const ContactPage = () => {
       today.setHours(0, 0, 0, 0);
       
       if (selectedDate < today) {
-        alert("add future date");
+        setDateError("add future date");
         return;
+      } else {
+        setDateError("");
       }
     }
 
@@ -177,10 +180,19 @@ const ContactPage = () => {
                     <label className="block text-base md:text-lg font-bold text-dark mb-4">Date</label>
                     <input
                       type="date"
+                      min={todayStr}
                       value={formData.date}
-                      onChange={(e) => setFormData({...formData, date: e.target.value})}
-                      className="w-full border border-dark/20 bg-white px-4 py-3 text-base rounded outline-none focus:border-dark transition-colors"
+                      onChange={(e) => {
+                        setFormData({...formData, date: e.target.value});
+                        setDateError(""); // Clear error on change
+                      }}
+                      className={`w-full border ${dateError ? 'border-red-500' : 'border-dark/20'} bg-white px-4 py-3 text-base rounded outline-none focus:border-dark transition-colors`}
                     />
+                    {dateError && (
+                      <p className="text-red-500 text-xs mt-2 font-bold italic tracking-wider animate-pulse uppercase">
+                        {dateError}
+                      </p>
+                    )}
                   </div>
                 </div>
 

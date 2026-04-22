@@ -329,12 +329,15 @@ const AdminBookingsDashboard = () => {
                            </div>
                         )}
 
-                        <div className="grid grid-cols-2 gap-4 mt-auto">
-                          <button onClick={() => handleStatusChange(booking.id, 'Confirmed')} className="flex items-center justify-center space-x-2 py-4 bg-[#D1FAE5] text-[#059669] text-[10px] uppercase tracking-widest font-black rounded-lg hover:bg-emerald-600 hover:text-white transition-all">
-                             <Check size={14} /><span>Accept Booking</span>
+                        <div className="grid grid-cols-3 gap-3 mt-auto">
+                          <button onClick={() => handleStatusChangeSafe(booking.id, 'Confirmed')} className="flex flex-col items-center justify-center space-y-1 py-4 bg-[#D1FAE5] text-[#059669] text-[9px] uppercase tracking-widest font-black rounded-lg hover:bg-emerald-600 hover:text-white transition-all">
+                             <Check size={14} /><span>Accept</span>
                           </button>
-                          <button onClick={() => setSelectedBookingDetails(booking)} className="flex items-center justify-center space-x-2 py-4 border border-dark/10 text-dark text-[10px] uppercase tracking-widest font-black rounded-lg hover:bg-dark hover:text-white transition-all">
-                             <Box size={14} /><span>View Details</span>
+                          <button onClick={() => handleStatusChangeSafe(booking.id, 'Rejected')} className="flex flex-col items-center justify-center space-y-1 py-4 bg-rose-50 text-rose-600 text-[9px] uppercase tracking-widest font-black rounded-lg hover:bg-rose-600 hover:text-white transition-all border border-rose-100">
+                             <XCircle size={14} /><span>Reject</span>
+                          </button>
+                          <button onClick={() => setSelectedBookingDetails(booking)} className="flex flex-col items-center justify-center space-y-1 py-4 border border-dark/10 text-dark text-[9px] uppercase tracking-widest font-black rounded-lg hover:bg-dark hover:text-white transition-all">
+                             <Box size={14} /><span>Details</span>
                           </button>
                         </div>
                       </motion.div>

@@ -35,7 +35,8 @@ const ClientDashboard = () => {
 
   const fetchDashboardData = async () => {
     const allBookings = await getBookings();
-    setClientBookings(allBookings.filter(b => b.email === clientEmail || b.clientName === clientName));
+    // Strictly filter by email to prevent name collisions
+    setClientBookings(allBookings.filter(b => b.email === clientEmail));
 
     const allQueries = await getQueries();
     setClientQueries(allQueries.filter(q => q.userEmail === clientEmail || q.email === clientEmail));
