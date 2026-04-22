@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/lib/authContext';
 import { Booking, ClientQuery, ClientQueryMessage } from '@prisma/client';
 import { getBookings, getQueries, addQueryMessage, markQueryMessagesAsSeen } from '@/lib/db';
-import { Calendar, MapPin, Box, MessageSquare, Link as LinkIcon, Send, CheckCheck } from 'lucide-react';
+import { Calendar, MapPin, Box, MessageSquare, Link as LinkIcon, Send, CheckCheck, Menu } from 'lucide-react';
 import Footer from '@/components/Footer';
 import ClientSidebar from '@/components/ClientSidebar';
 import Link from 'next/link';
@@ -20,6 +20,7 @@ const ClientDashboard = () => {
   const [replyText, setReplyText] = useState('');
   const [loading, setLoading] = useState(false);
   const [showPasswordModal, setShowPasswordModal] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [passwordError, setPasswordError] = useState('');
   const [passwordSuccess, setPasswordSuccess] = useState('');
   const [passwordLoading, setPasswordLoading] = useState(false);
@@ -119,9 +120,29 @@ const ClientDashboard = () => {
 
   return (
     <div className="flex min-h-screen bg-[#F6F4F0] font-manrope">
-      <ClientSidebar activeTab={activeTab} onTabChange={setActiveTab} />
+      <ClientSidebar 
+        activeTab={activeTab} 
+        onTabChange={setActiveTab} 
+        isOpen={isSidebarOpen} 
+        setIsOpen={setIsSidebarOpen} 
+      />
 
-      <div className="flex-1 flex flex-col overflow-auto">
+      <div className="flex-1 flex flex-col min-w-0">
+        {/* Mobile Header */}
+        <header className="h-16 bg-[#1A1A1A] border-b border-white/5 flex items-center justify-between px-6 md:hidden sticky top-0 z-40">
+          <div className="flex items-center space-x-3">
+             <div className="w-8 h-8 rounded bg-gold flex items-center justify-center">
+                <span className="text-dark font-bold text-xs font-cinzel">SS</span>
+             </div>
+             <span className="text-white font-bold text-xs tracking-widest font-cinzel uppercase">Client Hub</span>
+          </div>
+          <button 
+            onClick={() => setIsSidebarOpen(true)}
+            className="p-2 text-gold/80 hover:text-gold transition-colors"
+          >
+            <Menu size={24} />
+          </button>
+        </header>
 
         {/* === BOOKINGS TAB === */}
         {activeTab === 'bookings' && (
