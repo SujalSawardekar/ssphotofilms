@@ -290,7 +290,7 @@ const FindPhotosPage = () => {
                                     <Zap size={32} className="text-gold group-hover:text-dark transition-colors" />
                                  </div>
                                  <div className="text-center">
-                                   <span className="text-[11px] font-black uppercase tracking-[0.3em] text-dark block mb-2">Start Live Studio Scan</span>
+                                   <span className="text-[11px] font-black uppercase tracking-[0.3em] text-dark block mb-2">SCAN YOUR IMAGE</span>
                                    <span className="text-[9px] font-bold uppercase tracking-widest text-secondary opacity-40 italic">Use your camera for optimal AI detection</span>
                                  </div>
                               </button>

@@ -44,7 +44,7 @@ const occasions = [
   { 
     title: 'Engagement', 
     description: 'Capturing the first promise of a lifelong journey together.', 
-    image: '/assets/Engagement/main.jpg',
+    image: '/assets/Engagement/1DSC08499%20copy.jpg',
     href: '/gallery?category=engagement'
   },
   { 
@@ -56,7 +56,7 @@ const occasions = [
   { 
     title: 'Haldi', 
     description: 'Vibrant colors and soulful traditions of your celebration.', 
-    image: '/assets/haldi/main.jpg',
+    image: '/assets/haldi/1SSP02809%20copy.jpg',
     href: '/gallery?category=haldi'
   }
 ];
@@ -82,10 +82,10 @@ const OccasionGrid = () => {
   }, [startIndex, isMobile]);
 
   const handleDragEnd = (event: any, info: any) => {
-    if (info.offset.x < -50) {
+    if (info.offset.x < -20) {
       // Dragged left -> Next
       setStartIndex((prev) => (prev >= occasions.length - 1 ? 0 : prev + 1));
-    } else if (info.offset.x > 50) {
+    } else if (info.offset.x > 20) {
       // Dragged right -> Prev
       setStartIndex((prev) => (prev <= 0 ? occasions.length - 1 : prev - 1));
     }
