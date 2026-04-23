@@ -29,16 +29,25 @@ export async function POST(req: NextRequest) {
     if (isAuthentic) {
       console.log('[VERIFY_SUCCESS] Signature matches. Updating database for Booking:', bookingId);
       try {
+        console.log('[VERIFY_DB_UPDATE] Attempting to update database for booking:', bookingId);
         await updateBookingPayment(
           bookingId, 
           razorpay_order_id, 
           razorpay_payment_id, 
           razorpay_signature
         );
+        console.log('[VERIFY_DB_SUCCESS] Database updated successfully for booking:', bookingId);
         return NextResponse.json({ message: 'Payment verified and database updated' }, { status: 200 });
       } catch (dbError: any) {
-        console.error('[VERIFY_DB_ERROR] Failed to update booking:', dbError.message);
-        return NextResponse.json({ error: 'Database update failed', details: dbError.message }, { status: 500 });
+        console.error('[VERIFY_DB_ERROR] CRITICAL: Failed to update booking in database.');
+        console.error('Booking ID:', bookingId);
+        console.error('Error Message:', dbError.message);
+        console.error('Error Stack:', dbError.stack);
+        return NextResponse.json({ 
+          error: 'Database update failed', 
+          details: dbError.message,
+          bookingId: bookingId 
+        }, { status: 500 });
       }
     } else {
       console.error('[VERIFY_SIGNATURE_FAILURE] Signature mismatch!');

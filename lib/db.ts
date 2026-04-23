@@ -4,6 +4,32 @@ import prisma from './prisma';
 import { User, Booking, ClientQuery, TeamApplication, ClientQueryMessage, Event, Photo } from '@prisma/client';
 import { isTempEmail } from './utils';
 
+export interface BookingData {
+  clientName: string;
+  email: string;
+  phone: string;
+  eventType: string;
+  eventDate: string;
+  location: string;
+  hours?: number;
+  amount: number;
+  packageType?: string | null;
+  packageFeatures?: string[];
+  photographerName?: string | null;
+  message?: string | null;
+  photographerNotes?: string | null;
+  status?: string;
+  advancePaid?: number;
+  totalPaid?: number;
+  paymentMethod?: string;
+  isCustomPrice?: boolean;
+  isOffline?: boolean;
+  travelCharges?: number;
+  includeBothSide?: boolean;
+  includeReel?: boolean;
+  userId?: number | null;
+}
+
 // We no longer need this local function for Supabase
 export const initDb = async () => {
   return;
@@ -105,7 +131,7 @@ export const getBookingWithInstallments = async (id: string): Promise<any> => {
   });
 };
 
-export const addBooking = async (bookingData: any): Promise<Booking> => {
+export const addBooking = async (bookingData: BookingData): Promise<Booking> => {
   return await prisma.booking.create({
     data: {
       clientName: bookingData.clientName,
@@ -114,22 +140,23 @@ export const addBooking = async (bookingData: any): Promise<Booking> => {
       eventType: bookingData.eventType,
       eventDate: bookingData.eventDate,
       location: bookingData.location,
-      hours: bookingData.hours || 4,
-      amount: bookingData.amount,
-      packageType: bookingData.packageType,
+      hours: Number(bookingData.hours) || 4,
+      amount: Number(bookingData.amount),
+      packageType: bookingData.packageType || null,
       packageFeatures: bookingData.packageFeatures || [],
       photographerName: bookingData.photographerName || null,
-      message: bookingData.message,
+      message: bookingData.message || null,
       photographerNotes: bookingData.photographerNotes || null,
       status: bookingData.status || "Pending",
-      advancePaid: bookingData.advancePaid || 0,
-      totalPaid: bookingData.advancePaid || 0,
+      advancePaid: Number(bookingData.advancePaid) || 0,
+      totalPaid: Number(bookingData.totalPaid) || Number(bookingData.advancePaid) || 0,
       paymentMethod: bookingData.paymentMethod || "Cash",
-      isCustomPrice: bookingData.isCustomPrice || false,
-      isOffline: bookingData.isOffline || false,
-      travelCharges: bookingData.travelCharges || 0,
-      includeBothSide: bookingData.includeBothSide || false,
-      includeReel: bookingData.includeReel || false
+      isCustomPrice: !!bookingData.isCustomPrice,
+      isOffline: !!bookingData.isOffline,
+      travelCharges: Number(bookingData.travelCharges) || 0,
+      includeBothSide: !!bookingData.includeBothSide,
+      includeReel: !!bookingData.includeReel,
+      userId: bookingData.userId ? Number(bookingData.userId) : null
     }
   });
 };
@@ -166,7 +193,9 @@ export const updateBookingPayment = async (bookingId: string, orderId: string, p
     where: { id: bookingId }
   });
 
-  if (!booking) return;
+  if (!booking) {
+    throw new Error(`Booking with ID ${bookingId} not found`);
+  }
 
   await prisma.booking.update({
     where: { id: bookingId },
@@ -176,7 +205,7 @@ export const updateBookingPayment = async (bookingId: string, orderId: string, p
       razorpayOrderId: orderId,
       razorpayPaymentId: paymentId,
       razorpaySignature: signature,
-      totalPaid: booking.amount // Mark as fully paid
+      totalPaid: Number(booking.amount) // Mark as fully paid
     }
   });
 };
