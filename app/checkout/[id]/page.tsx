@@ -76,13 +76,16 @@ export default function CheckoutPage() {
               body: JSON.stringify({ ...response, bookingId: booking.id }),
             });
 
+            const result = await verifyResp.json();
+
             if (verifyResp.ok) {
               router.push('/client');
             } else {
-              throw new Error("Payment verification failed");
+              throw new Error(result.details || result.error || result.message || "Payment verification failed");
             }
-          } catch (err) {
-            alert("Payment successful, but sync failed. Our team will contact you.");
+          } catch (err: any) {
+            console.error("Verification Error:", err);
+            alert(`Payment successful, but sync failed: ${err.message}. Our team will contact you.`);
           } finally {
             setPaying(false);
           }
