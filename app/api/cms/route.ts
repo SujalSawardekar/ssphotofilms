@@ -64,6 +64,9 @@ export async function POST(req: NextRequest) {
             }
           });
         }
+      }, {
+        maxWait: 30000,
+        timeout: 60000
       });
     } 
     else if (type === 'testimonials') {
@@ -82,6 +85,9 @@ export async function POST(req: NextRequest) {
             }
           });
         }
+      }, {
+        maxWait: 30000,
+        timeout: 60000
       });
     } 
     else if (type === 'services') {
@@ -124,6 +130,9 @@ export async function POST(req: NextRequest) {
             }
           }
         }
+      }, {
+        maxWait: 30000,
+        timeout: 60000
       });
     } 
     else if (type === 'gallery') {
@@ -143,6 +152,9 @@ export async function POST(req: NextRequest) {
             }
           });
         }
+      }, {
+        maxWait: 30000,
+        timeout: 60000
       });
     } 
     else {

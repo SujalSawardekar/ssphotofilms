@@ -467,7 +467,7 @@ export const CmsProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         
         if (!res.ok) {
           const err = await res.json();
-          throw new Error(err.error || `Failed to save ${item.type}`);
+          throw new Error(err.details || err.error || `Failed to save ${item.type}`);
         }
       }
 
