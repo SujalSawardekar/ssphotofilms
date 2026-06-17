@@ -31,8 +31,8 @@ function BookingFormContent() {
   const pricingCategories = cmsServices && cmsServices.length > 0 ? cmsServices : DEFAULT_PRICING_CATEGORIES;
 
   // Find the matching package data
-  const categoryData = pricingCategories.find(c => c.label.toLowerCase() === preselectedEvent.toLowerCase()) || pricingCategories[0];
-  const packageData = categoryData.packages.find(p => p.title.toLowerCase() === preselectedPackageTitle.toLowerCase()) || categoryData.packages[0];
+  const categoryData = pricingCategories.find((c: any) => c.label.toLowerCase() === preselectedEvent.toLowerCase()) || pricingCategories[0];
+  const packageData = categoryData.packages.find((p: any) => p.title.toLowerCase() === preselectedPackageTitle.toLowerCase()) || categoryData.packages[0];
 
   const [hasMounted, setHasMounted] = useState(false);
 
@@ -253,8 +253,8 @@ function BookingFormContent() {
                      <div className="space-y-4">
                         <ul className="space-y-4">
                            {packageData.features
-                             .filter(f => !f.toLowerCase().includes("both side") && !f.toLowerCase().includes("reel"))
-                             .map((f, i) => (
+                             .filter((f: string) => !f.toLowerCase().includes("both side") && !f.toLowerCase().includes("reel"))
+                             .map((f: string, i: number) => (
                                <li key={i} className="flex items-start gap-4 transition-all duration-300">
                                   <div className="mt-2 shrink-0 text-gold">
                                      <div className="w-1.5 h-1.5 bg-current rounded-full" />
@@ -267,12 +267,12 @@ function BookingFormContent() {
                         </ul>
 
                         {/* Dedicated Add-ons Section */}
-                        {(packageData.features.some(f => f.toLowerCase().includes("both side")) || 
-                          packageData.features.some(f => f.toLowerCase().includes("reel"))) && (
+                        {(packageData.features.some((f: string) => f.toLowerCase().includes("both side")) || 
+                          packageData.features.some((f: string) => f.toLowerCase().includes("reel"))) && (
                           <div className="mt-8 pt-8 border-t border-dark/5 space-y-6">
                              <p className="text-[10px] font-black text-secondary/40 uppercase tracking-[0.3em]">Premium Add-ons</p>
                              <div className="grid grid-cols-1 gap-3">
-                                {packageData.features.some(f => f.toLowerCase().includes("both side")) && (
+                                {packageData.features.some((f: string) => f.toLowerCase().includes("both side")) && (
                                   <div 
                                     onClick={() => setIsBothSide(!isBothSide)}
                                     className={`p-4 rounded-2xl border transition-all cursor-pointer flex items-center justify-between ${isBothSide ? 'border-gold bg-gold/5' : 'border-dark/5 bg-white hover:border-gold/30'}`}
@@ -291,7 +291,7 @@ function BookingFormContent() {
                                   </div>
                                 )}
 
-                                {packageData.features.some(f => f.toLowerCase().includes("reel")) && (
+                                {packageData.features.some((f: string) => f.toLowerCase().includes("reel")) && (
                                   <div 
                                     onClick={() => setIsReel(!isReel)}
                                     className={`p-4 rounded-2xl border transition-all cursor-pointer flex items-center justify-between ${isReel ? 'border-[#FF2D55] bg-[#FF2D55]/5' : 'border-dark/5 bg-white hover:border-red-500/30'}`}
