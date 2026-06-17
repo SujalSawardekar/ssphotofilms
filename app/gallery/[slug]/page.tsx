@@ -5,7 +5,8 @@ import Image from 'next/image';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { motion } from 'framer-motion';
-import { galleryStories } from '@/lib/galleryData';
+import { galleryStories as DEFAULT_STORIES } from '@/lib/galleryData';
+import { useCms } from '@/lib/CmsContext';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 
@@ -15,6 +16,9 @@ interface StoryPageProps {
 
 const StoryDetailPage = ({ params }: StoryPageProps) => {
   const { slug } = React.use(params);
+  const { gallery } = useCms();
+
+  const galleryStories = gallery.length > 0 ? gallery : DEFAULT_STORIES;
   const story = galleryStories.find(s => s.slug === slug);
 
   if (!story) {
@@ -69,7 +73,7 @@ const StoryDetailPage = ({ params }: StoryPageProps) => {
       <section className="py-24 px-6 md:px-12 lg:px-24">
         <div className="max-w-[1600px] mx-auto">
           <div className="columns-1 md:columns-2 lg:columns-3 gap-8 space-y-8">
-            {story.images.map((image, idx) => (
+            {story.images.map((image: string, idx: number) => (
               <motion.div
                 key={idx}
                 initial={{ opacity: 0, scale: 0.95 }}

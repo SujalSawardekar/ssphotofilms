@@ -8,21 +8,32 @@ import {
   LayoutDashboard, 
   Calendar, 
   Upload, 
-  QrCode, 
   Users, 
   MessageSquare,
   LogOut,
   Image as ImageIcon,
+  Edit3,
+  Settings as SettingsIcon,
+  Briefcase,
   X
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-const adminLinks = [
-  { label: 'DASHBOARD',  href: '/admin',           icon: LayoutDashboard },
-  { label: 'BOOKINGS',   href: '/admin/bookings',  icon: Calendar },
-  { label: 'SESSIONS',   href: '/admin/events',    icon: ImageIcon },
-  { label: 'QUERIES',    href: '/admin/queries',   icon: MessageSquare },
-  { label: 'TEAM',       href: '/admin/team',      icon: Users },
+const crmLinks = [
+  { label: 'DASHBOARD',       href: '/admin',                  icon: LayoutDashboard },
+  { label: 'CLIENT BOOKINGS', href: '/admin/bookings',         icon: Calendar },
+  { label: 'CLIENT QUERIES',  href: '/admin/queries',          icon: MessageSquare },
+];
+
+const cmsLinks = [
+  { label: 'EDIT WEBSITE',    href: '/?editMode=true',         icon: Edit3 },
+  { label: 'GALLERY MANAGER', href: '/admin/gallery-manager',  icon: ImageIcon },
+  { label: 'SERVICES PRICING',href: '/admin/services-manager', icon: Briefcase },
+];
+
+const utilityLinks = [
+  { label: 'MEDIA LIBRARY',   href: '/admin/media-library',    icon: Upload },
+  { label: 'GLOBAL SETTINGS', href: '/admin/settings',         icon: SettingsIcon },
 ];
 
 interface AdminSidebarProps {
@@ -90,27 +101,84 @@ export default function AdminSidebar({ isOpen, setIsOpen }: AdminSidebarProps) {
         </div>
 
         {/* Navigation Links */}
-        <nav className="flex-1 px-6 py-8 space-y-2">
-          <p className="text-xs uppercase tracking-[0.4em] text-white/30 mb-6 px-2">Main Menu</p>
-          {adminLinks.map((link) => {
-            const isActive = link.href !== '#' && pathname === link.href;
-            return (
-              <Link
-                key={link.label}
-                href={link.href}
-                onClick={() => setIsOpen?.(false)}
-                className={`flex items-center space-x-4 px-4 py-3.5 rounded-md transition-all group ${
-                  isActive 
-                    ? 'bg-gold text-dark' 
-                    : 'text-white/50 hover:text-gold hover:bg-white/5'
-                }`}
-              >
-                <link.icon size={18} strokeWidth={1.5} className={isActive ? 'text-dark' : 'text-gold/60 group-hover:text-gold'} />
-                <span className="text-sm font-bold tracking-[0.2em] uppercase">{link.label}</span>
-                {isActive && <span className="ml-auto w-1.5 h-1.5 bg-dark rounded-full" />}
-              </Link>
-            );
-          })}
+        <nav className="flex-1 px-6 py-6 overflow-y-auto space-y-6 scrollbar-hide">
+          
+          {/* Group 1: Business CRM */}
+          <div>
+            <p className="text-[10px] uppercase tracking-[0.3em] text-white/20 mb-3 px-4 font-black">Business Desk (CRM)</p>
+            <div className="space-y-1.5">
+              {crmLinks.map((link) => {
+                const isActive = pathname === link.href;
+                return (
+                  <Link
+                    key={link.label}
+                    href={link.href}
+                    onClick={() => setIsOpen?.(false)}
+                    className={`flex items-center space-x-4 px-4 py-3 rounded-lg transition-all group ${
+                      isActive 
+                        ? 'bg-gold text-dark font-extrabold shadow-md' 
+                        : 'text-white/55 hover:text-gold hover:bg-white/5'
+                    }`}
+                  >
+                    <link.icon size={16} strokeWidth={isActive ? 2.5 : 1.5} className={isActive ? 'text-dark' : 'text-gold/60 group-hover:text-gold'} />
+                    <span className="text-xs font-bold tracking-[0.15em] uppercase">{link.label}</span>
+                  </Link>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Group 2: Website CMS */}
+          <div>
+            <p className="text-[10px] uppercase tracking-[0.3em] text-white/20 mb-3 px-4 font-black">Website Editor (CMS)</p>
+            <div className="space-y-1.5">
+              {cmsLinks.map((link) => {
+                // Active check matches either exact match or homepage if editMode query is present
+                const isActive = pathname === '/' && link.href.startsWith('/?') ? true : (pathname === '/gallery-manager' || pathname === '/admin/gallery-manager' ? link.href.includes('gallery-manager') : (pathname === '/services-manager' || pathname === '/admin/services-manager' ? link.href.includes('services-manager') : pathname === link.href));
+                return (
+                  <Link
+                    key={link.label}
+                    href={link.href}
+                    onClick={() => setIsOpen?.(false)}
+                    className={`flex items-center space-x-4 px-4 py-3 rounded-lg transition-all group ${
+                      isActive 
+                        ? 'bg-gold text-dark font-extrabold shadow-md' 
+                        : 'text-white/55 hover:text-gold hover:bg-white/5'
+                    }`}
+                  >
+                    <link.icon size={16} strokeWidth={isActive ? 2.5 : 1.5} className={isActive ? 'text-dark' : 'text-gold/60 group-hover:text-gold'} />
+                    <span className="text-xs font-bold tracking-[0.15em] uppercase">{link.label}</span>
+                  </Link>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Group 3: Settings & Utils */}
+          <div>
+            <p className="text-[10px] uppercase tracking-[0.3em] text-white/20 mb-3 px-4 font-black">Utilities</p>
+            <div className="space-y-1.5">
+              {utilityLinks.map((link) => {
+                const isActive = pathname === link.href;
+                return (
+                  <Link
+                    key={link.label}
+                    href={link.href}
+                    onClick={() => setIsOpen?.(false)}
+                    className={`flex items-center space-x-4 px-4 py-3 rounded-lg transition-all group ${
+                      isActive 
+                        ? 'bg-gold text-dark font-extrabold shadow-md' 
+                        : 'text-white/55 hover:text-gold hover:bg-white/5'
+                    }`}
+                  >
+                    <link.icon size={16} strokeWidth={isActive ? 2.5 : 1.5} className={isActive ? 'text-dark' : 'text-gold/60 group-hover:text-gold'} />
+                    <span className="text-xs font-bold tracking-[0.15em] uppercase">{link.label}</span>
+                  </Link>
+                );
+              })}
+            </div>
+          </div>
+
         </nav>
 
         {/* Logout */}

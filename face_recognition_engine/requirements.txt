@@ -6,10 +6,10 @@ Pillow==12.0.0
 qrcode==8.2
 python-dotenv==1.2.1
 setuptools>=80,<81
-face-recognition==1.3.0
+# face-recognition==1.3.0 (installed separately with --no-deps)
 dlib==19.24.6; platform_system != "Windows"
 dlib-bin>=19.24.6,<21; platform_system == "Windows"
 gdown==5.1.0
 flask-cors==5.0.0
-opencv-python==4.10.1.84
+opencv-python>=4.10.0
 patool==2.3.0

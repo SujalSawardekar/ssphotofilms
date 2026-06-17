@@ -2,16 +2,23 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import Image from 'next/image';
+import { useCms } from '@/lib/CmsContext';
+import EditableText from './EditableText';
+import EditableImage from './EditableImage';
 
-const images = [
+const DEFAULT_IMAGES = [
   "/assets/hero-bg.jpg",
   "/assets/hero-bg2.jpg",
   "/assets/hero-bg3.jpg",
 ];
 
 const HeroSection = () => {
+  const { contents, updateContentKey, editMode, isPreview } = useCms();
   const [currentIndex, setCurrentIndex] = useState(0);
+
+  const images: string[] = contents["home.hero.images"] 
+    ? JSON.parse(contents["home.hero.images"]) 
+    : DEFAULT_IMAGES;
 
   const nextSlide = () => {
     setCurrentIndex((prev: number) => (prev + 1) % images.length);
@@ -21,12 +28,19 @@ const HeroSection = () => {
     setCurrentIndex((prev: number) => (prev - 1 + images.length) % images.length);
   };
 
+  const handleImageChange = (newUrl: string, idx: number) => {
+    const updatedImages = [...images];
+    updatedImages[idx] = newUrl;
+    updateContentKey("home.hero.images", JSON.stringify(updatedImages));
+  };
+
   useEffect(() => {
+    if (editMode && !isPreview) return;
     const timer = setInterval(() => {
       nextSlide();
     }, 6000);
     return () => clearInterval(timer);
-  }, [currentIndex]); // Restart timer on manual click
+  }, [currentIndex, images.length, editMode, isPreview]); // Restart timer on manual click
 
   return (
     <section className="relative h-screen w-full flex items-center justify-center overflow-hidden bg-dark">
@@ -41,8 +55,9 @@ const HeroSection = () => {
             transition={{ duration: 0.8, ease: "easeInOut" }}
             className="absolute inset-0"
           >
-            <Image
+            <EditableImage
               src={images[currentIndex]}
+              onChange={(newUrl) => handleImageChange(newUrl, currentIndex)}
               alt="Hero Background"
               fill
               priority
@@ -73,14 +88,14 @@ const HeroSection = () => {
             </div>
           </motion.button>
 
-          <div className="flex flex-col items-start md:items-center flex-1 px-4">
+          <div className="flex flex-col items-start md:items-center flex-1 px-4 pointer-events-auto">
             <motion.h1
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
               className="text-white font-cinzel text-xl md:text-4xl lg:text-5xl font-bold text-left md:text-center leading-tight tracking-[0.1em] md:tracking-[0.2em] break-words md:whitespace-nowrap max-w-[260px] md:max-w-none"
             >
-              CAPTURING LOVE STORIES
+              <EditableText cmsKey="home.hero.title" defaultVal="CAPTURING LOVE STORIES" />
             </motion.h1>
             <motion.p
               initial={{ opacity: 0, y: 20 }}
@@ -88,7 +103,7 @@ const HeroSection = () => {
               transition={{ delay: 0.5, duration: 1 }}
               className="text-white font-manrope text-[9px] md:text-xs uppercase tracking-[0.3em] md:tracking-[0.5em] font-medium mt-6 opacity-100 text-left md:text-center"
             >
-              UNSCRIPTED. RAW. AUTHENTIC
+              <EditableText cmsKey="home.hero.subtitle" defaultVal="UNSCRIPTED. RAW. AUTHENTIC" />
             </motion.p>
           </div>
 

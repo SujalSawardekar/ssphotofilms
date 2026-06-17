@@ -5,10 +5,11 @@ import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { pricingCategories } from '@/lib/mockData';
+import { pricingCategories as DEFAULT_PRICING_CATEGORIES } from '@/lib/mockData';
 import { addBooking } from '@/lib/db';
 import { isValidFutureDate } from '@/lib/utils';
 import { useAuth } from '@/lib/authContext';
+import { useCms } from '@/lib/CmsContext';
 import { motion, AnimatePresence } from 'framer-motion';
 import { indianCities, City } from '@/lib/indianCities';
 import { Search, MapPin, ChevronDown, CheckCircle2, AlertCircle, ArrowRight, LayoutDashboard, Home, Box, ShieldCheck } from 'lucide-react';
@@ -18,6 +19,7 @@ function BookingFormContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { user } = useAuth();
+  const { services: cmsServices } = useCms();
   
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -25,6 +27,8 @@ function BookingFormContent() {
   const preselectedPackageTitle = searchParams.get('package') || 'BASIC SHOOT';
   const initialBothSide = searchParams.get('bothSide') === 'true';
   const initialReel = searchParams.get('reel') === 'true';
+
+  const pricingCategories = cmsServices && cmsServices.length > 0 ? cmsServices : DEFAULT_PRICING_CATEGORIES;
 
   // Find the matching package data
   const categoryData = pricingCategories.find(c => c.label.toLowerCase() === preselectedEvent.toLowerCase()) || pricingCategories[0];

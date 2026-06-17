@@ -5,8 +5,9 @@ export const metadata: Metadata = {
   title: "SS Photo & Films | Capturing Timeless Stories",
   description: "SS Photo & Films is a premium photography studio specializing in Wedding, Maternity, and Corporate events. Capturing raw, unscripted, and authentic moments since 2017.",
 };
-
 import { AuthProvider } from "@/lib/authContext";
+import { CmsProvider } from "@/lib/CmsContext";
+import CmsEditor from "@/components/CmsEditor";
 
 export default function RootLayout({
   children,
@@ -23,7 +24,10 @@ export default function RootLayout({
       </head>
       <body suppressHydrationWarning className="min-h-screen bg-background text-foreground font-manrope selection:bg-gold selection:text-white">
         <AuthProvider>
-          {children}
+          <CmsProvider>
+            <CmsEditor />
+            {children}
+          </CmsProvider>
         </AuthProvider>
       </body>
     </html>

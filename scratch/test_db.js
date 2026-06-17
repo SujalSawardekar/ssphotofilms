@@ -3,11 +3,13 @@ const { PrismaClient } = require('@prisma/client');
 async function main() {
   const prisma = new PrismaClient();
   try {
-    console.log("Attempting to connect to the database...");
-    const result = await prisma.$queryRaw`SELECT 1 as test`;
-    console.log("Connection successful:", result);
+    const contents = await prisma.cmsContent.findMany();
+    console.log("=== CMS CONTENT ===");
+    for (const c of contents) {
+      console.log(`${c.key}: ${c.value}`);
+    }
   } catch (error) {
-    console.error("Connection failed!");
+    console.error("Failed to query DB!");
     console.error(error);
   } finally {
     await prisma.$disconnect();

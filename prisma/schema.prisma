@@ -132,3 +132,80 @@ model TeamApplication {
   status         String   @default("Pending")
   createdAt      DateTime @default(now())
 }
+
+model CmsContent {
+  id        Int      @id @default(autoincrement())
+  key       String   @unique
+  value     String   @db.Text
+  updatedAt DateTime @updatedAt
+}
+
+model CmsOccasion {
+  id          String   @id @default(cuid())
+  title       String
+  description String
+  image       String
+  href        String
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+}
+
+model CmsTestimonial {
+  id         String   @id @default(cuid())
+  clientName String
+  eventType  String
+  review     String   @db.Text
+  image      String
+  order      Int      @default(0)
+  createdAt  DateTime @default(now())
+}
+
+model CmsServiceCategory {
+  id          String              @id
+  label       String
+  description String?             @db.Text
+  pdfUrl      String?
+  order       Int                 @default(0)
+  packages    CmsServicePackage[]
+  createdAt   DateTime            @default(now())
+}
+
+model CmsServicePackage {
+  id              String             @id @default(cuid())
+  categoryId      String
+  title           String
+  originalPrice   String
+  discountPrice   String
+  bothSidePrice   String?
+  reelPrice       String?
+  features        String[]
+  imageSrc        String
+  captionTitle    String
+  captionSubtitle String
+  order           Int                @default(0)
+  category        CmsServiceCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  createdAt       DateTime           @default(now())
+}
+
+model CmsGalleryStory {
+  id        String   @id @default(cuid())
+  slug      String   @unique
+  title     String
+  category  String
+  date      String
+  names     String
+  mainImage String
+  images    String[]
+  createdAt DateTime @default(now())
+}
+
+model MediaLibraryItem {
+  id         String   @id @default(cuid())
+  fileName   String
+  url        String
+  resolution String?
+  size       Int
+  mimeType   String
+  createdAt  DateTime @default(now())
+}
+

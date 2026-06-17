@@ -5,6 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { useAuth } from '@/lib/authContext';
+import { useCms } from '@/lib/CmsContext';
 import { Menu, X, Mail, Phone, LogOut, User } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { clsx, type ClassValue } from 'clsx';
@@ -19,6 +20,8 @@ const Navbar = ({ isLightPage = false, transparentDarkText = false }: { isLightP
   const [isScrolled, setIsScrolled] = useState(false);
   const pathname = usePathname();
   const { user, logout } = useAuth();
+  const { editMode, isPreview } = useCms();
+  const showEditorOffset = editMode && !isPreview;
 
   useEffect(() => {
     const handleScroll = () => {
@@ -44,7 +47,8 @@ const Navbar = ({ isLightPage = false, transparentDarkText = false }: { isLightP
 
   return (
     <nav className={cn(
-      "fixed top-0 left-0 w-full z-[100] transition-all duration-500 font-manrope",
+      "fixed left-0 w-full z-[100] transition-all duration-500 font-manrope",
+      showEditorOffset ? "top-16" : "top-0",
       solidBg ? "bg-background shadow-sm border-b border-dark/5" : "bg-transparent border-none",
       isScrolled ? "py-2" : "py-4"
     )}>

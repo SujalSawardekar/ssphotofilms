@@ -5,7 +5,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useSearchParams } from 'next/navigation';
-import { galleryCategories, galleryStories, Story } from '@/lib/galleryData';
+import { galleryCategories as DEFAULT_CATEGORIES, galleryStories as DEFAULT_STORIES, Story } from '@/lib/galleryData';
+import { useCms } from '@/lib/CmsContext';
 import { cn } from '@/lib/utils'; // Generic utility for class merging
 
 // Custom Diagonal Arrow Icon matched to the design
@@ -26,6 +27,10 @@ const GalleryArrow = ({ className }: { className?: string }) => (
 );
 
 const GalleryColumnLayout = () => {
+  const { gallery } = useCms();
+  const galleryStories = gallery.length > 0 ? gallery : DEFAULT_STORIES;
+  const galleryCategories = DEFAULT_CATEGORIES;
+
   const searchParams = useSearchParams();
   const [categoryIndex, setCategoryIndex] = useState(0);
   const [storyIndex, setStoryIndex] = useState(0);

@@ -4,9 +4,17 @@ import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { FaInstagram, FaYoutube, FaFacebookF } from 'react-icons/fa6';
+import { useCms } from '@/lib/CmsContext';
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
+  const { contents } = useCms();
+
+  const phone = contents["contact.phone"] || "+91 7741083155";
+  const email = contents["contact.email"] || "ssphotographyofficial13@gmail.com";
+  const instagram = contents["contact.social.instagram"] || "https://www.instagram.com/ss_photography_official13";
+  const youtube = contents["contact.social.youtube"] || "https://www.youtube.com/@ss_photography_official13";
+  const facebook = contents["contact.social.facebook"] || "https://www.facebook.com/ssphotographyofficial13/";
 
   return (
     <footer className="bg-background text-dark py-20 px-6 md:px-12 w-full border-t border-dark/5 snap-start">
@@ -56,11 +64,11 @@ const Footer = () => {
           <div className="space-y-8">
             <h4 className="text-xs uppercase tracking-[0.3em] font-bold text-dark">Contact</h4>
             <div className="space-y-4 text-xs uppercase tracking-[0.2em] font-bold text-dark/60">
-              <p>+91 7741083155</p>
-              <p className="lowercase">ssphotographyofficial13@gmail.com</p>
+              <p>{phone}</p>
+              <p className="lowercase">{email}</p>
               <div className="pt-4 flex space-x-6">
                 <a 
-                  href="https://www.instagram.com/ss_photography_official13" 
+                  href={instagram} 
                   target="_blank" 
                   rel="noopener noreferrer"
                   className="hover:text-gold transition-colors"
@@ -69,7 +77,7 @@ const Footer = () => {
                   <FaInstagram size={18} />
                 </a>
                 <a 
-                  href="https://www.youtube.com/@ss_photography_official13" 
+                  href={youtube} 
                   target="_blank" 
                   rel="noopener noreferrer"
                   className="hover:text-gold transition-colors"
@@ -78,7 +86,7 @@ const Footer = () => {
                   <FaYoutube size={18} />
                 </a>
                 <a 
-                  href="https://www.facebook.com/ssphotographyofficial13/" 
+                  href={facebook} 
                   target="_blank" 
                   rel="noopener noreferrer"
                   className="hover:text-gold transition-colors"
