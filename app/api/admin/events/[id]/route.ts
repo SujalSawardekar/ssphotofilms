@@ -9,7 +9,7 @@ export async function DELETE(req: NextRequest, { params }: { params: Promise<{ i
     if (!id) return NextResponse.json({ error: 'Missing ID' }, { status: 400 });
 
     // Physical Cleanup
-    const DATA_ROOT = 'c:\\Users\\shreyas\\ss-photo-films-data';
+    const DATA_ROOT = process.env.DATA_ROOT || path.join(process.cwd(), 'face_recognition_engine');
     const albumFolder = path.join(DATA_ROOT, 'album_images', id);
     const dbFile = path.join(DATA_ROOT, 'databases', `${id}.csv`);
 

@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Quote, ChevronLeft, ChevronRight, ArrowLeftRight } from 'lucide-react';
+import Script from 'next/script';
 import { useCms } from '@/lib/CmsContext';
 
 const DEFAULT_TESTIMONIALS = [
@@ -308,6 +309,15 @@ const Testimonials = () => {
               aria-label={`Go to testimonial ${i + 1}`}
             />
           ))}
+        </div>
+
+        {/* Live Google Reviews Widget Container */}
+        <div className="mt-20 border-t border-gold/10 pt-16 max-w-6xl mx-auto text-center w-full">
+          <h3 className="text-2xl font-cinzel font-bold text-dark mb-8 uppercase tracking-widest">Live Google Reviews</h3>
+          
+          <Script src="https://elfsightcdn.com/platform.js" strategy="lazyOnload" />
+          
+          <div className="elfsight-app-e9976021-37a6-48f4-aab2-592ad7117c43" data-elfsight-app-lazy></div>
         </div>
 
         {/* Footer Link */}

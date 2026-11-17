@@ -21,9 +21,10 @@ export default function CheckoutPage() {
         try {
           const data = await getBookingWithInstallments(params.id as string);
           setBooking(data);
-          setLoading(false);
         } catch (err) {
           console.error("Fetch error:", err);
+        } finally {
+          setLoading(false);
         }
       }
     };
@@ -139,6 +140,21 @@ export default function CheckoutPage() {
       <div className="flex flex-col items-center space-y-4">
         <div className="w-12 h-12 border-4 border-dark/10 border-t-gold rounded-full animate-spin" />
         <p className="text-xs font-bold tracking-[0.3em] text-dark/30 uppercase">Securing Session...</p>
+      </div>
+    </div>
+  );
+
+  if (!booking) return (
+    <div className="min-h-screen flex items-center justify-center bg-white font-cinzel">
+      <div className="flex flex-col items-center space-y-4">
+        <h1 className="text-3xl font-bold text-dark uppercase tracking-widest mb-2">Booking Not Found</h1>
+        <p className="text-xs font-bold tracking-[0.2em] text-dark/50 uppercase">The requested booking could not be found or the link is invalid.</p>
+        <button 
+          onClick={() => router.push('/')}
+          className="mt-6 px-8 py-3 bg-dark text-white text-xs font-bold tracking-[0.2em] uppercase rounded-full hover:bg-[#FF2D55] transition-colors"
+        >
+          Return Home
+        </button>
       </div>
     </div>
   );
