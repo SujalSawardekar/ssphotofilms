@@ -59,7 +59,7 @@ const DEFAULT_OCCASIONS = [
   { 
     title: 'Haldi', 
     description: 'Vibrant colors and soulful traditions of your celebration.', 
-    image: '/assets/haldi/1SSP02809%20copy.jpg',
+    image: '/assets/type/Haldi Type.jpeg',
     href: '/gallery?category=haldi'
   }
 ];

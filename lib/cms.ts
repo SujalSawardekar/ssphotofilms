@@ -93,7 +93,7 @@ export async function ensureCmsData() {
         { title: 'Maternity', description: 'A tiny heartbeat, a life in our memories and hearts.', image: '/assets/occasion-maternity.jpg', href: '/gallery?category=maternity', order: 2 },
         { title: 'Engagement', description: 'Capturing the first promise of a lifelong journey together.', image: '/assets/Engagement/1DSC08499%20copy.jpg', href: '/gallery?category=engagement', order: 3 },
         { title: 'Pre-wedding', description: 'Documenting your unique connection before the big day.', image: '/assets/hero-bg2.jpg', href: '/gallery?category=pre-wedding', order: 4 },
-        { title: 'Haldi', description: 'Vibrant colors and soulful traditions of your celebration.', image: '/assets/haldi/1SSP02809%20copy.jpg', href: '/gallery?category=haldi', order: 5 }
+        { title: 'Haldi', description: 'Vibrant colors and soulful traditions of your celebration.', image: '/assets/type/Haldi Type.jpeg', href: '/gallery?category=haldi', order: 5 }
       ];
       for (const o of defaultOccasions) {
         await tx.cmsOccasion.create({ data: o });
