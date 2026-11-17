@@ -2,8 +2,9 @@
 
 import React, { useState } from 'react';
 import { useCms } from '@/lib/CmsContext';
-import { Plus, Trash2, Edit2, Save, ArrowUp, ArrowDown, Clipboard, AlertCircle, CheckCircle2 } from 'lucide-react';
+import { Plus, Trash2, Edit2, Save, ArrowUp, ArrowDown, Clipboard, AlertCircle, CheckCircle2, Loader2, Sparkles, Check } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { formatPrice, parsePrice } from '@/lib/utils';
 
 export default function ServicesManagerPage() {
   const { 
@@ -22,13 +23,14 @@ export default function ServicesManagerPage() {
   const [selectedPkgIdx, setSelectedPkgIdx] = useState<number | null>(null);
   const [isCreating, setIsCreating] = useState(false);
   const [notification, setNotification] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
+  const [publishStatus, setPublishStatus] = useState<'idle' | 'publishing' | 'success' | 'error'>('idle');
 
   // New Package Form State
   const [newTitle, setNewTitle] = useState('');
   const [newOriginalPrice, setNewOriginalPrice] = useState('');
   const [newDiscountPrice, setNewDiscountPrice] = useState('');
   const [newBothSidePrice, setNewBothSidePrice] = useState('');
-  const [newReelPrice, setNewReelPrice] = useState('');
+  const [newReelPrice, setNewReelPrice] = useState('1,500');
   const [newFeatures, setNewFeatures] = useState('');
   const [newImageSrc, setNewImageSrc] = useState('/assets/occasion-wedding.jpg');
 
@@ -36,19 +38,19 @@ export default function ServicesManagerPage() {
 
   const handleCreatePackage = () => {
     if (!newTitle || !newOriginalPrice || !newDiscountPrice) {
-      alert("Please fill all required fields");
+      alert("Please fill all required fields (Title, Original Price, Offer Price)");
       return;
     }
 
     const newPkg = {
-      title: newTitle,
-      originalPrice: newOriginalPrice,
-      discountPrice: newDiscountPrice,
-      bothSidePrice: newBothSidePrice || null,
-      reelPrice: newReelPrice || null,
-      features: newFeatures.split('\n').filter(Boolean),
-      imageSrc: newImageSrc,
-      captionTitle: newTitle,
+      title: newTitle.trim(),
+      originalPrice: newOriginalPrice.trim(),
+      discountPrice: newDiscountPrice.trim(),
+      bothSidePrice: newBothSidePrice.trim() ? newBothSidePrice.trim() : null,
+      reelPrice: newReelPrice.trim() ? newReelPrice.trim() : null,
+      features: newFeatures.split('\n').map(s => s.trim()).filter(Boolean),
+      imageSrc: newImageSrc || '/assets/occasion-wedding.jpg',
+      captionTitle: newTitle.trim(),
       captionSubtitle: ''
     };
 
@@ -59,16 +61,33 @@ export default function ServicesManagerPage() {
     setNewOriginalPrice('');
     setNewDiscountPrice('');
     setNewBothSidePrice('');
-    setNewReelPrice('');
+    setNewReelPrice('1,500');
     setNewFeatures('');
     setIsCreating(false);
+    setNotification({ message: `Package "${newPkg.title}" added! Remember to click "Save & Publish".`, type: 'success' });
+    setTimeout(() => setNotification(null), 4000);
   };
 
   const handlePublish = async () => {
-    const success = await publish('services');
-    if (success) {
-      setNotification({ message: "Services pricing successfully updated!", type: 'success' });
-      setTimeout(() => setNotification(null), 4000);
+    try {
+      setPublishStatus('publishing');
+      const success = await publish('services');
+      if (success) {
+        setPublishStatus('success');
+        setNotification({ message: "Services pricing successfully published to live website!", type: 'success' });
+        setTimeout(() => {
+          setPublishStatus('idle');
+          setNotification(null);
+        }, 3500);
+      } else {
+        setPublishStatus('error');
+        setNotification({ message: "Publishing failed. Please check your connection and retry.", type: 'error' });
+        setTimeout(() => setPublishStatus('idle'), 4000);
+      }
+    } catch (err: any) {
+      setPublishStatus('error');
+      setNotification({ message: err?.message || "Failed to publish changes", type: 'error' });
+      setTimeout(() => setPublishStatus('idle'), 4000);
     }
   };
 
@@ -105,11 +124,36 @@ export default function ServicesManagerPage() {
           
           <button
             onClick={handlePublish}
-            disabled={isSaving}
-            className="bg-gold hover:bg-white text-dark border border-gold px-6 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest flex items-center gap-2 transition-all duration-300 shadow-md"
+            disabled={isSaving || publishStatus === 'publishing'}
+            className={`px-6 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest flex items-center gap-2 transition-all duration-300 shadow-md ${
+              publishStatus === 'success'
+                ? 'bg-emerald-600 text-white border border-emerald-600'
+                : publishStatus === 'error'
+                ? 'bg-rose-600 text-white border border-rose-600'
+                : 'bg-gold hover:bg-white text-dark border border-gold'
+            }`}
           >
-            <Save size={16} />
-            <span>{isSaving ? 'Publishing...' : 'Publish'}</span>
+            {publishStatus === 'publishing' || isSaving ? (
+              <>
+                <Loader2 size={16} className="animate-spin" />
+                <span>Publishing Live...</span>
+              </>
+            ) : publishStatus === 'success' ? (
+              <>
+                <CheckCircle2 size={16} />
+                <span>Published Live!</span>
+              </>
+            ) : publishStatus === 'error' ? (
+              <>
+                <AlertCircle size={16} />
+                <span>Publish Failed</span>
+              </>
+            ) : (
+              <>
+                <Save size={16} />
+                <span>Save & Publish</span>
+              </>
+            )}
           </button>
         </div>
       </div>
@@ -172,7 +216,19 @@ export default function ServicesManagerPage() {
                 >
                   <div className="min-w-0 flex-1">
                     <h4 className="font-bold text-sm text-dark truncate uppercase tracking-wider">{pkg.title}</h4>
-                    <p className="text-xs text-secondary/70 font-semibold mt-1">₹{Number(pkg.discountPrice).toLocaleString('en-IN')} /-</p>
+                    <div className="flex items-center flex-wrap gap-2 mt-1">
+                      <p className="text-xs text-secondary/70 font-semibold">₹{formatPrice(pkg.discountPrice)} /-</p>
+                      {pkg.reelPrice && (
+                        <span className="text-[9px] bg-[#FF2D55]/10 text-[#FF2D55] px-1.5 py-0.5 rounded font-bold uppercase tracking-wider">
+                          Reel: +₹{formatPrice(pkg.reelPrice)}
+                        </span>
+                      )}
+                      {pkg.bothSidePrice && (
+                        <span className="text-[9px] bg-gold/15 text-dark px-1.5 py-0.5 rounded font-bold uppercase tracking-wider">
+                          Both Side: ₹{formatPrice(pkg.bothSidePrice)}
+                        </span>
+                      )}
+                    </div>
                   </div>
 
                   {/* Reordering indicators */}
@@ -361,7 +417,10 @@ export default function ServicesManagerPage() {
                   />
                 </div>
                 <div className="space-y-1">
-                  <label className="text-[10px] font-black text-secondary uppercase tracking-widest">Offer Price</label>
+                  <div className="flex justify-between items-center">
+                    <label className="text-[10px] font-black text-secondary uppercase tracking-widest">Offer Price</label>
+                    <span className="text-[10px] text-emerald-700 font-bold">₹{formatPrice(activePackage.discountPrice)}</span>
+                  </div>
                   <input
                     type="text"
                     value={activePackage.discountPrice}
@@ -371,23 +430,33 @@ export default function ServicesManagerPage() {
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-[10px] font-black text-secondary uppercase tracking-widest">Both Side Cover price Upgrade</label>
+                  <div className="flex justify-between items-center">
+                    <label className="text-[10px] font-black text-secondary uppercase tracking-widest">Both Side Cover price Upgrade</label>
+                    {activePackage.bothSidePrice && (
+                      <span className="text-[10px] text-gold font-bold">₹{formatPrice(activePackage.bothSidePrice)}</span>
+                    )}
+                  </div>
                   <input
                     type="text"
                     value={activePackage.bothSidePrice || ''}
                     onChange={(e) => updatePackage(activeCatId, selectedPkgIdx!, { bothSidePrice: e.target.value || null })}
                     className="w-full bg-[#F6F4F0] border border-dark/5 px-4 py-2 text-xs font-bold text-dark outline-none rounded-xl focus:border-gold"
-                    placeholder="None"
+                    placeholder="e.g. 39,999 (leave blank if none)"
                   />
                 </div>
                 <div className="space-y-1">
-                  <label className="text-[10px] font-black text-secondary uppercase tracking-widest">Reel add-on price</label>
+                  <div className="flex justify-between items-center">
+                    <label className="text-[10px] font-black text-secondary uppercase tracking-widest">Reel add-on price</label>
+                    {activePackage.reelPrice && (
+                      <span className="text-[10px] text-[#FF2D55] font-bold">+₹{formatPrice(activePackage.reelPrice)}</span>
+                    )}
+                  </div>
                   <input
                     type="text"
                     value={activePackage.reelPrice || ''}
                     onChange={(e) => updatePackage(activeCatId, selectedPkgIdx!, { reelPrice: e.target.value || null })}
                     className="w-full bg-[#F6F4F0] border border-dark/5 px-4 py-2 text-xs font-bold text-dark outline-none rounded-xl focus:border-gold"
-                    placeholder="None"
+                    placeholder="e.g. 1,500 (leave blank if none)"
                   />
                 </div>
               </div>
@@ -395,7 +464,7 @@ export default function ServicesManagerPage() {
               <div className="space-y-2">
                 <label className="text-xs font-black text-secondary uppercase tracking-widest">Package Features (One per line)</label>
                 <textarea
-                  value={activePackage.features.join('\n')}
+                  value={(activePackage.features || []).join('\n')}
                   onChange={(e) => updatePackage(activeCatId, selectedPkgIdx!, { features: e.target.value.split('\n').filter(Boolean) })}
                   className="w-full bg-[#F6F4F0] border border-dark/5 p-4 text-xs font-bold text-dark outline-none rounded-xl focus:border-gold h-36 leading-relaxed"
                 />

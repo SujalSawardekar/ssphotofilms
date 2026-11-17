@@ -2,14 +2,17 @@
 
 import React, { useState } from 'react';
 import { useCms } from '@/lib/CmsContext';
-import { Plus, Trash2, Edit2, Image as ImageIcon, Save, ArrowLeft, Calendar, FileText, User } from 'lucide-react';
+import { Plus, Trash2, Edit2, Image as ImageIcon, Save, ArrowLeft, Calendar, FileText, User, CheckCircle2, AlertCircle, Loader2 } from 'lucide-react';
 import Link from 'next/link';
+import { motion, AnimatePresence } from 'framer-motion';
 
 export default function GalleryManagerPage() {
   const { gallery, updateGalleryStory, addGalleryStory, deleteGalleryStory, publish, isSaving, openMediaSelector } = useCms();
   const [selectedStoryId, setSelectedStoryId] = useState<string | null>(null);
   const [isCreating, setIsCreating] = useState(false);
   const [activeCategoryTab, setActiveCategoryTab] = useState<string>('ALL');
+  const [notification, setNotification] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
+  const [publishStatus, setPublishStatus] = useState<'idle' | 'publishing' | 'success' | 'error'>('idle');
 
   // New Story Form State
   const [newTitle, setNewTitle] = useState('');
@@ -29,20 +32,20 @@ export default function GalleryManagerPage() {
   ];
 
   const handleCreateStory = () => {
-    if (!newTitle || !newNames || !newDate) {
-      alert("Please fill all required fields");
+    if (!newTitle.trim() || !newNames.trim() || !newDate.trim()) {
+      alert("Please fill all required fields (Client Names, Tagline/Title, and Date)");
       return;
     }
-    const slug = newTitle.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+    const slug = `${newTitle.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') || 'session'}-${Date.now().toString().slice(-4)}`;
     const newStory = {
       id: `story_${Date.now()}`,
       slug,
-      title: newTitle,
+      title: newTitle.trim(),
       category: newCategory,
-      date: newDate,
-      names: newNames,
-      mainImage: newMainImage,
-      images: [newMainImage]
+      date: newDate.trim(),
+      names: newNames.trim(),
+      mainImage: newMainImage || '/assets/occasion-wedding.jpg',
+      images: [newMainImage || '/assets/occasion-wedding.jpg']
     };
     addGalleryStory(newStory);
     
@@ -57,12 +60,30 @@ export default function GalleryManagerPage() {
     if (activeCategoryTab !== 'ALL') {
       setActiveCategoryTab(newCategory);
     }
+    setNotification({ message: `Session "${newStory.names}" created! Click "Save & Publish" to go live.`, type: 'success' });
+    setTimeout(() => setNotification(null), 4000);
   };
 
   const handlePublish = async () => {
-    const success = await publish('gallery');
-    if (success) {
-      alert("Gallery changes published successfully!");
+    try {
+      setPublishStatus('publishing');
+      const success = await publish('gallery');
+      if (success) {
+        setPublishStatus('success');
+        setNotification({ message: "Gallery changes successfully published to live site!", type: 'success' });
+        setTimeout(() => {
+          setPublishStatus('idle');
+          setNotification(null);
+        }, 3500);
+      } else {
+        setPublishStatus('error');
+        setNotification({ message: "Publishing gallery failed. Please try again.", type: 'error' });
+        setTimeout(() => setPublishStatus('idle'), 4000);
+      }
+    } catch (err: any) {
+      setPublishStatus('error');
+      setNotification({ message: err?.message || "Publishing failed", type: 'error' });
+      setTimeout(() => setPublishStatus('idle'), 4000);
     }
   };
 
@@ -91,11 +112,36 @@ export default function GalleryManagerPage() {
           
           <button
             onClick={handlePublish}
-            disabled={isSaving}
-            className="bg-gold hover:bg-white text-dark border border-gold px-6 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest flex items-center gap-2 transition-all duration-300 shadow-md"
+            disabled={isSaving || publishStatus === 'publishing'}
+            className={`px-6 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest flex items-center gap-2 transition-all duration-300 shadow-md ${
+              publishStatus === 'success'
+                ? 'bg-emerald-600 text-white border border-emerald-600'
+                : publishStatus === 'error'
+                ? 'bg-rose-600 text-white border border-rose-600'
+                : 'bg-gold hover:bg-white text-dark border border-gold'
+            }`}
           >
-            <Save size={16} />
-            <span>{isSaving ? 'Publishing...' : 'Publish'}</span>
+            {publishStatus === 'publishing' || isSaving ? (
+              <>
+                <Loader2 size={16} className="animate-spin" />
+                <span>Publishing Live...</span>
+              </>
+            ) : publishStatus === 'success' ? (
+              <>
+                <CheckCircle2 size={16} />
+                <span>Published Live!</span>
+              </>
+            ) : publishStatus === 'error' ? (
+              <>
+                <AlertCircle size={16} />
+                <span>Publish Failed</span>
+              </>
+            ) : (
+              <>
+                <Save size={16} />
+                <span>Save & Publish</span>
+              </>
+            )}
           </button>
         </div>
       </div>
@@ -412,6 +458,31 @@ export default function GalleryManagerPage() {
           )}
         </div>
 
+      </div>
+
+      {/* Toast Notification */}
+      <div className="fixed bottom-10 right-10 z-[200] pointer-events-none">
+        <AnimatePresence>
+          {notification && (
+            <motion.div
+              initial={{ opacity: 0, y: 50, scale: 0.9 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 20, scale: 0.9 }}
+              className={`flex items-center space-x-3 px-6 py-4 rounded-xl shadow-2xl pointer-events-auto border ${
+                notification.type === 'success' 
+                  ? 'bg-emerald-50 text-emerald-800 border-emerald-200' 
+                  : 'bg-rose-50 text-rose-800 border-rose-200'
+              }`}
+            >
+              {notification.type === 'success' ? (
+                <CheckCircle2 size={16} className="text-emerald-500" />
+              ) : (
+                <AlertCircle size={16} className="text-rose-500" />
+              )}
+              <span className="text-xs font-bold uppercase tracking-wider">{notification.message}</span>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
 
     </div>

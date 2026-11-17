@@ -490,7 +490,11 @@ export const CmsProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       return true;
     } catch (e: any) {
       console.error("[CMS] Error publishing edits:", e);
-      alert(`Publishing failed: ${e.message || 'Unknown error'}`);
+      if (typeof window !== 'undefined' && typeof window.alert === 'function') {
+        try {
+          window.alert(`Publishing failed: ${e.message || 'Unknown error'}`);
+        } catch {}
+      }
       return false;
     } finally {
       setIsSaving(false);

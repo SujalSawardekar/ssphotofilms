@@ -14,6 +14,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { CheckCircle2, ArrowRight, ArrowUp, ArrowDown, Trash2 } from 'lucide-react';
 import EditableText from '@/components/EditableText';
 import EditableImage from '@/components/EditableImage';
+import { parsePrice, formatPrice } from '@/lib/utils';
 
 // Custom Diagonal Arrow Icon matched to the gallery stories design
 const GalleryArrow = ({ className }: { className?: string }) => (
@@ -97,11 +98,6 @@ export default function ServicesPage() {
 
   const activeCategory = pricingCategories.find(c => c.id === activeCategoryId) || pricingCategories[0];
   
-  const parsePrice = (p: string | number) => {
-    if (typeof p === 'number') return p;
-    return parseInt(p.replace(/,/g, '')) || 0;
-  };
-
   // Helper to determine coverage label
   const getCoverageLabel = (features: string[]) => {
     const hasVideo = features.some(f => 
@@ -112,7 +108,7 @@ export default function ServicesPage() {
 
   const calculateTotalPrice = (pkg: PricingPackage, idx: number, isOriginal: boolean = false) => {
     const basePrice = isOriginal ? parsePrice(pkg.originalPrice) : parsePrice(pkg.discountPrice);
-    const upgradePrice = bothSideSelections[idx] && pkg.bothSidePrice ? (parsePrice(pkg.bothSidePrice) - parsePrice(pkg.discountPrice)) : 0;
+    const upgradePrice = bothSideSelections[idx] && pkg.bothSidePrice ? Math.max(0, parsePrice(pkg.bothSidePrice) - parsePrice(pkg.discountPrice)) : 0;
     const addOnPrice = reelSelections[idx] && pkg.reelPrice ? parsePrice(pkg.reelPrice) : 0;
     
     return Number(basePrice) + Number(upgradePrice) + Number(addOnPrice);
@@ -361,7 +357,7 @@ export default function ServicesPage() {
                               <ul className="space-y-3 mb-6">
                                 {(pkg.features || []).map((feature: string, fIdx: number) => {
                                   const isBothSideFeature = feature.toLowerCase().includes("both side");
-                                  const isReelFeature = feature.toLowerCase().includes("add-on: cinematic reel");
+                                  const isReelFeature = feature.toLowerCase().includes("reel") && (feature.toLowerCase().includes("add-on") || feature.toLowerCase().includes("cinematic reel"));
                                   
                                   return (
                                     <li 
@@ -408,6 +404,79 @@ export default function ServicesPage() {
                                   );
                                 })}
                               </ul>
+                            )}
+
+                            {/* Dedicated Add-ons & Upgrades Box whenever reelPrice or bothSidePrice is configured */}
+                            {(Boolean(pkg.reelPrice) || Boolean(pkg.bothSidePrice)) && (
+                              <div className="mb-6 p-4 rounded-2xl bg-[#F8F7F4] border border-dark/10 space-y-3">
+                                <div className="flex items-center justify-between">
+                                  <span className="text-[10px] font-black uppercase tracking-widest text-gold">Optional Add-ons & Upgrades</span>
+                                  <span className="text-[9px] text-secondary/60 uppercase tracking-wider">Tap to include in pricing</span>
+                                </div>
+
+                                {pkg.reelPrice && (
+                                  <div
+                                    onClick={() => setReelSelections(prev => ({ ...prev, [idx]: !prev[idx] }))}
+                                    className={`flex items-center justify-between p-3 rounded-xl border transition-all cursor-pointer ${
+                                      reelSelections[idx]
+                                        ? 'bg-[#FF2D55]/10 border-[#FF2D55] shadow-sm'
+                                        : 'bg-white border-dark/10 hover:border-[#FF2D55]/40'
+                                    }`}
+                                  >
+                                    <div className="flex items-center gap-3">
+                                      <div className={`w-5 h-5 rounded-md border flex items-center justify-center transition-all ${
+                                        reelSelections[idx] ? 'bg-[#FF2D55] border-[#FF2D55] text-white' : 'border-dark/20 bg-[#FAF9F6] text-transparent'
+                                      }`}>
+                                        <CheckCircle2 size={12} className={reelSelections[idx] ? 'text-white' : 'opacity-0'} />
+                                      </div>
+                                      <div>
+                                        <div className="text-xs font-bold text-dark flex items-center gap-2">
+                                          <span>Cinematic Reel Add-on</span>
+                                          <span className="text-[8px] bg-[#FF2D55]/15 text-[#FF2D55] font-black px-1.5 py-0.5 rounded uppercase">Trending</span>
+                                        </div>
+                                        <div className="text-[10px] text-secondary">Vertical edited & color graded reel for Instagram</div>
+                                      </div>
+                                    </div>
+                                    <div className="text-right">
+                                      <div className="text-xs md:text-sm font-black text-dark">+₹{formatPrice(pkg.reelPrice)}</div>
+                                      <div className="text-[9px] font-black uppercase tracking-wider text-gold">
+                                        {reelSelections[idx] ? "Selected ✓" : "+ Add"}
+                                      </div>
+                                    </div>
+                                  </div>
+                                )}
+
+                                {pkg.bothSidePrice && (
+                                  <div
+                                    onClick={() => setBothSideSelections(prev => ({ ...prev, [idx]: !prev[idx] }))}
+                                    className={`flex items-center justify-between p-3 rounded-xl border transition-all cursor-pointer ${
+                                      bothSideSelections[idx]
+                                        ? 'bg-gold/15 border-gold shadow-sm'
+                                        : 'bg-white border-dark/10 hover:border-gold/40'
+                                    }`}
+                                  >
+                                    <div className="flex items-center gap-3">
+                                      <div className={`w-5 h-5 rounded-md border flex items-center justify-center transition-all ${
+                                        bothSideSelections[idx] ? 'bg-gold border-gold text-white' : 'border-dark/20 bg-[#FAF9F6] text-transparent'
+                                      }`}>
+                                        <CheckCircle2 size={12} className={bothSideSelections[idx] ? 'text-white' : 'opacity-0'} />
+                                      </div>
+                                      <div>
+                                        <div className="text-xs font-bold text-dark">Both Side Coverage Upgrade</div>
+                                        <div className="text-[10px] text-secondary">Synchronized coverage for bride & groom events</div>
+                                      </div>
+                                    </div>
+                                    <div className="text-right">
+                                      <div className="text-xs md:text-sm font-black text-dark">
+                                        +₹{formatPrice(Math.max(0, parsePrice(pkg.bothSidePrice) - parsePrice(pkg.discountPrice)))}
+                                      </div>
+                                      <div className="text-[9px] font-black uppercase tracking-wider text-gold">
+                                        {bothSideSelections[idx] ? "Selected ✓" : "+ Upgrade"}
+                                      </div>
+                                    </div>
+                                  </div>
+                                )}
+                              </div>
                             )}
 
                             {/* Additional prices config for Admin */}

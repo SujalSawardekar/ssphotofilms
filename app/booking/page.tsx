@@ -13,7 +13,7 @@ import { useCms } from '@/lib/CmsContext';
 import { motion, AnimatePresence } from 'framer-motion';
 import { indianCities, City } from '@/lib/indianCities';
 import { Search, MapPin, ChevronDown, CheckCircle2, AlertCircle, ArrowRight, LayoutDashboard, Home, Box, ShieldCheck } from 'lucide-react';
-import { parsePrice } from '@/lib/utils';
+import { parsePrice, formatPrice } from '@/lib/utils';
 
 function BookingFormContent() {
   const router = useRouter();
@@ -267,12 +267,14 @@ function BookingFormContent() {
                         </ul>
 
                         {/* Dedicated Add-ons Section */}
-                        {(packageData.features.some((f: string) => f.toLowerCase().includes("both side")) || 
+                        {(Boolean(packageData.bothSidePrice) || 
+                          Boolean(packageData.reelPrice) ||
+                          packageData.features.some((f: string) => f.toLowerCase().includes("both side")) || 
                           packageData.features.some((f: string) => f.toLowerCase().includes("reel"))) && (
                           <div className="mt-8 pt-8 border-t border-dark/5 space-y-6">
                              <p className="text-[10px] font-black text-secondary/40 uppercase tracking-[0.3em]">Premium Add-ons</p>
                              <div className="grid grid-cols-1 gap-3">
-                                {packageData.features.some((f: string) => f.toLowerCase().includes("both side")) && (
+                                {(Boolean(packageData.bothSidePrice) || packageData.features.some((f: string) => f.toLowerCase().includes("both side"))) && (
                                   <div 
                                     onClick={() => setIsBothSide(!isBothSide)}
                                     className={`p-4 rounded-2xl border transition-all cursor-pointer flex items-center justify-between ${isBothSide ? 'border-gold bg-gold/5' : 'border-dark/5 bg-white hover:border-gold/30'}`}
@@ -283,6 +285,9 @@ function BookingFormContent() {
                                         </div>
                                         <div>
                                            <p className="text-[13px] font-bold text-dark">Both Side Coverage</p>
+                                           <p className="text-[10px] text-secondary/60">
+                                             +₹{formatPrice(packageData.bothSidePrice ? Math.max(0, parsePrice(packageData.bothSidePrice) - parsePrice(packageData.discountPrice)) : 10000)}
+                                           </p>
                                         </div>
                                      </div>
                                      <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all ${isBothSide ? 'bg-gold border-gold text-white' : 'border-dark/10'}`}>
@@ -291,7 +296,7 @@ function BookingFormContent() {
                                   </div>
                                 )}
 
-                                {packageData.features.some((f: string) => f.toLowerCase().includes("reel")) && (
+                                {(Boolean(packageData.reelPrice) || packageData.features.some((f: string) => f.toLowerCase().includes("reel"))) && (
                                   <div 
                                     onClick={() => setIsReel(!isReel)}
                                     className={`p-4 rounded-2xl border transition-all cursor-pointer flex items-center justify-between ${isReel ? 'border-[#FF2D55] bg-[#FF2D55]/5' : 'border-dark/5 bg-white hover:border-red-500/30'}`}
@@ -302,6 +307,9 @@ function BookingFormContent() {
                                         </div>
                                         <div>
                                            <p className="text-[13px] font-bold text-dark">Cinematic Reel</p>
+                                           <p className="text-[10px] text-[#FF2D55] font-bold">
+                                             +₹{formatPrice(packageData.reelPrice || 1500)}
+                                           </p>
                                         </div>
                                      </div>
                                      <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all ${isReel ? 'bg-[#FF2D55] border-[#FF2D55] text-white' : 'border-dark/10'}`}>

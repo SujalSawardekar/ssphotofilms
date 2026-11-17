@@ -103,6 +103,7 @@ export const pricingCategories: ServiceCategory[] = [
         originalPrice: "34,999",
         discountPrice: "24,999",
         bothSidePrice: "39,999",
+        reelPrice: "1,500",
         features: [
           "1 Cinematic Video (2-3 Min)",
           "1 Professional Photographer",
@@ -120,6 +121,7 @@ export const pricingCategories: ServiceCategory[] = [
         originalPrice: "54,999",
         discountPrice: "44,999",
         bothSidePrice: "64,999",
+        reelPrice: "1,500",
         features: [
           "1 Cinematic Video (4-5 Min)",
           "1 Candid Photographer",
@@ -138,6 +140,7 @@ export const pricingCategories: ServiceCategory[] = [
         originalPrice: "84,999",
         discountPrice: "74,999",
         bothSidePrice: "94,999",
+        reelPrice: "1,500",
         features: [
           "1 Cinematic Film (5-7 Min)",
           "2 Candid Photographers",
@@ -164,6 +167,7 @@ export const pricingCategories: ServiceCategory[] = [
         title: "Basic (Only Photoshoot)",
         originalPrice: "24,999",
         discountPrice: "14,999",
+        reelPrice: "1,500",
         features: [
           "1 Day Shoot at 2 Locations",
           "30 Fully Edited HD Photos",
@@ -208,6 +212,7 @@ export const pricingCategories: ServiceCategory[] = [
         title: "STANDARD PACKAGE",
         originalPrice: "3,500",
         discountPrice: "2,500",
+        reelPrice: "1,500",
         features: [
           "1 INDOOR SETUP (CHOOSE THEME FROM OUR CATALOGUE)",
           "30 MIN SESSION",
@@ -222,6 +227,7 @@ export const pricingCategories: ServiceCategory[] = [
         title: "PROFESSIONAL PACKAGE",
         originalPrice: "6,500",
         discountPrice: "4,500",
+        reelPrice: "1,500",
         features: [
           "2 INDOOR SETUP (CHOOSE THEME FROM OUR CATALOGUE)",
           "1 HRS SESSION",
@@ -236,6 +242,7 @@ export const pricingCategories: ServiceCategory[] = [
         title: "PRIME PACKAGE",
         originalPrice: "8,500",
         discountPrice: "6,500",
+        reelPrice: "1,500",
         features: [
           "3 INDOOR SETUP (CHOOSE THEME FROM OUR CATALOGUE)",
           "2 HRS SESSION",
@@ -275,6 +282,7 @@ export const pricingCategories: ServiceCategory[] = [
         title: "STANDARD PACKAGE",
         originalPrice: "3,999",
         discountPrice: "2,999",
+        reelPrice: "1,500",
         features: [
           "1 INDOOR SETUP (CHOOSE THEME FROM OUR CATALOGUE)",
           "30 MIN SESSION",
@@ -289,6 +297,7 @@ export const pricingCategories: ServiceCategory[] = [
         title: "PROFESSIONAL PACKAGE",
         originalPrice: "6,999",
         discountPrice: "4,999",
+        reelPrice: "1,500",
         features: [
           "2 INDOOR SETUP (CHOOSE THEME FROM OUR CATALOGUE)",
           "1 HRS SESSION",
@@ -343,8 +352,9 @@ export const pricingCategories: ServiceCategory[] = [
     packages: [
       {
         title: "Basic Service",
-        originalPrice: 14999,
-        discountPrice: 11999,
+        originalPrice: "14,999",
+        discountPrice: "11,999",
+        reelPrice: "1,500",
         features: ["1 Traditional photographer", "All Raw photos provided", "15 pages photobook", "Closeups with edit"],
         imageSrc: "/assets/Engagement/1SSP03053 copy.jpg",
         captionTitle: "The Promise",
@@ -352,8 +362,9 @@ export const pricingCategories: ServiceCategory[] = [
       },
       {
         title: "Grand Service",
-        originalPrice: 24999,
-        discountPrice: 19999,
+        originalPrice: "24,999",
+        discountPrice: "19,999",
+        reelPrice: "1,500",
         features: ["1 Traditional photographer", "1 Candid photographer", "All Raw photos provided", "Closeups with edit", "15 Pages Photobook"],
         imageSrc: "/assets/Engagement/1SSP03215 copy.jpg",
         captionTitle: "Eyes on Forever",
@@ -361,8 +372,9 @@ export const pricingCategories: ServiceCategory[] = [
       },
       {
         title: "Luxury Service",
-        originalPrice: 34999,
-        discountPrice: 29999,
+        originalPrice: "34,999",
+        discountPrice: "29,999",
+        reelPrice: "1,500",
         features: ["1 Traditional photographer", "1 Cinematographer", "1 Candid photographer", "All Raw photos provided", "Closeups with edit", "15 Pages Photobook", "Cinematic video with edit"],
         imageSrc: "/assets/Engagement/1SSP04730 copy.jpg",
         captionTitle: "Royal Bond",

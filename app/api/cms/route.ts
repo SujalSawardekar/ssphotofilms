@@ -52,19 +52,16 @@ export async function POST(req: NextRequest) {
     else if (type === 'occasions') {
       // data is Array of occasions
       await prisma.$transaction(async (tx) => {
-        // Clear all occasions and re-insert in order
         await tx.cmsOccasion.deleteMany();
-        for (let i = 0; i < data.length; i++) {
-          const occ = data[i];
-          await tx.cmsOccasion.create({
-            data: {
-              title: occ.title,
-              description: occ.description,
-              image: occ.image,
-              href: occ.href || `/gallery?category=${occ.title.toLowerCase().replace(/ & /g, '-').replace(/ /g, '-')}`,
-              order: i
-            }
-          });
+        const occasionsData = (data || []).map((occ: any, i: number) => ({
+          title: occ.title || '',
+          description: occ.description || '',
+          image: occ.image || '/assets/occasion-wedding.jpg',
+          href: occ.href || `/gallery?category=${(occ.title || '').toLowerCase().replace(/ & /g, '-').replace(/ /g, '-')}`,
+          order: i
+        }));
+        if (occasionsData.length > 0) {
+          await tx.cmsOccasion.createMany({ data: occasionsData });
         }
       }, {
         maxWait: 30000,
@@ -75,17 +72,15 @@ export async function POST(req: NextRequest) {
       // data is Array of testimonials
       await prisma.$transaction(async (tx) => {
         await tx.cmsTestimonial.deleteMany();
-        for (let i = 0; i < data.length; i++) {
-          const test = data[i];
-          await tx.cmsTestimonial.create({
-            data: {
-              clientName: test.clientName,
-              eventType: test.eventType,
-              review: test.review,
-              image: test.image || '',
-              order: i
-            }
-          });
+        const testimonialsData = (data || []).map((test: any, i: number) => ({
+          clientName: test.clientName || 'Anonymous',
+          eventType: test.eventType || 'Wedding',
+          review: test.review || '',
+          image: test.image || '',
+          order: i
+        }));
+        if (testimonialsData.length > 0) {
+          await tx.cmsTestimonial.createMany({ data: testimonialsData });
         }
       }, {
         maxWait: 30000,
@@ -99,38 +94,44 @@ export async function POST(req: NextRequest) {
         await tx.cmsServicePackage.deleteMany();
         await tx.cmsServiceCategory.deleteMany();
 
-        for (let cIdx = 0; cIdx < data.length; cIdx++) {
-          const cat = data[cIdx];
-          const dbCat = await tx.cmsServiceCategory.create({
-            data: {
-              id: cat.id,
-              label: cat.label,
-              description: cat.description || '',
-              pdfUrl: cat.pdfUrl || '',
-              order: cIdx
-            }
-          });
+        const categoriesData = (data || []).map((cat: any, cIdx: number) => ({
+          id: String(cat.id || `cat-${cIdx}`),
+          label: cat.label || 'Category',
+          description: cat.description || '',
+          pdfUrl: cat.pdfUrl || '',
+          order: cIdx
+        }));
 
+        if (categoriesData.length > 0) {
+          await tx.cmsServiceCategory.createMany({ data: categoriesData });
+        }
+
+        const packagesData: any[] = [];
+        for (let cIdx = 0; cIdx < (data || []).length; cIdx++) {
+          const cat = data[cIdx];
+          const catId = String(cat.id || `cat-${cIdx}`);
           if (cat.packages && Array.isArray(cat.packages)) {
             for (let pIdx = 0; pIdx < cat.packages.length; pIdx++) {
               const pkg = cat.packages[pIdx];
-              await tx.cmsServicePackage.create({
-                data: {
-                  categoryId: dbCat.id,
-                  title: pkg.title,
-                  originalPrice: String(pkg.originalPrice),
-                  discountPrice: String(pkg.discountPrice),
-                  bothSidePrice: pkg.bothSidePrice ? String(pkg.bothSidePrice) : null,
-                  reelPrice: pkg.reelPrice ? String(pkg.reelPrice) : null,
-                  features: Array.isArray(pkg.features) ? pkg.features : [],
-                  imageSrc: pkg.imageSrc,
-                  captionTitle: pkg.captionTitle || pkg.title,
-                  captionSubtitle: pkg.captionSubtitle || '',
-                  order: pIdx
-                }
+              packagesData.push({
+                categoryId: catId,
+                title: pkg.title || 'Package',
+                originalPrice: String(pkg.originalPrice ?? '0'),
+                discountPrice: String(pkg.discountPrice ?? '0'),
+                bothSidePrice: pkg.bothSidePrice ? String(pkg.bothSidePrice) : null,
+                reelPrice: pkg.reelPrice ? String(pkg.reelPrice) : null,
+                features: Array.isArray(pkg.features) ? pkg.features : [],
+                imageSrc: pkg.imageSrc || '/assets/occasion-wedding.jpg',
+                captionTitle: pkg.captionTitle || pkg.title || 'Package',
+                captionSubtitle: pkg.captionSubtitle || '',
+                order: pIdx
               });
             }
           }
+        }
+
+        if (packagesData.length > 0) {
+          await tx.cmsServicePackage.createMany({ data: packagesData });
         }
       }, {
         maxWait: 30000,
@@ -141,18 +142,36 @@ export async function POST(req: NextRequest) {
       // data is Array of stories (synchronizing portfolio)
       await prisma.$transaction(async (tx) => {
         await tx.cmsGalleryStory.deleteMany();
-        for (const story of data) {
-          await tx.cmsGalleryStory.create({
-            data: {
-              slug: story.slug || story.title.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
-              title: story.title,
-              category: story.category,
-              date: story.date,
-              names: story.names,
-              mainImage: story.mainImage,
-              images: story.images || []
-            }
+        const usedSlugs = new Set<string>();
+        const galleryData: any[] = [];
+
+        for (let i = 0; i < (data || []).length; i++) {
+          const story = data[i];
+          const rawSlug = (story.slug || story.title || `session-${i}`)
+            .toLowerCase()
+            .replace(/[^a-z0-9]+/g, '-')
+            .replace(/^-+|-+$/g, '') || `session-${i}`;
+          
+          let finalSlug = rawSlug;
+          let counter = 1;
+          while (usedSlugs.has(finalSlug)) {
+            finalSlug = `${rawSlug}-${counter++}`;
+          }
+          usedSlugs.add(finalSlug);
+
+          galleryData.push({
+            slug: finalSlug,
+            title: story.title || 'Untitled Session',
+            category: story.category || 'WEDDINGS',
+            date: story.date || '',
+            names: story.names || '',
+            mainImage: story.mainImage || '/assets/occasion-wedding.jpg',
+            images: Array.isArray(story.images) && story.images.length > 0 ? story.images : [story.mainImage || '/assets/occasion-wedding.jpg']
           });
+        }
+
+        if (galleryData.length > 0) {
+          await tx.cmsGalleryStory.createMany({ data: galleryData });
         }
       }, {
         maxWait: 30000,

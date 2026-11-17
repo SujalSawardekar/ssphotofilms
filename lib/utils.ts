@@ -32,8 +32,15 @@ export const isValidFutureDate = (dateStr: string): boolean => {
   return date.getTime() >= (now.getTime() - 60000); // Allow 1 min grace
 };
 
-export const parsePrice = (price: string | number): number => {
-  if (typeof price === 'number') return price;
+export const parsePrice = (price: string | number | null | undefined): number => {
+  if (typeof price === 'number') return isNaN(price) ? 0 : price;
   if (!price) return 0;
-  return parseInt(price.toString().replace(/,/g, ''), 10) || 0;
+  const cleaned = price.toString().replace(/[^0-9.]/g, '');
+  const parsed = parseFloat(cleaned);
+  return isNaN(parsed) ? 0 : parsed;
+};
+
+export const formatPrice = (price: string | number | null | undefined): string => {
+  const num = parsePrice(price);
+  return num.toLocaleString('en-IN');
 };
