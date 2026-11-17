@@ -6,7 +6,47 @@ import { pricingCategories } from './mockData';
 export async function ensureCmsData() {
   try {
     const contentCount = await prisma.cmsContent.count();
-    if (contentCount > 0) return;
+    if (contentCount > 0) {
+      // Auto-sync requested occasion images to the database
+      try {
+        await prisma.cmsOccasion.updateMany({
+          where: { title: { contains: 'Haldi', mode: 'insensitive' } },
+          data: { image: '/assets/type/Haldi Type.jpeg' }
+        });
+        await prisma.cmsOccasion.updateMany({
+          where: { title: { contains: 'Pre-wedding', mode: 'insensitive' } },
+          data: { image: '/assets/type/Prewedding Type.jpeg' }
+        });
+        await prisma.cmsOccasion.updateMany({
+          where: { title: { contains: 'Baby', mode: 'insensitive' } },
+          data: { image: '/assets/type/Babykid.jpeg' }
+        });
+
+        await prisma.cmsContent.upsert({
+          where: { key: 'home.hero.images' },
+          update: {
+            value: JSON.stringify([
+              "/assets/type/hero-slide1.png",
+              "/assets/type/01.jpg.jpeg",
+              "/assets/prewedding/1ssp08645-copy.jpg",
+              "/assets/type/1DSC03229 copy.jpg.jpeg"
+            ])
+          },
+          create: {
+            key: 'home.hero.images',
+            value: JSON.stringify([
+              "/assets/type/hero-slide1.png",
+              "/assets/type/01.jpg.jpeg",
+              "/assets/prewedding/1ssp08645-copy.jpg",
+              "/assets/type/1DSC03229 copy.jpg.jpeg"
+            ])
+          }
+        });
+      } catch (syncErr) {
+        console.warn("[CMS] Occasion auto-sync note:", syncErr);
+      }
+      return;
+    }
 
     console.log("[CMS] Database empty. Seeding initial CMS content...");
 
@@ -17,9 +57,9 @@ export async function ensureCmsData() {
       "home.hero.subtitle": "UNSCRIPTED. RAW. AUTHENTIC",
       "home.hero.images": JSON.stringify([
         "/assets/type/hero-slide1.png",
-        "/assets/type/1DSC03229 copy.jpg.jpeg",
-        "/assets/type/03.jpg",
-        "/assets/type/01.jpg.jpeg"
+        "/assets/type/01.jpg.jpeg",
+        "/assets/prewedding/1ssp08645-copy.jpg",
+        "/assets/type/1DSC03229 copy.jpg.jpeg"
       ]),
       // Home About Teaser
       "home.about.title": "FOR THE LOVE OF ART \n AND TIMELESS MEMORIES",
@@ -88,11 +128,11 @@ export async function ensureCmsData() {
 
       // 2. Seed occasions
       const defaultOccasions = [
-        { title: 'Baby & Kids', description: 'One smile from them can bring happiness worth millions to us.', image: '/assets/occasion-baby.jpg', href: '/gallery?category=kids', order: 0 },
+        { title: 'Baby & Kids', description: 'One smile from them can bring happiness worth millions to us.', image: '/assets/type/Babykid.jpeg', href: '/gallery?category=kids', order: 0 },
         { title: 'Wedding', description: 'A magical bond between two souls worth a million stories.', image: '/assets/occasion-wedding.jpg', href: '/gallery?category=wedding', order: 1 },
         { title: 'Maternity', description: 'A tiny heartbeat, a life in our memories and hearts.', image: '/assets/occasion-maternity.jpg', href: '/gallery?category=maternity', order: 2 },
         { title: 'Engagement', description: 'Capturing the first promise of a lifelong journey together.', image: '/assets/Engagement/1DSC08499%20copy.jpg', href: '/gallery?category=engagement', order: 3 },
-        { title: 'Pre-wedding', description: 'Documenting your unique connection before the big day.', image: '/assets/hero-bg2.jpg', href: '/gallery?category=pre-wedding', order: 4 },
+        { title: 'Pre-wedding', description: 'Documenting your unique connection before the big day.', image: '/assets/type/Prewedding Type.jpeg', href: '/gallery?category=pre-wedding', order: 4 },
         { title: 'Haldi', description: 'Vibrant colors and soulful traditions of your celebration.', image: '/assets/type/Haldi Type.jpeg', href: '/gallery?category=haldi', order: 5 }
       ];
       for (const o of defaultOccasions) {

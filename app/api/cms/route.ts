@@ -3,6 +3,8 @@ import prisma from '@/lib/prisma';
 import { updateManyCmsContent, ensureCmsData } from '@/lib/cms';
 import { revalidatePath } from 'next/cache';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET() {
   try {
     await ensureCmsData();

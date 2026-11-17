@@ -54,6 +54,8 @@ const Footer = () => {
             <h4 className="text-xs uppercase tracking-[0.3em] font-bold text-dark">Categories</h4>
             <ul className="space-y-4 text-xs uppercase tracking-[0.2em] font-bold text-dark/60">
               <li><Link href="/gallery?category=wedding" className="hover:text-dark transition-colors">Wedding</Link></li>
+              <li><Link href="/gallery?category=haldi" className="hover:text-dark transition-colors">Haldi</Link></li>
+              <li><Link href="/gallery?category=pre-wedding" className="hover:text-dark transition-colors">Pre-wedding</Link></li>
               <li><Link href="/gallery?category=maternity" className="hover:text-dark transition-colors">Maternity</Link></li>
               <li><Link href="/gallery?category=kids" className="hover:text-dark transition-colors">Baby & Kids</Link></li>
               <li><Link href="/gallery?category=engagement" className="hover:text-dark transition-colors">Engagement</Link></li>

@@ -29,7 +29,7 @@ const DEFAULT_OCCASIONS = [
   { 
     title: 'Baby & Kids', 
     description: 'One smile from them can bring happiness worth millions to us.', 
-    image: '/assets/occasion-baby.jpg',
+    image: '/assets/type/Babykid.jpeg',
     href: '/gallery?category=kids'
   },
   { 
@@ -42,19 +42,22 @@ const DEFAULT_OCCASIONS = [
     title: 'Maternity', 
     description: 'A tiny heartbeat, a life in our memories and hearts.', 
     image: '/assets/occasion-maternity.jpg',
-    href: '/gallery?category=maternity'
+    href: '/gallery?category=maternity',
+    imagePosition: 'object-top'
   },
   { 
     title: 'Engagement', 
     description: 'Capturing the first promise of a lifelong journey together.', 
     image: '/assets/Engagement/1DSC08499%20copy.jpg',
-    href: '/gallery?category=engagement'
+    href: '/gallery?category=engagement',
+    imagePosition: 'object-top'
   },
   { 
     title: 'Pre-wedding', 
     description: 'Documenting your unique connection before the big day.', 
-    image: '/assets/hero-bg2.jpg',
-    href: '/gallery?category=pre-wedding'
+    image: '/assets/type/Prewedding Type.jpeg',
+    href: '/gallery?category=pre-wedding',
+    imagePosition: 'object-[50%_75%]'
   },
   { 
     title: 'Haldi', 
@@ -196,7 +199,16 @@ const OccasionGrid = () => {
                           alt={item.title} 
                           fill
                           quality={75}
-                          className="object-cover transition-transform duration-700 group-hover:scale-110"
+                          className={`object-cover transition-transform duration-700 group-hover:scale-110 ${
+                            (item as any).imagePosition || (
+                              item.title?.toLowerCase().includes('maternity') || 
+                              item.title?.toLowerCase().includes('engagement')
+                                ? 'object-top' 
+                                : (item.title?.toLowerCase().includes('pre-wedding') || item.title?.toLowerCase().includes('prewedding'))
+                                ? 'object-[50%_75%]'
+                                : 'object-center'
+                            )
+                          }`}
                           sizes="(max-width: 768px) 100vw, 33vw"
                         />
                         
