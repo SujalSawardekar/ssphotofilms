@@ -16,9 +16,10 @@ export async function ensureCmsData() {
       "home.hero.title": "CAPTURING LOVE STORIES",
       "home.hero.subtitle": "UNSCRIPTED. RAW. AUTHENTIC",
       "home.hero.images": JSON.stringify([
-        "/assets/hero-bg.jpg",
-        "/assets/hero-bg2.jpg",
-        "/assets/hero-bg3.jpg"
+        "/assets/type/hero-slide1.png",
+        "/assets/type/1DSC03229 copy.jpg.jpeg",
+        "/assets/type/03.jpg",
+        "/assets/type/01.jpg.jpeg"
       ]),
       // Home About Teaser
       "home.about.title": "FOR THE LOVE OF ART \n AND TIMELESS MEMORIES",

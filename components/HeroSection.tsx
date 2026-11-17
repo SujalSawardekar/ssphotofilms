@@ -7,9 +7,10 @@ import EditableText from './EditableText';
 import EditableImage from './EditableImage';
 
 const DEFAULT_IMAGES = [
-  "/assets/hero-bg.jpg",
-  "/assets/hero-bg2.jpg",
-  "/assets/hero-bg3.jpg",
+  "/assets/type/hero-slide1.png",
+  "/assets/type/1DSC03229 copy.jpg.jpeg",
+  "/assets/type/03.jpg",
+  "/assets/type/01.jpg.jpeg",
 ];
 
 const HeroSection = () => {
@@ -130,7 +131,7 @@ const HeroSection = () => {
 
             {/* Total Slide Counter (Bottom) */}
             <span className="text-white/40 text-sm font-bold tracking-widest leading-none">
-              03
+              {String(images.length).padStart(2, '0')}
             </span>
           </div>
         </div>

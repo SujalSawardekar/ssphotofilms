@@ -2,11 +2,15 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Quote, ChevronLeft, ChevronRight, ArrowLeftRight } from 'lucide-react';
-import Script from 'next/script';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useCms } from '@/lib/CmsContext';
 
 const DEFAULT_TESTIMONIALS = [
+  { 
+    review: "Great studio from chiplun. Best studio from chiplun. Truly appreciate their dedication and would highly recommend SS Photo and Films.", 
+    clientName: "Jagruti Surve", 
+    eventType: "Studio Review" 
+  },
   { 
     review: "An amazing experience from start to finish! SS Studio covered our pre-wedding, engagement, wedding and album, and everything turned out better than we imagined. Shreyas was very patient, calm and made us feel at ease throughout, never awkward or rushed.", 
     clientName: "Mithilesh Shirke", 
@@ -31,11 +35,6 @@ const DEFAULT_TESTIMONIALS = [
     review: "Very nice photography and Videography. Captured important moment beautifully with great attention to detail and creativity.", 
     clientName: "Deepali Hiwalkar", 
     eventType: "Photography & Videography" 
-  },
-  { 
-    review: "Great studio from chiplun. Best studio from chiplun. Truly appreciate their dedication and would highly recommend SS Photo and Films.", 
-    clientName: "Jagruti Surve", 
-    eventType: "Studio Review" 
   },
 ];
 
@@ -90,11 +89,11 @@ const Testimonials = () => {
   const handleAddNew = () => {
     addTestimonial({
       clientName: "New Client Name",
-      eventType: "Event Type",
+      eventType: "Studio Review",
       review: "Write the client review here...",
       image: ""
     });
-    setIndex(testimonials.length); // go to new slide
+    setIndex(testimonials.length);
   };
 
   const handleDelete = () => {
@@ -120,7 +119,7 @@ const Testimonials = () => {
 
   const variants = {
     enter: (dir: number) => ({
-      x: dir > 0 ? 1000 : -1000,
+      x: dir > 0 ? 500 : -500,
       opacity: 0
     }),
     center: {
@@ -130,37 +129,23 @@ const Testimonials = () => {
     },
     exit: (dir: number) => ({
       zIndex: 0,
-      x: dir < 0 ? 1000 : -1000,
+      x: dir < 0 ? 500 : -500,
       opacity: 0
     })
   };
 
-  if (testimonials.length === 0) {
-    return (
-      <section className="bg-background py-24 px-6 md:px-12 text-center">
-        <h2 className="text-3xl font-cinzel text-dark mb-4">CLIENT TALES</h2>
-        <div className="py-10 border border-dashed border-dark/10 rounded-2xl max-w-xl mx-auto flex flex-col items-center">
-          <p className="text-secondary/60 text-sm mb-4">No testimonials yet.</p>
-          {editMode && !isPreview && (
-            <button onClick={handleAddNew} className="bg-gold text-dark px-6 py-2.5 rounded font-bold text-xs uppercase tracking-widest shadow">
-              + Add Testimonial
-            </button>
-          )}
-        </div>
-      </section>
-    );
-  }
-
   const current = testimonials[index] || testimonials[0];
 
   return (
-    <section className="bg-background py-24 px-6 md:px-12 border-t border-gold/10 overflow-hidden font-manrope">
+    <section id="testimonials" className="bg-background py-20 md:py-28 px-6 md:px-12 border-t border-gold/10 overflow-hidden font-manrope">
       <div className="max-w-4xl mx-auto">
-        <div className="text-center mb-16 space-y-4 flex flex-col items-center">
-          <h2 className="text-4xl md:text-5xl font-cinzel font-bold text-dark tracking-tight uppercase">
+        
+        {/* Section Header: CLIENT TALES with Gold Line */}
+        <div className="text-center mb-12 sm:mb-16 space-y-3 flex flex-col items-center">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-cinzel font-bold text-dark tracking-wide uppercase">
             CLIENT TALES
           </h2>
-          <div className="w-24 h-[1px] bg-gold mx-auto" />
+          <div className="w-20 sm:w-24 h-[1.5px] bg-gold mx-auto" />
           
           {editMode && !isPreview && (
             <button 
@@ -172,9 +157,9 @@ const Testimonials = () => {
           )}
         </div>
 
-        {/* Carousel Container */}
-        <div className="relative min-h-[480px] md:min-h-[400px] flex items-center justify-center">
-          <AnimatePresence initial={false} custom={direction}>
+        {/* Testimonial Card Carousel */}
+        <div className="relative min-h-[380px] sm:min-h-[340px] md:min-h-[300px] flex items-center justify-center">
+          <AnimatePresence initial={false} custom={direction} mode="wait">
             <motion.div
               key={index}
               custom={direction}
@@ -183,25 +168,29 @@ const Testimonials = () => {
               animate="center"
               exit="exit"
               transition={{
-                x: { type: "spring", stiffness: 300, damping: 30 },
-                opacity: { duration: 0.2 }
+                x: { type: "spring", stiffness: 350, damping: 35 },
+                opacity: { duration: 0.25 }
               }}
               drag={(!editMode || isPreview) ? "x" : false}
               dragConstraints={{ left: 0, right: 0 }}
               onDragEnd={(e, { offset }) => {
-                const swipe = 20;
+                const swipe = 25;
                 if (offset.x < -swipe) {
                   nextSlide();
                 } else if (offset.x > swipe) {
                   prevSlide();
                 }
               }}
-              className="absolute w-full touch-pan-y"
+              className="w-full touch-pan-y"
             >
-              <div className="bg-white p-6 md:p-16 shadow-[0_20px_60px_rgba(0,0,0,0.05)] border border-dark/5 rounded-2xl relative">
-                <Quote className="text-gold/10 absolute top-6 right-6 md:top-10 md:right-10 w-12 h-12 md:w-20 md:h-20" strokeWidth={1} />
+              <div className="bg-white p-8 sm:p-12 md:p-14 shadow-[0_15px_45px_rgba(0,0,0,0.04)] border border-dark/[0.04] rounded-2xl md:rounded-[24px] relative">
                 
-                {/* Admin testimonials menu in edit mode */}
+                {/* Large stylized quote mark watermark in top-right */}
+                <span className="absolute top-6 right-8 md:top-8 md:right-12 text-[#E8D5B0]/35 font-serif text-6xl md:text-8xl select-none pointer-events-none leading-none">
+                  &rdquo;
+                </span>
+                
+                {/* Admin controls in edit mode */}
                 {editMode && !isPreview && (
                   <div className="absolute top-4 left-4 z-40 bg-dark/80 backdrop-blur-md rounded-xl p-1.5 flex items-center space-x-2 border border-white/10 shadow-lg text-white">
                     <button
@@ -231,8 +220,9 @@ const Testimonials = () => {
                   </div>
                 )}
 
-                <div className="space-y-6 md:space-y-10 relative z-10 text-center md:text-left">
-                  <div className="text-secondary font-garamond italic text-xl md:text-3xl leading-snug w-full">
+                <div className="relative z-10">
+                  {/* Quote Text */}
+                  <div className="text-[#3A3A3A] font-garamond italic text-lg sm:text-xl md:text-2xl lg:text-[25px] leading-relaxed w-full pr-12 md:pr-16">
                     {editMode && !isPreview ? (
                       <textarea
                         value={current.review}
@@ -244,9 +234,13 @@ const Testimonials = () => {
                     )}
                   </div>
                   
-                  <div className="pt-6 md:pt-10 border-t border-gold/10 flex flex-col md:flex-row md:items-center justify-between gap-4">
-                    <div className="w-full md:w-auto">
-                      <h4 className="font-cinzel text-dark font-bold uppercase tracking-widest text-base md:text-lg">
+                  {/* Thin divider line */}
+                  <div className="border-t border-dark/[0.06] my-6 md:my-8" />
+
+                  {/* Bottom Row: Author details on left, circular navigation on right */}
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h4 className="font-cinzel text-dark font-bold uppercase tracking-[0.2em] text-sm sm:text-base">
                         {editMode && !isPreview ? (
                           <input
                             type="text"
@@ -258,7 +252,7 @@ const Testimonials = () => {
                           current.clientName
                         )}
                       </h4>
-                      <p className="text-gold text-[10px] md:text-xs uppercase tracking-[0.2em] md:tracking-[0.3em] font-bold mt-1">
+                      <p className="text-gold text-[10px] sm:text-xs uppercase tracking-[0.25em] font-bold mt-1">
                         {editMode && !isPreview ? (
                           <input
                             type="text"
@@ -272,20 +266,21 @@ const Testimonials = () => {
                       </p>
                     </div>
                     
-                    <div className="hidden md:flex space-x-4 shrink-0">
+                    {/* Navigation Arrows: Circular buttons matching Image 1 */}
+                    <div className="flex items-center space-x-2.5">
                       <button 
                         onClick={prevSlide}
-                        className="p-3 border border-dark/10 rounded-full hover:bg-dark hover:text-white transition-all duration-300"
+                        className="w-9 h-9 sm:w-10 sm:h-10 rounded-full border border-dark/15 bg-white flex items-center justify-center text-dark/70 hover:bg-dark hover:text-white hover:border-dark transition-all duration-300 shadow-sm cursor-pointer"
                         aria-label="Previous testimonial"
                       >
-                        <ChevronLeft size={20} />
+                        <ChevronLeft size={16} />
                       </button>
                       <button 
                         onClick={nextSlide}
-                        className="p-3 border border-dark/10 rounded-full hover:bg-dark hover:text-white transition-all duration-300"
+                        className="w-9 h-9 sm:w-10 sm:h-10 rounded-full border border-dark/15 bg-white flex items-center justify-center text-dark/70 hover:bg-dark hover:text-white hover:border-dark transition-all duration-300 shadow-sm cursor-pointer"
                         aria-label="Next testimonial"
                       >
-                        <ChevronRight size={20} />
+                        <ChevronRight size={16} />
                       </button>
                     </div>
                   </div>
@@ -295,43 +290,34 @@ const Testimonials = () => {
           </AnimatePresence>
         </div>
 
-        {/* Navigation Dots */}
-        <div className="mt-10 md:mt-12 flex justify-center items-center space-x-3">
+        {/* Pagination Dots (Active dot is elongated gold pill) */}
+        <div className="mt-8 md:mt-10 flex justify-center items-center space-x-2">
           {testimonials.map((_, i) => (
             <button
               key={i}
               onClick={() => goToSlide(i)}
-              className={`transition-all duration-500 rounded-full ${
+              className={`transition-all duration-300 rounded-full ${
                 i === index 
-                ? "w-8 h-2 bg-gold" 
-                : "w-2 h-2 bg-dark/10 hover:bg-gold/40"
+                ? "w-7 sm:w-8 h-1.5 bg-gold" 
+                : "w-1.5 h-1.5 bg-dark/20 hover:bg-dark/40"
               }`}
               aria-label={`Go to testimonial ${i + 1}`}
             />
           ))}
         </div>
 
-        {/* Live Google Reviews Widget Container */}
-        <div className="mt-20 border-t border-gold/10 pt-16 max-w-6xl mx-auto text-center w-full">
-          <h3 className="text-2xl font-cinzel font-bold text-dark mb-8 uppercase tracking-widest">Live Google Reviews</h3>
-          
-          <Script src="https://elfsightcdn.com/platform.js" strategy="lazyOnload" />
-          
-          <div className="elfsight-app-e9976021-37a6-48f4-aab2-592ad7117c43" data-elfsight-app-lazy></div>
-        </div>
-
-        {/* Footer Link */}
+        {/* Direct Verified Google Reviews Link */}
         <motion.div 
           initial={{ opacity: 0, y: 10 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="mt-20 text-center"
+          className="mt-14 text-center"
         >
           <a 
             href="https://maps.app.goo.gl/GTSoLLD2cZGRgLPy5" 
             target="_blank" 
             rel="noopener noreferrer"
-            className="inline-flex items-center space-x-4 text-[10px] uppercase tracking-[0.4em] font-black text-dark/40 hover:text-gold transition-all duration-500 group"
+            className="inline-flex items-center space-x-4 text-[10px] sm:text-xs uppercase tracking-[0.35em] font-bold text-dark/40 hover:text-gold transition-all duration-300 group"
           >
             <span>VERIFIED GOOGLE REVIEWS</span>
             <div className="w-10 h-[1px] bg-dark/20 group-hover:bg-gold transition-colors" />

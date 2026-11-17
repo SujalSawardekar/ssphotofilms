@@ -39,11 +39,23 @@ export const EditableImage: React.FC<EditableImageProps> = ({
   // Decide what image source path to use
   let activeSrc = overrideSrc;
   if (cmsKey) {
-    activeSrc = contents[cmsKey] !== undefined ? contents[cmsKey] : defaultVal;
+    activeSrc = contents[cmsKey] !== undefined && contents[cmsKey] !== "" ? contents[cmsKey] : defaultVal;
   }
   if (!activeSrc) {
     activeSrc = defaultVal;
   }
+
+  const [imgSrc, setImgSrc] = React.useState(activeSrc);
+
+  React.useEffect(() => {
+    setImgSrc(activeSrc);
+  }, [activeSrc]);
+
+  const handleError = () => {
+    if (defaultVal && imgSrc !== defaultVal) {
+      setImgSrc(defaultVal);
+    }
+  };
 
   const handleImageReplace = () => {
     openMediaSelector((newUrl: string) => {
@@ -57,23 +69,25 @@ export const EditableImage: React.FC<EditableImageProps> = ({
 
   const imgElement = fill ? (
     <Image
-      src={activeSrc}
+      src={imgSrc || defaultVal}
       alt={alt}
       fill
       sizes={sizes}
       priority={priority}
       quality={quality}
+      onError={handleError}
       className={`${className} ${editMode && !isPreview ? 'brightness-75 transition-all' : ''}`}
     />
   ) : (
     <Image
-      src={activeSrc}
+      src={imgSrc || defaultVal}
       alt={alt}
       width={width}
       height={height}
       sizes={sizes}
       priority={priority}
       quality={quality}
+      onError={handleError}
       className={`${className} ${editMode && !isPreview ? 'brightness-75 transition-all' : ''}`}
     />
   );
